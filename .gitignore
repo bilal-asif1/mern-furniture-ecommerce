@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+client/node_modules
+client/dist
+client/build
+server/node_modules
+mongodb_data/
+.env
+client/.env
+server/.env
+*.log
+server/public/uploads/
