@@ -56,7 +56,6 @@ import {
 function AppBootstrap() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
-  const role = useSelector((state) => state.auth.user?.role);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -67,16 +66,31 @@ function AppBootstrap() {
   useEffect(() => {
     if (!token) return;
 
-    dispatch(fetchMe()).catch(() => {
-      dispatch(logoutAction());
-    });
-    dispatch(loadCartFromServer());
-    dispatch(loadWishlistFromServer());
+    let cancelled = false;
 
-    if (role === 'admin') {
-      dispatch(fetchMyOrders());
-    }
-  }, [dispatch, token, role]);
+    (async () => {
+      try {
+        const me = await dispatch(fetchMe()).unwrap();
+
+        if (cancelled) return;
+
+        dispatch(loadCartFromServer());
+        dispatch(loadWishlistFromServer());
+
+        if (me?.role === 'admin') {
+          dispatch(fetchMyOrders());
+        }
+      } catch (_error) {
+        if (!cancelled) {
+          dispatch(logoutAction());
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch, token]);
 
   return null;
 }
@@ -120,6 +134,7 @@ export function useApp() {
     const auth = {
       user: authState.user,
       token,
+      status: authState.status,
     };
 
     const handleCartSync = () => {
@@ -255,6 +270,7 @@ export function useApp() {
   }, [
     authState.user,
     authState.token,
+    authState.status,
     authState.loading,
     authState.error,
     authState.success,

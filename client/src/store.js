@@ -56,22 +56,37 @@ const normalizeBrand = (brand = {}) => ({
   status: brand.status || 'active',
 });
 
-const isBrokenImageSource = (value) =>
-  typeof value === 'string' && (value.startsWith('/uploads/') || value.startsWith('data:'));
+const isRenderableImageSource = (value) => {
+  if (typeof value !== 'string') return false;
+
+  const source = value.trim();
+  if (!source) return false;
+  if (source === '/product-placeholder.svg') return true;
+  if (source.startsWith('/uploads/') || source.startsWith('data:')) return false;
+
+  try {
+    const url = new URL(source);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (_error) {
+    return false;
+  }
+};
+
+const pickRenderableImage = (...candidates) => {
+  for (const candidate of candidates) {
+    if (isRenderableImageSource(candidate)) return candidate;
+  }
+  return '/product-placeholder.svg';
+};
 
 const normalizeProduct = (product = {}) => {
   const category = product.category && typeof product.category === 'object' ? product.category : null;
   const images = Array.isArray(product.images)
     ? product.images
-        .map((item) => (typeof item === 'string' ? item : item?.url || item?.src || ''))
-        .filter((item) => Boolean(item) && !isBrokenImageSource(item))
+        .map((item) => (typeof item === 'string' ? item : item?.url || item?.src || item?.secure_url || ''))
+        .filter((item) => isRenderableImageSource(item))
     : [];
-  const image =
-    (product.thumbnailImage && !isBrokenImageSource(product.thumbnailImage) ? product.thumbnailImage : '') ||
-    (product.thumbnail && !isBrokenImageSource(product.thumbnail) ? product.thumbnail : '') ||
-    (product.image && !isBrokenImageSource(product.image) ? product.image : '') ||
-    images[0] ||
-    '/product-placeholder.svg';
+  const image = pickRenderableImage(product.thumbnailImage, product.thumbnail, product.image, images[0]);
   const badges = Array.isArray(product.badges) ? product.badges.filter(Boolean) : [];
 
   return {
@@ -401,8 +416,7 @@ export const fetchMyOrders = createAsyncThunk('orders/fetchMyOrders', async (_, 
 
 export const fetchOrderById = createAsyncThunk('orders/fetchOrderById', async (id, thunkAPI) => {
   try {
-    const token = thunkAPI.getState().auth.token;
-    const { data } = await apiClient.get(`/orders/${id}`, withAuth(token));
+    const { data } = await apiClient.get(`/orders/track/${id}`);
     return normalizeOrder(data);
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
@@ -510,6 +524,7 @@ const authSlice = createSlice({
   initialState: {
     user: authInitial?.user || null,
     token: authInitial?.token || null,
+    status: authInitial?.token ? 'checking' : 'anonymous',
     loading: false,
     error: '',
     success: '',
@@ -518,12 +533,14 @@ const authSlice = createSlice({
     setCredentials(state, action) {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      state.status = 'authenticated';
       state.success = action.payload.success || '';
       state.error = '';
     },
     logout(state) {
       state.user = null;
       state.token = null;
+      state.status = 'anonymous';
       state.error = '';
       state.success = '';
     },
@@ -549,6 +566,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.status = 'authenticated';
         state.success = 'Signed in successfully';
       })
       .addCase(loginUser.rejected, rejected)
@@ -557,20 +575,27 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.status = 'authenticated';
         state.success = 'Account created successfully';
       })
       .addCase(registerUser.rejected, rejected)
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.status = 'authenticated';
+        state.error = '';
       })
       .addCase(fetchMe.rejected, (state, action) => {
-        state.error = action.payload || 'Session expired';
+        state.user = null;
+        state.token = null;
+        state.status = 'anonymous';
+        state.error = action.payload || 'Session expired. Please log in again.';
       })
       .addCase(updateProfile.pending, pending)
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.status = 'authenticated';
         state.success = 'Profile updated successfully';
       })
       .addCase(updateProfile.rejected, rejected);

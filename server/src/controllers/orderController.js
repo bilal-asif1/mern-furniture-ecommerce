@@ -40,6 +40,27 @@ const getOrderById = asyncHandler(async (req, res) => {
   res.json(order);
 });
 
+const getPublicOrderTracking = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id).populate('orderItems.product', 'name slug images price');
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  res.json({
+    _id: order._id,
+    id: order._id,
+    status: order.status,
+    createdAt: order.createdAt,
+    deliveredAt: order.deliveredAt,
+    paidAt: order.paidAt,
+    isPaid: order.isPaid,
+    totalPrice: order.totalPrice,
+    orderItems: order.orderItems,
+    shippingAddress: order.shippingAddress,
+  });
+});
+
 const getAllOrders = asyncHandler(async (_req, res) => {
   const orders = await Order.find().sort({ createdAt: -1 }).populate('user', 'name email');
   res.json(orders);
@@ -57,4 +78,4 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
   res.json(order);
 });
 
-export { createOrder, getMyOrders, getOrderById, getAllOrders, updateOrderStatus };
+export { createOrder, getMyOrders, getOrderById, getPublicOrderTracking, getAllOrders, updateOrderStatus };

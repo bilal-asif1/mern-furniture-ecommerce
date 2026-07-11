@@ -42,6 +42,42 @@ const toCommaString = (items = []) => items.filter(Boolean).join(', ');
 
 const toImagePayload = (items = []) => items.map((item) => item.value).filter(Boolean);
 
+const buildProductPayload = (form, { categoryFallback = '', brandFallback = 'Junaid Furniture' } = {}) => {
+  const imageValues = toImagePayload(form.images);
+  const thumbnailImage = form.thumbnailImage || imageValues[0] || '';
+
+  return {
+    name: form.name.trim(),
+    category: form.category || categoryFallback,
+    brand: form.brand.trim() || brandFallback,
+    sku: form.sku.trim(),
+    description: form.description.trim(),
+    shortDescription: form.shortDescription.trim(),
+    material: form.material.trim(),
+    color: form.color.trim(),
+    dimensions: {
+      width: form.dimensions.width,
+      height: form.dimensions.height,
+      depth: form.dimensions.depth,
+    },
+    weight: form.weight,
+    warranty: form.warranty.trim(),
+    price: form.price,
+    discountPrice: form.discountPrice,
+    discountPercentage: form.discountPercentage || calculateDiscountPercentage(form.price, form.discountPrice),
+    stock: form.stock,
+    featured: form.featured,
+    bestSeller: form.bestSeller,
+    newArrival: form.newArrival,
+    productStatus: form.productStatus,
+    tags: form.tags,
+    badges: form.badges,
+    thumbnailImage,
+    images: imageValues,
+    removedImages: form.removedImages,
+  };
+};
+
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -181,45 +217,19 @@ export default function AdminProductsPage() {
     event.preventDefault();
     try {
       setSaving(true);
-      const payload = {
-        name: form.name,
-        category: form.category,
-        brand: form.brand,
-        sku: form.sku,
-        description: form.description,
-        shortDescription: form.shortDescription,
-        material: form.material,
-        color: form.color,
-        dimensions: {
-          width: form.dimensions.width,
-          height: form.dimensions.height,
-          depth: form.dimensions.depth,
-        },
-        weight: form.weight,
-        warranty: form.warranty,
-        price: form.price,
-        discountPrice: form.discountPrice,
-        discountPercentage: form.discountPercentage || calculateDiscountPercentage(form.price, form.discountPrice),
-        stock: form.stock,
-        featured: form.featured,
-        bestSeller: form.bestSeller,
-        newArrival: form.newArrival,
-        productStatus: form.productStatus,
-        tags: form.tags,
-        badges: form.badges,
-        thumbnailImage: form.thumbnailImage || form.images[0]?.value || '',
-        images: toImagePayload(form.images),
-        removedImages: form.removedImages,
-      };
+      const payload = buildProductPayload(form, {
+        categoryFallback: categories[0]?.id || '',
+        brandFallback: brands[0]?.name || 'Junaid Furniture',
+      });
+      const action = editingId
+        ? updateProduct(editingId, payload)
+        : createProduct(payload);
 
-      const result = editingId
-        ? await updateProduct(editingId, payload)
-        : await createProduct(payload);
-
-      if (result.meta.requestStatus === 'fulfilled') {
-        resetForm();
-        await fetchAdminProducts({ limit: 200 });
-      }
+      await action.unwrap();
+      resetForm();
+      await fetchAdminProducts({ limit: 200 });
+    } catch (_error) {
+      // The catalog slice already records a user-facing error message.
     } finally {
       setSaving(false);
     }

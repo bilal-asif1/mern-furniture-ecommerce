@@ -85,6 +85,12 @@ const serializeProduct = (product) => {
   };
 };
 
+const respondWithProductError = (res, error, fallbackMessage) => {
+  const statusCode = error?.statusCode || error?.status || 500;
+  const message = error?.message || fallbackMessage;
+  return res.status(statusCode).json({ message });
+};
+
 const getProducts = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
@@ -135,44 +141,49 @@ const getProductBySlug = asyncHandler(async (req, res) => {
 });
 
 const createProduct = asyncHandler(async (req, res) => {
-  const payload = await normalizeProductPayload({ body: req.body });
-  
-  const { name, price, category, description } = payload;
+  try {
+    const payload = await normalizeProductPayload({ body: req.body });
 
-  if (!name || !description || price == null || !category) {
-    res.status(400);
-    throw new Error('Name, description, price, and category are required');
+    const { name, price, category, description } = payload;
+
+    if (!name || !description || price == null || !category) {
+      return res.status(400).json({ message: 'Name, description, price, and category are required' });
+    }
+
+    const exists = await Product.findOne({ $or: [{ name }, { slug: slugify(name) }] });
+    if (exists) {
+      return res.status(400).json({ message: 'Product already exists' });
+    }
+
+    const product = await Product.create(payload);
+    await product.populate('category', 'name slug');
+    return res.status(201).json(serializeProduct(product));
+  } catch (error) {
+    return respondWithProductError(res, error, 'Unable to create product');
   }
-
-  const exists = await Product.findOne({ $or: [{ name }, { slug: slugify(name) }] });
-  if (exists) {
-    res.status(400);
-    throw new Error('Product already exists');
-  }
-
-  const product = await Product.create(payload);
-  await product.populate('category', 'name slug');
-  res.status(201).json(serializeProduct(product));
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-  const existingProduct = await Product.findById(req.params.id);
-  if (!existingProduct) {
-    res.status(404);
-    throw new Error('Product not found');
-  }
+  try {
+    const existingProduct = await Product.findById(req.params.id);
+    if (!existingProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
 
-  const payload = await normalizeProductPayload({
-    body: req.body,
-    existingProduct,
-  });
-  
-  const updated = await Product.findByIdAndUpdate(req.params.id, payload, {
-    new: true,
-    runValidators: true,
-  });
-  await updated.populate('category', 'name slug');
-  res.json(serializeProduct(updated));
+    const payload = await normalizeProductPayload({
+      body: req.body,
+      existingProduct,
+    });
+
+    const updated = await Product.findByIdAndUpdate(req.params.id, payload, {
+      new: true,
+      runValidators: true,
+    });
+    await updated.populate('category', 'name slug');
+    return res.json(serializeProduct(updated));
+  } catch (error) {
+    return respondWithProductError(res, error, 'Unable to update product');
+  }
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {

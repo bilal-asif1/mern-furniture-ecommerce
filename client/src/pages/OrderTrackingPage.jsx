@@ -30,7 +30,7 @@ export default function OrderTrackingPage() {
 
   return (
     <PageSection className="py-10">
-      <SectionTitle eyebrow="Tracking" title="Track Your Order" description="Monitor fulfillment status with a clean, customer-friendly tracking layout." />
+      <SectionTitle eyebrow="Tracking" title="Track Your Order" description="Look up an order by ID without signing in, then follow its fulfillment status." />
       <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
         <div className="rounded-[2rem] bg-white p-6 shadow-card">
           <Field label="Order Number">
