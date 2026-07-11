@@ -9,15 +9,6 @@ export const apiClient = axios.create({
   },
 });
 
-// Override the default transformRequest to handle FormData
-apiClient.defaults.transformRequest = [(data, headers) => {
-  if (data instanceof FormData) {
-    delete headers['Content-Type'];
-    return data;
-  }
-  return data;
-}, ...axios.defaults.transformRequest];
-
 export const withAuth = (token) =>
   token
     ? {
