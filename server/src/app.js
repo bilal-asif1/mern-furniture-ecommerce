@@ -6,9 +6,30 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
 
-// In development allow the dev client origins by reflecting the incoming Origin header.
-// This simplifies local E2E and dev server setups.
-app.use(cors({ origin: true, credentials: true }));
+console.log('Starting with CLIENT_URL:', process.env.CLIENT_URL);
+
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000'];
+if (process.env.CLIENT_URL) {
+  // Remove trailing slash if present to avoid mismatch
+  const clientUrl = process.env.CLIENT_URL.replace(/\/$/, '');
+  if (!allowedOrigins.includes(clientUrl)) {
+    allowedOrigins.push(clientUrl);
+  }
+}
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(morgan('dev'));
 
