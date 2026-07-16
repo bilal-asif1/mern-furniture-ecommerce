@@ -9,7 +9,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 
 export default function CartPage() {
   const { cart, cartSubtotal, removeFromCart, updateCartQty, clearCart, cartLoading, cartError, cartSuccess } = useApp();
-  const shipping = cartSubtotal > 0 ? 45 : 0;
+  const shipping = cartSubtotal > 0 ? 1000 : 0;
   const total = cartSubtotal + shipping;
 
   return (

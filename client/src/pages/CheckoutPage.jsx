@@ -21,7 +21,7 @@ export default function CheckoutPage() {
     notes: '',
   });
 
-  const shippingPrice = cart.length ? 45 : 0;
+  const shippingPrice = cart.length ? 1000 : 0;
   const taxPrice = Number((cartSubtotal * 0.08).toFixed(2));
   const totalPrice = Number((cartSubtotal + shippingPrice + taxPrice).toFixed(2));
 
