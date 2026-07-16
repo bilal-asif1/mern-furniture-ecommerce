@@ -30,6 +30,8 @@ export const adminApi = {
       .then((response) => response.data),
   updateUser: (token, id, body) => apiClient.put(`/admin/users/${id}`, body, withAuth(token)).then((response) => response.data),
   deleteUser: (token, id) => apiClient.delete(`/admin/users/${id}`, withAuth(token)).then((response) => response.data),
+  orders: (token) => apiClient.get('/orders', withAuth(token)).then((response) => response.data),
+  updateOrder: (token, id, body) => apiClient.put(`/orders/${id}`, body, withAuth(token)).then((response) => response.data),
 };
 
 export const productApi = {

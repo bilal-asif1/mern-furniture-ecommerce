@@ -32,8 +32,8 @@ export default function Navbar() {
               JF
             </motion.div>
             <div>
-              <p className="font-display text-2xl font-semibold leading-none text-text">Junaid Furniture</p>
-              <p className="text-xs uppercase tracking-[0.3em] text-text/50">Premium Living</p>
+              <p className="font-display text-lg sm:text-2xl font-semibold leading-none text-text">Junaid Furniture</p>
+              <p className="hidden text-[10px] sm:text-xs uppercase tracking-[0.3em] text-text/50 sm:block">Premium Living</p>
             </div>
           </Link>
         </motion.div>
@@ -58,7 +58,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

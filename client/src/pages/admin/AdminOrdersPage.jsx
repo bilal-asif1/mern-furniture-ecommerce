@@ -3,7 +3,7 @@ import AdminPageShell from '../../components/AdminPageShell';
 import Button from '../../components/Button';
 import { SelectField } from '../../components/Field';
 import { useApp } from '../../context/AppContext';
-import { orderApi } from '../../lib/adminApi';
+import { adminApi } from '../../lib/adminApi';
 import { formatCurrency } from '../../utils/formatCurrency';
 
 const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
@@ -26,10 +26,13 @@ export default function AdminOrdersPage() {
     try {
       setLoading(true);
       setError('');
-      const data = await orderApi.list(auth.token);
-      setOrders(Array.isArray(data) ? data : []);
+      const data = await adminApi.orders(auth.token);
+      let fetchedOrders = Array.isArray(data) ? data : [];
+      // Explicitly sort orders newest-first to prevent any pagination/sorting issues
+      fetchedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setOrders(fetchedOrders);
       const next = {};
-      (Array.isArray(data) ? data : []).forEach((order) => {
+      fetchedOrders.forEach((order) => {
         next[order._id] = order.status || 'Pending';
       });
       setStatusMap(next);
