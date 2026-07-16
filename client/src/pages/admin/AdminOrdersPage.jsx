@@ -8,6 +8,12 @@ import { formatCurrency } from '../../utils/formatCurrency';
 
 const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
+const formatOrderId = (id) => {
+  if (!id) return 'Order #UNKNOWN';
+  const shortId = id.slice(-6).toUpperCase();
+  return `Order #${shortId}`;
+};
+
 export default function AdminOrdersPage() {
   const { auth } = useApp();
   const [orders, setOrders] = useState([]);
@@ -59,7 +65,8 @@ export default function AdminOrdersPage() {
         {orders.map((order) => (
           <div key={order._id} className="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-card lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-text">{order._id}</h3>
+              <h3 className="text-lg font-semibold text-text">{formatOrderId(order._id)}</h3>
+              <p className="text-xs text-text/40 font-mono">{order._id}</p>
               <p className="text-sm text-text/60">{new Date(order.createdAt).toLocaleDateString()}</p>
               <p className="mt-2 text-sm text-text/70">{order.user?.name || 'Customer'} | {order.user?.email || 'N/A'}</p>
             </div>
