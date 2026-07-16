@@ -3,8 +3,7 @@ import AdminPageShell from '../../components/AdminPageShell';
 import MetricCard from '../../components/MetricCard';
 import Button from '../../components/Button';
 import { useApp } from '../../context/AppContext';
-
-const currency = (value = 0) => `$${Number(value).toLocaleString()}`;
+import { formatCurrency } from '../../utils/formatCurrency';
 
 export default function AdminDashboardPage() {
   const {
@@ -38,7 +37,7 @@ export default function AdminDashboardPage() {
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="Revenue" value={currency(adminSummary?.revenue)} delta="Live data" />
+            <MetricCard label="Revenue" value={formatCurrency(adminSummary?.revenue)} delta="Live data" />
             <MetricCard label="Orders" value={adminSummary?.orders ?? 0} delta={`${adminSummary?.pendingOrders ?? 0} pending`} />
             <MetricCard label="Customers" value={adminSummary?.customers ?? 0} delta="Registered users" />
             <MetricCard label="Low Stock" value={adminSummary?.lowStock ?? 0} delta="Inventory alert" />
@@ -54,7 +53,7 @@ export default function AdminDashboardPage() {
                   return (
                     <div key={`${entry.year}-${entry.month}`} className="flex-1">
                       <div className="flex h-full flex-col justify-end">
-                        <div className="mb-2 text-center text-xs font-semibold text-text/60">{currency(entry.revenue)}</div>
+                        <div className="mb-2 text-center text-xs font-semibold text-text/60">{formatCurrency(entry.revenue)}</div>
                         <div className="rounded-t-2xl bg-primary/80" style={{ height: `${height}%` }} />
                       </div>
                     </div>

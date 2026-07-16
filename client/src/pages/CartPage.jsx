@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import EmptyState from '../components/EmptyState';
 import QuantityStepper from '../components/QuantityStepper';
 import { useApp } from '../context/AppContext';
+import { formatCurrency } from '../utils/formatCurrency';
 
 export default function CartPage() {
   const { cart, cartSubtotal, removeFromCart, updateCartQty, clearCart, cartLoading, cartError, cartSuccess } = useApp();
@@ -50,7 +51,7 @@ export default function CartPage() {
                     <div>
                       <h3 className="text-lg font-semibold text-text">{item.name}</h3>
                       <p className="text-sm text-text/60">{item.categoryName || item.category || 'Furniture'}</p>
-                      <p className="mt-2 text-sm font-semibold text-primary">${item.price}</p>
+                      <p className="mt-2 text-sm font-semibold text-primary">{formatCurrency(item.price)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -82,7 +83,7 @@ export default function CartPage() {
                 transition={{ delay: 0.3 }}
                 className="flex justify-between"
               >
-                <span>Subtotal</span><span>${cartSubtotal.toFixed(2)}</span>
+                <span>Subtotal</span><span>{formatCurrency(cartSubtotal)}</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -90,7 +91,7 @@ export default function CartPage() {
                 transition={{ delay: 0.4 }}
                 className="flex justify-between"
               >
-                <span>Shipping</span><span>${shipping.toFixed(2)}</span>
+                <span>Shipping</span><span>{formatCurrency(shipping)}</span>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -98,7 +99,7 @@ export default function CartPage() {
                 transition={{ delay: 0.5 }}
                 className="flex justify-between border-t border-black/5 pt-3 text-base font-semibold text-text"
               >
-                <span>Total</span><span>${total.toFixed(2)}</span>
+                <span>Total</span><span>{formatCurrency(total)}</span>
               </motion.div>
             </div>
             <motion.div

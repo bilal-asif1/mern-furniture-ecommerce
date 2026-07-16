@@ -4,6 +4,7 @@ import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
 import Button from '../components/Button';
 import { useApp } from '../context/AppContext';
+import { formatCurrency } from '../utils/formatCurrency';
 
 export default function DashboardPage() {
   const { auth, wishlist, cart, orders, fetchMyOrders, ordersLoading } = useApp();
@@ -66,7 +67,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-primary">{order.status}</p>
-                    <p className="text-sm text-text/60">${Number(order.totalPrice || 0).toFixed(2)}</p>
+                    <p className="text-sm text-text/60">{formatCurrency(order.totalPrice || 0)}</p>
                   </div>
                 </motion.div>
               ))}

@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import { SelectField } from '../../components/Field';
 import { useApp } from '../../context/AppContext';
 import { orderApi } from '../../lib/adminApi';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
@@ -65,7 +66,7 @@ export default function AdminOrdersPage() {
             <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[520px] lg:items-center">
               <div className="rounded-2xl bg-[#f6efe8] px-4 py-3">
                 <p className="text-xs uppercase tracking-[0.2em] text-text/50">Total</p>
-                <p className="mt-1 font-semibold text-text">${order.totalPrice}</p>
+                <p className="mt-1 font-semibold text-text">{formatCurrency(order.totalPrice)}</p>
               </div>
               <SelectField value={statusMap[order._id] || order.status} onChange={(event) => setStatusMap((current) => ({ ...current, [order._id]: event.target.value }))}>
                 {statuses.map((status) => <option key={status}>{status}</option>)}

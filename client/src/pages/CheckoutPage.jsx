@@ -6,6 +6,7 @@ import SectionTitle from '../components/SectionTitle';
 import Button from '../components/Button';
 import { Field, SelectField, TextArea, TextInput } from '../components/Field';
 import { useApp } from '../context/AppContext';
+import { formatCurrency } from '../utils/formatCurrency';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -137,7 +138,7 @@ export default function CheckoutPage() {
               </SelectField>
             </Field>
             <Field label="Shipping Fee">
-              <TextInput value={`$${shippingPrice.toFixed(2)}`} disabled />
+              <TextInput value={formatCurrency(shippingPrice)} disabled />
             </Field>
           </motion.div>
           <motion.div
@@ -182,7 +183,7 @@ export default function CheckoutPage() {
                   className="flex items-center justify-between text-sm text-text/70"
                 >
                   <span>{item.name} x {item.quantity}</span>
-                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                  <span>{formatCurrency(item.price * item.quantity)}</span>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -193,7 +194,7 @@ export default function CheckoutPage() {
               className="border-t border-black/10 pt-4 flex items-center justify-between font-semibold text-text"
             >
               <span>Total</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>{formatCurrency(totalPrice)}</span>
             </motion.div>
           </motion.div>
           <motion.p
