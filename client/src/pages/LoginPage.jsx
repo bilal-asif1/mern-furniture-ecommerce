@@ -12,14 +12,14 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/dashboard';
-  const [email, setEmail] = useState('admin@junaidfurniture.com');
-  const [password, setPassword] = useState('Admin@12345');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [localError, setLocalError] = useState('');
 
-  const signIn = async (targetEmail = email, targetPassword = password) => {
+  const signIn = async () => {
     try {
       setLocalError('');
-      const result = await loginUser({ email: targetEmail, password: targetPassword });
+      const result = await loginUser({ email, password });
       if (result.meta.requestStatus === 'fulfilled') {
         navigate(result.payload.user.role === 'admin' ? '/admin' : from, { replace: true });
       }
@@ -77,7 +77,7 @@ export default function LoginPage() {
             </motion.p>
           ) : null}
         </AnimatePresence>
-        <div className="mt-6 flex flex-col gap-3">
+        <div className="mt-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -85,25 +85,7 @@ export default function LoginPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Button onClick={() => signIn()} disabled={authLoading}>{authLoading ? 'Signing In...' : 'Sign In'}</Button>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Button variant="secondary" onClick={() => signIn('admin@junaidfurniture.com', 'Admin@12345')} disabled={authLoading}>Use Admin Demo</Button>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Button variant="ghost" onClick={() => signIn('customer@junaidfurniture.com', 'Customer@12345')} disabled={authLoading}>Use Customer Demo</Button>
+            <Button onClick={signIn} disabled={authLoading}>{authLoading ? 'Signing In...' : 'Sign In'}</Button>
           </motion.div>
         </div>
       </motion.div>
