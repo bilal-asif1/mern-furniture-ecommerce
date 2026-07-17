@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
@@ -10,7 +10,7 @@ import { formatCurrency } from '../utils/formatCurrency';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { cart, cartSubtotal, createOrder, clearCart, orderSaving, orderError, orderSuccess } = useApp();
+  const { cart, cartSubtotal, createOrder, clearCart, orderSaving, orderError, orderSuccess, auth } = useApp();
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -62,6 +62,11 @@ export default function CheckoutPage() {
   return (
     <PageSection className="py-10">
       <SectionTitle eyebrow="Checkout" title="Secure Checkout" description="Collect shipping information and place an order with confidence." />
+      {!auth?.user && (
+        <div className="mt-4 text-sm text-text/60">
+          Already have an account? <Link to="/login" className="font-semibold text-primary hover:underline">Sign in</Link>
+        </div>
+      )}
       <AnimatePresence>
         {orderError ? (
           <motion.div

@@ -71,7 +71,10 @@ export default function AdminOrdersPage() {
               <h3 className="text-lg font-semibold text-text">{formatOrderId(order._id)}</h3>
               <p className="text-xs text-text/40 font-mono">{order._id}</p>
               <p className="text-sm text-text/60">{new Date(order.createdAt).toLocaleDateString()}</p>
-              <p className="mt-2 text-sm text-text/70">{order.user?.name || 'Customer'} | {order.user?.email || 'N/A'}</p>
+              <p className="mt-2 text-sm text-text/70">{order.shippingAddress?.fullName || 'Customer'}</p>
+              <p className="text-sm text-text/60">{order.shippingAddress?.email || 'N/A'}</p>
+              <p className="text-sm text-text/60">{order.shippingAddress?.phone || 'N/A'}</p>
+              <p className="text-sm text-text/60">{order.shippingAddress?.address || 'N/A'}, {order.shippingAddress?.city || 'N/A'}</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[520px] lg:items-center">
               <div className="rounded-2xl bg-[#f6efe8] px-4 py-3">

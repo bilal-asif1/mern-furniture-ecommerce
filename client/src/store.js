@@ -426,7 +426,7 @@ export const fetchOrderById = createAsyncThunk('orders/fetchOrderById', async (i
 export const createOrder = createAsyncThunk('orders/createOrder', async (payload, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.token;
-    const { data } = await apiClient.post('/orders', payload, withAuth(token));
+    const { data } = await apiClient.post('/orders', payload, token ? withAuth(token) : {});
     return normalizeOrder(data);
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));

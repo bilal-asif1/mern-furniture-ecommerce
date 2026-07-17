@@ -15,7 +15,7 @@ const createOrder = asyncHandler(async (req, res) => {
   }
 
   const order = await Order.create({
-    user: req.user._id,
+    user: req.user?._id || null,
     orderItems,
     shippingAddress,
     paymentMethod,

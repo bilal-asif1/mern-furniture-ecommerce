@@ -4,7 +4,7 @@ import { createOrder, getAllOrders, getMyOrders, getOrderById, getPublicOrderTra
 
 const router = express.Router();
 
-router.post('/', protect, createOrder);
+router.post('/', createOrder);
 router.get('/mine', protect, getMyOrders);
 router.get('/track/:id', getPublicOrderTracking);
 router.get('/', protect, admin, getAllOrders);
