@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import Button from './Button';
+import logo from '../assets/logo.png';
 
 const items = [
   { to: '/admin', label: 'Overview' },
@@ -26,9 +27,9 @@ export default function AdminLayout() {
           <div className="flex h-full flex-col">
             <div className="flex items-start justify-between gap-4 p-6">
               <div>
-                <p className="font-display text-3xl font-semibold text-text">Admin Panel</p>
-                <p className="mt-2 text-sm text-text/60">Junaid Furniture</p>
-                <p className="mt-4 text-xs font-semibold uppercase tracking-[0.25em] text-primary">{auth?.user?.name || 'Admin'}</p>
+                <img src={logo} alt="Junaid Furniture" className="h-8 w-auto" />
+                <p className="mt-2 text-sm font-semibold text-text">Admin Panel</p>
+                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.25em] text-primary">{auth?.user?.name || 'Admin'}</p>
               </div>
               <button className="lg:hidden rounded-full bg-white px-3 py-2 text-sm font-semibold text-text shadow-card" onClick={() => setMobileOpen(false)} type="button">
                 Close

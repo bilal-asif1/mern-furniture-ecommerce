@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../context/AppContext';
+import logo from '../assets/logo.png';
 
 const navItems = [
   { to: '/shop', label: 'Shop' },
@@ -23,18 +24,14 @@ export default function Navbar() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Link to="/" className="flex items-center gap-3">
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
+          <Link to="/" className="flex items-center">
+            <motion.img
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-white shadow-soft"
-            >
-              JF
-            </motion.div>
-            <div>
-              <p className="font-display text-lg sm:text-2xl font-semibold leading-none text-text">Junaid Furniture</p>
-              <p className="hidden text-[10px] sm:text-xs uppercase tracking-[0.3em] text-text/50 sm:block">Premium Living</p>
-            </div>
+              src={logo}
+              alt="Junaid Furniture"
+              className="h-12 w-auto sm:h-14"
+            />
           </Link>
         </motion.div>
 
