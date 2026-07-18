@@ -39,7 +39,7 @@ export default function App() {
         <Route path="product/:slug" element={<ProductDetailsPage />} />
         <Route path="wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
         <Route path="cart" element={<CartPage />} />
-        <Route path="checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+        <Route path="checkout" element={<CheckoutPage />} />
         <Route path="track-order" element={<OrderTrackingPage />} />
         <Route path="contact" element={<ContactPage />} />
         <Route path="faq" element={<FAQPage />} />
