@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import Logo from './Logo';
 
 export default function Footer() {
   const groups = [
@@ -34,7 +34,7 @@ export default function Footer() {
     <footer className="mt-10 border-t border-black/5 bg-[#efe7df]">
       <div className="section-shell grid gap-10 md:grid-cols-2 xl:grid-cols-4">
         <div>
-          <img src={logo} alt="Junaid Furniture" className="h-10 w-auto" />
+          <Logo />
           <p className="mt-4 max-w-sm text-sm leading-7 text-text/70">
             Premium furniture crafted for elegant interiors, modern homes, and a polished shopping experience.
           </p>

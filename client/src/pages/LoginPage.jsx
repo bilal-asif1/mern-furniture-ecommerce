@@ -6,6 +6,7 @@ import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
 import Button from '../components/Button';
 import { Field, TextInput } from '../components/Field';
+import Logo from '../components/Logo';
 
 export default function LoginPage() {
   const { loginUser, authLoading, authError, authSuccess } = useApp();
@@ -36,6 +37,9 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-xl rounded-[2rem] bg-white p-8 shadow-card"
       >
+        <div className="mb-6 flex justify-center">
+          <Logo />
+        </div>
         <SectionTitle eyebrow="Login" title="Welcome back" description="Sign in to access your account or the admin dashboard." align="center" />
         <div className="mt-8 space-y-5">
           <motion.div
