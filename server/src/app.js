@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import registerRoutes from './routes/index.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
+// Force Railway redeploy to pick up guest checkout changes
+
 const app = express();
 
 console.log('Starting with CLIENT_URL:', process.env.CLIENT_URL);
