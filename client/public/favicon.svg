@@ -1,4 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="18" fill="#8B5E3C"/>
-  <path d="M20 42V22h24v4H24v5h16v4H24v7h-4Z" fill="#F8F5F2"/>
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <text
+    x="32"
+    y="39"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'Baskerville Old Face', 'Georgia', 'Times New Roman', serif"
+    font-size="30"
+    font-weight="700"
+    letter-spacing="-1.5"
+    fill="#8B5E3C"
+  >
+    JF
+  </text>
 </svg>

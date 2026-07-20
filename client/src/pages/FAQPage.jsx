@@ -13,7 +13,7 @@ export default function FAQPage() {
         kicker="FAQ"
         title="Helpful answers for a smooth buying experience."
         description="Find quick support details about shipping, returns, payment, and custom furniture options."
-        image="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1400&q=80"
+        image="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80"
       />
       <PageSection>
         <SectionTitle eyebrow="Support" title="Frequently Asked Questions" />

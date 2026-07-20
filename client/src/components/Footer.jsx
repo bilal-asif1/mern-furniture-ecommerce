@@ -55,7 +55,25 @@ export default function Footer() {
       <div className="border-t border-black/5">
         <div className="section-shell flex flex-col gap-3 text-sm text-text/60 md:flex-row md:items-center md:justify-between">
           <p>(c) 2026 Junaid Furniture. All rights reserved.</p>
-          <p>Instagram | Facebook | Pinterest | LinkedIn</p>
+          <p className="flex items-center gap-2">
+            <a
+              href="https://www.instagram.com/junaid_furnitures"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-text"
+            >
+              Instagram
+            </a>
+            <span>|</span>
+            <a
+              href="https://www.facebook.com/junaidfurniturefsd?mibextid=wwXIfr&mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-text"
+            >
+              Facebook
+            </a>
+          </p>
         </div>
       </div>
     </footer>

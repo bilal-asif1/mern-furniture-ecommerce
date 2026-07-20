@@ -4,6 +4,7 @@ import SectionTitle from '../components/SectionTitle';
 import CategoryCard from '../components/CategoryCard';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
+import categoriesHero from '../assets/images/categories/categories-hero.jpg';
 
 export default function CategoriesPage() {
   const { categories, products } = useApp();
@@ -14,7 +15,7 @@ export default function CategoriesPage() {
         kicker="Categories"
         title="Browse collections by room and lifestyle."
         description="Elegant category navigation helps customers move quickly through living room, bedroom, dining, and office selections."
-        image="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1400&q=80"
+        image={categoriesHero}
       />
       <PageSection>
         <SectionTitle eyebrow="Collections" title="Category Showcase" />

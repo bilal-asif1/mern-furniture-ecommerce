@@ -8,6 +8,7 @@ import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 import { SelectField, TextInput } from '../components/Field';
 import { useApp } from '../context/AppContext';
+import shopHero from '../assets/images/shop/shop-hero.jpg';
 
 const PER_PAGE = 6;
 
@@ -70,7 +71,8 @@ export default function ShopPage() {
         kicker="Shop"
         title="Discover curated furniture for every room."
         description="Use smart search, filters, and pagination to explore premium furniture products with ease."
-        image="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80"
+        image={shopHero}
+        imageClassName="object-[center_40%]"
       />
       <PageSection>
         <SectionTitle eyebrow="Catalog" title="Search and Filter Products" description="Find the right piece by room, style, rating, or price." />

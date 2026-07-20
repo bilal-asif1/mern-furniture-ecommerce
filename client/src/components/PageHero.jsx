@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 
-export default function PageHero({ title, description, kicker, image }) {
+const HERO_IMAGE_WRAPPER_CLASS = 'relative h-[360px] w-full overflow-hidden rounded-[2rem] shadow-soft sm:h-[460px]';
+const HERO_IMAGE_CLASS = 'h-full w-full object-cover object-center';
+
+export default function PageHero({ title, description, kicker, image, imageClassName = '' }) {
   return (
     <section className="bg-hero-gradient">
       <div className="section-shell grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -41,7 +44,7 @@ export default function PageHero({ title, description, kicker, image }) {
             initial={{ opacity: 0, x: 30, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }}
-            className="relative"
+            className={HERO_IMAGE_WRAPPER_CLASS}
           >
             <motion.div
               animate={{
@@ -60,7 +63,7 @@ export default function PageHero({ title, description, kicker, image }) {
               alt={title}
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
-              className="relative h-[360px] w-full rounded-[2rem] object-cover shadow-soft sm:h-[460px]"
+              className={`${HERO_IMAGE_CLASS} ${imageClassName}`.trim()}
             />
           </motion.div>
         ) : null}

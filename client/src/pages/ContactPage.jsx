@@ -5,6 +5,7 @@ import SectionTitle from '../components/SectionTitle';
 import Button from '../components/Button';
 import { Field, TextArea, TextInput } from '../components/Field';
 import { apiClient, unwrapApiError } from '../lib/apiClient';
+import contactHero from '../assets/images/contact/contact-hero.jpg';
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -37,7 +38,8 @@ export default function ContactPage() {
         kicker="Contact"
         title="Talk to our team about products, delivery, or custom orders."
         description="Reach out for support, collaborations, or assistance with your furniture purchase."
-        image="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=80"
+        image={contactHero}
+        imageClassName="!object-[50%_55%]"
       />
       <PageSection>
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
