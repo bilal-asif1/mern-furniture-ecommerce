@@ -16,7 +16,7 @@ const formatOrderId = (id) => {
 
 function OrderDetailsModal({ order, onClose }) {
   if (!order) return null;
-  const deliveryInstructions = order.shippingAddress?.notes?.trim();
+  const deliveryInstructions = (order.orderNotes || order.shippingAddress?.notes || '').trim();
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">

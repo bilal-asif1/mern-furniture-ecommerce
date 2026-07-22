@@ -46,6 +46,7 @@ export default function CheckoutPage() {
         city: form.city,
         notes: form.notes,
       },
+      orderNotes: form.notes,
       paymentMethod: form.paymentMethod,
       taxPrice,
       shippingPrice,
