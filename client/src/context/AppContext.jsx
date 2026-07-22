@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import {
   store,
@@ -122,6 +122,13 @@ export function useApp() {
   const wishlistState = useSelector((state) => state.wishlist);
   const ordersState = useSelector((state) => state.orders);
   const adminState = useSelector((state) => state.admin);
+  const [toast, setToast] = useState({ message: '', type: 'success' });
+
+  const showToast = useCallback((message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast({ message: '', type: 'success' }), 2500);
+  }, []);
+
   const fetchCategoriesCb = useCallback(() => dispatch(fetchCategories()), [dispatch]);
   const fetchBrandsCb = useCallback(() => dispatch(fetchBrands()), [dispatch]);
   const fetchProductsCb = useCallback((params) => dispatch(fetchProducts(params)), [dispatch]);
