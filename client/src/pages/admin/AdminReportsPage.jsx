@@ -3,7 +3,7 @@ import AdminPageShell from '../../components/AdminPageShell';
 import { useApp } from '../../context/AppContext';
 import { adminApi } from '../../lib/adminApi';
 
-const currency = (value = 0) => `$${Number(value).toLocaleString()}`;
+const currency = (value = 0) => `Rs. ${Number(value).toLocaleString()}`;
 
 export default function AdminReportsPage() {
   const { auth } = useApp();

@@ -1,6 +1,2 @@
 export const formatCurrency = (amount) => 
-  new Intl.NumberFormat('en-PK', { 
-    style: 'currency', 
-    currency: 'PKR', 
-    minimumFractionDigits: 0 
-  }).format(amount);
+  `Rs. ${Number(amount || 0).toLocaleString('en-US')}`;
