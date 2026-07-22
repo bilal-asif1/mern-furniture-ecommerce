@@ -17,6 +17,7 @@ html {
   background:
     radial-gradient(circle at top left, rgba(139, 94, 60, 0.12), transparent 35%),
     linear-gradient(180deg, #faf7f3 0%, #f6f0e7 100%);
+  overflow-x: hidden;
 }
 
 body {
@@ -26,6 +27,7 @@ body {
     linear-gradient(180deg, #faf7f4 0%, #f5efe6 100%);
   color: #2c2c2c;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 ::selection {

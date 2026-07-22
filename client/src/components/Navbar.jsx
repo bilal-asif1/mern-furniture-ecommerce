@@ -51,14 +51,17 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1 sm:gap-2">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.4 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link to="/wishlist" className="hidden rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text/70 transition hover:border-primary hover:text-primary sm:inline-flex">
-              Wishlist ({wishlist.length})
+            <Link to="/wishlist" className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-black/10 bg-white px-2 text-xs font-semibold text-text/70 transition hover:border-primary hover:text-primary sm:h-11 sm:min-w-16 sm:px-4 sm:text-sm" aria-label="Wishlist">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:hidden"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              <span className="hidden sm:inline">Wishlist ({wishlist.length})</span>
             </Link>
           </motion.div>
           <motion.div
@@ -68,16 +71,19 @@ export default function Navbar() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link to="/cart" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-soft">
-              Cart ({cartCount})
+            <Link to="/cart" className="inline-flex h-10 min-w-10 items-center justify-center rounded-full bg-primary px-2 text-xs font-semibold text-white shadow-soft sm:h-11 sm:min-w-16 sm:px-4 sm:text-sm" aria-label="Cart">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:hidden"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span className="hidden sm:inline">Cart ({cartCount})</span>
             </Link>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: 0.6 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link to={auth?.user ? '/dashboard' : '/login'} className="hidden rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text sm:inline-flex">
+            <Link to={auth?.user ? '/dashboard' : '/login'} className="hidden rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text sm:inline-flex hover:border-primary hover:text-primary">
               {auth?.user ? auth.user.name.split(' ')[0] : 'Sign in'}
             </Link>
           </motion.div>
@@ -86,7 +92,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.7 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex h-11 min-w-20 items-center justify-center rounded-full border border-black/10 bg-white px-3 text-sm font-semibold text-text lg:hidden"
+            className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-black/10 bg-white px-2 text-xs font-semibold text-text lg:hidden sm:h-11 sm:min-w-20 sm:px-3 sm:text-sm"
             onClick={() => setOpen((value) => !value)}
             aria-label="Toggle navigation"
           >

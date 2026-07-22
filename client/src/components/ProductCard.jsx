@@ -33,14 +33,14 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
             />
           </motion.div>
         </Link>
-      <div className="space-y-4 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
+      <div className="space-y-3 p-4 sm:space-y-4 sm:p-5">
+        <div className="flex items-start justify-between gap-2 sm:gap-3">
+          <div className="min-w-0 flex-1">
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: index * 0.1 + 0.2 }}
-              className="text-xs font-bold uppercase tracking-[0.2em] text-primary"
+              className="text-[10px] font-bold uppercase tracking-[0.15em] text-primary sm:text-xs sm:tracking-[0.2em]"
             >
               {product.badge}
             </motion.p>
@@ -49,7 +49,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: index * 0.1 + 0.3 }}
-                className="mt-2 text-lg font-semibold text-text"
+                className="mt-1.5 truncate text-base font-semibold text-text sm:mt-2 sm:text-lg"
               >
                 {product.name}
               </motion.h3>
@@ -62,7 +62,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => toggleWishlist(product)}
-            className={`inline-flex h-10 min-w-16 items-center justify-center rounded-full border px-3 text-xs font-semibold transition ${wishlisted ? 'border-primary bg-primary text-white' : 'border-black/10 bg-white text-text/70 hover:border-primary'}`}
+            className={`inline-flex h-9 min-w-14 shrink-0 items-center justify-center rounded-full border px-2.5 text-[10px] font-semibold transition sm:h-10 sm:min-w-16 sm:px-3 sm:text-xs ${wishlisted ? 'border-primary bg-primary text-white' : 'border-black/10 bg-white text-text/70 hover:border-primary'}`}
             aria-label="Toggle wishlist"
           >
             Save
@@ -72,7 +72,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: index * 0.1 + 0.5 }}
-          className="text-sm leading-6 text-text/65"
+          className="line-clamp-2 text-xs leading-5 text-text/65 sm:text-sm sm:leading-6"
         >
           {product.description}
         </motion.p>
@@ -80,31 +80,31 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: index * 0.1 + 0.6 }}
-          className="flex items-center justify-between"
+          className="flex items-center justify-between gap-2"
         >
-          <div>
+          <div className="min-w-0">
             <RatingStars value={product.rating} />
-            <p className="mt-1 text-xs text-text/50">{product.reviews} reviews</p>
+            <p className="mt-0.5 text-[10px] text-text/50 sm:mt-1 sm:text-xs">{product.reviews} reviews</p>
           </div>
-          <p className="text-xl font-bold text-text">PKR {Number(product.price || 0).toLocaleString()}</p>
+          <p className="shrink-0 text-base font-bold text-text sm:text-xl">PKR {Number(product.price || 0).toLocaleString()}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: index * 0.1 + 0.7 }}
-          className="flex gap-3"
+          className="flex gap-2 sm:gap-3"
         >
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="flex-1"
           >
-            <Button className="w-full" onClick={() => addToCart(product)}>
+            <Button className="w-full text-xs sm:text-sm" onClick={() => addToCart(product)}>
               Add to Cart
             </Button>
           </motion.div>
-          <Link to={`/product/${product.slug}`} className="inline-flex">
-            <Button variant="ghost">View</Button>
+          <Link to={`/product/${product.slug}`} className="inline-flex shrink-0">
+            <Button variant="ghost" className="text-xs sm:text-sm">View</Button>
           </Link>
         </motion.div>
       </div>

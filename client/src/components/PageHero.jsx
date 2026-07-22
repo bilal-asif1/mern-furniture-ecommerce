@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 
-const HERO_IMAGE_WRAPPER_CLASS = 'relative h-[360px] w-full overflow-hidden rounded-[2rem] shadow-soft sm:h-[460px]';
+const HERO_IMAGE_WRAPPER_CLASS = 'relative h-[280px] w-full overflow-hidden rounded-[2rem] shadow-soft sm:h-[360px] md:h-[460px]';
 const HERO_IMAGE_CLASS = 'h-full w-full object-cover object-center';
 
 export default function PageHero({ title, description, kicker, image, imageClassName = '' }) {
   return (
     <section className="bg-hero-gradient">
-      <div className="section-shell grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="section-shell grid items-center gap-8 py-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:py-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -17,7 +17,7 @@ export default function PageHero({ title, description, kicker, image, imageClass
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xs font-bold uppercase tracking-[0.35em] text-primary"
+              className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary sm:text-xs sm:tracking-[0.35em]"
             >
               {kicker}
             </motion.p>
@@ -26,7 +26,7 @@ export default function PageHero({ title, description, kicker, image, imageClass
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-4 max-w-2xl font-display text-4xl font-semibold leading-tight text-text sm:text-5xl lg:text-6xl"
+            className="mt-3 max-w-2xl font-display text-2xl font-semibold leading-tight text-text sm:mt-4 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
           >
             {title}
           </motion.h1>
@@ -34,7 +34,7 @@ export default function PageHero({ title, description, kicker, image, imageClass
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-5 max-w-2xl text-base leading-8 text-text/70 sm:text-lg"
+            className="mt-3 max-w-2xl text-sm leading-7 text-text/70 sm:mt-5 sm:text-base sm:leading-8 md:text-lg"
           >
             {description}
           </motion.p>

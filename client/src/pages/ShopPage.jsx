@@ -80,7 +80,7 @@ export default function ShopPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mt-8 grid gap-4 rounded-[2rem] bg-white p-5 shadow-card lg:grid-cols-4"
+          className="mt-8 grid gap-4 rounded-[2rem] bg-white p-5 shadow-card sm:grid-cols-2 lg:grid-cols-4"
         >
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -178,7 +178,7 @@ export default function ShopPage() {
         ) : null}
         <motion.div
           layout
-          className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+          className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           <AnimatePresence mode="popLayout">
             {visibleProducts.map((product, index) => (

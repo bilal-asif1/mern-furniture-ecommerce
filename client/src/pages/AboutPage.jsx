@@ -61,28 +61,28 @@ export default function AboutPage() {
       />
 
       <PageSection>
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-[#e7d8c7] bg-white/90 p-8 shadow-[0_18px_45px_rgba(77,52,34,0.08)] backdrop-blur-sm">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+          <div className="rounded-[2rem] border border-[#e7d8c7] bg-white/90 p-5 shadow-[0_18px_45px_rgba(77,52,34,0.08)] backdrop-blur-sm sm:p-8">
             <SectionTitle eyebrow="Our Story" title="Built for premium homes and effortless shopping." />
-            <div className="prose-tight mt-5 text-sm leading-8 text-text/70">
+            <div className="prose-tight mt-4 text-sm leading-7 text-text/70 sm:mt-5 sm:leading-8">
               <p>We designed this furniture store experience to feel calm, editorial, and trustworthy. The warm wood-inspired palette, generous spacing, and clean layout are meant to make browsing feel relaxed and intuitive.</p>
-              <p className="mt-4">From product discovery to checkout, we focus on quality materials, clear presentation, reliable delivery, and helpful support so customers can shop with confidence and ease.</p>
-              <p className="mt-4">Every part of the experience is shaped to feel polished, personal, and dependable, with the goal of making beautiful furniture easier to discover and bring home.</p>
+              <p className="mt-3 sm:mt-4">From product discovery to checkout, we focus on quality materials, clear presentation, reliable delivery, and helpful support so customers can shop with confidence and ease.</p>
+              <p className="mt-3 sm:mt-4">Every part of the experience is shaped to feel polished, personal, and dependable, with the goal of making beautiful furniture easier to discover and bring home.</p>
             </div>
           </div>
-          <div className="grid gap-6">
+          <div className="grid gap-4 sm:gap-6">
             {highlights.map(({ title, description, Icon }) => (
               <div
                 key={title}
-                className="group rounded-[1.75rem] border border-[#eadfce] bg-[#eadfd2] p-6 shadow-[0_12px_28px_rgba(77,52,34,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(77,52,34,0.14)]"
+                className="group rounded-[1.75rem] border border-[#eadfce] bg-[#eadfd2] p-5 shadow-[0_12px_28px_rgba(77,52,34,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_rgba(77,52,34,0.14)] sm:p-6"
               >
-                <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/80 text-primary shadow-sm transition-transform duration-300 group-hover:scale-105">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/80 text-primary shadow-sm transition-transform duration-300 group-hover:scale-105 sm:h-11 sm:w-11">
                     <Icon />
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-text">{title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-text/70">{description}</p>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-lg font-semibold text-text sm:text-xl">{title}</h3>
+                    <p className="mt-2 text-xs leading-6 text-text/70 sm:mt-3 sm:text-sm sm:leading-7">{description}</p>
                   </div>
                 </div>
               </div>
