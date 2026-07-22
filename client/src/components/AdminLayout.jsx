@@ -59,13 +59,15 @@ export default function AdminLayout() {
         </aside>
         {mobileOpen ? <button type="button" aria-label="Close sidebar backdrop" className="fixed inset-0 z-30 bg-black/35 lg:hidden" onClick={() => setMobileOpen(false)} /> : null}
         <main className="min-h-screen lg:col-start-2">
-          <div className="flex items-center justify-between border-b border-black/5 bg-white px-4 py-4 lg:hidden">
+          <div className="sticky top-0 z-50 flex items-center justify-between border-b border-black/5 bg-white/85 backdrop-blur-md px-4 py-4 lg:hidden">
             <button type="button" className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text" onClick={() => setMobileOpen(true)}>
               Menu
             </button>
             <p className="text-sm font-semibold text-text/60">Admin Dashboard</p>
           </div>
-          <Outlet />
+          <div className="pt-[64px] lg:pt-0">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
