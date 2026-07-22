@@ -31,7 +31,12 @@ export default function AdminDashboardPage() {
       description="Track store health, revenue, orders, inventory, and the most important operational metrics."
       actions={<Button onClick={() => window.location.reload()}>Refresh</Button>}
     >
-      {adminError ? <div className="rounded-3xl bg-red-50 px-5 py-4 text-sm text-red-700">{adminError}</div> : null}
+      {adminError ? (
+        <div className="mb-6 flex items-center justify-between rounded-3xl bg-red-50 px-5 py-4 text-sm text-red-700">
+          <span>{adminError}</span>
+          <Button onClick={() => { fetchAdminSummary(); fetchRevenueAnalytics(); fetchAdminOrders(); }} size="sm">Retry</Button>
+        </div>
+      ) : null}
       {adminLoading ? (
         <div className="rounded-3xl bg-white p-6 shadow-card">Loading dashboard...</div>
       ) : (

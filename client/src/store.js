@@ -439,6 +439,7 @@ export const fetchAdminOrders = createAsyncThunk('orders/fetchAdminOrders', asyn
     const { data } = await apiClient.get('/orders', withAuth(token));
     return Array.isArray(data) ? data.map(normalizeOrder) : [];
   } catch (error) {
+    console.error('API Error (fetchAdminOrders):', error);
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
 });
@@ -459,6 +460,7 @@ export const fetchAdminSummary = createAsyncThunk('admin/fetchSummary', async (_
     const { data } = await apiClient.get('/admin/summary', withAuth(token));
     return data;
   } catch (error) {
+    console.error('API Error (fetchAdminSummary):', error);
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
 });
@@ -469,6 +471,7 @@ export const fetchRevenueAnalytics = createAsyncThunk('admin/fetchRevenue', asyn
     const { data } = await apiClient.get('/admin/analytics/revenue', withAuth(token));
     return Array.isArray(data) ? data : [];
   } catch (error) {
+    console.error('API Error (fetchRevenueAnalytics):', error);
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
 });

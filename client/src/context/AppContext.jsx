@@ -145,6 +145,9 @@ export function useApp() {
   const deleteProductCb = useCallback((id) => dispatch(deleteProduct(id)), [dispatch]);
   const restoreProductCb = useCallback((id) => dispatch(restoreProduct(id)), [dispatch]);
   const toggleProductStatusCb = useCallback((id) => dispatch(toggleProductStatus(id)), [dispatch]);
+  const fetchAdminSummaryCb = useCallback(() => dispatch(fetchAdminSummary()), [dispatch]);
+  const fetchRevenueAnalyticsCb = useCallback(() => dispatch(fetchRevenueAnalytics()), [dispatch]);
+  const fetchAdminOrdersCb = useCallback(() => dispatch(fetchAdminOrders()), [dispatch]);
 
   return useMemo(() => {
     const token = authState.token;
@@ -273,13 +276,13 @@ export function useApp() {
       fetchMyOrders: () => dispatch(fetchMyOrders()),
       fetchOrderById: (id) => dispatch(fetchOrderById(id)),
       createOrder: (payload) => dispatch(createOrder(payload)),
-      fetchAdminSummary: () => dispatch(fetchAdminSummary()),
-      fetchRevenueAnalytics: () => dispatch(fetchRevenueAnalytics()),
+      fetchAdminSummary: fetchAdminSummaryCb,
+      fetchRevenueAnalytics: fetchRevenueAnalyticsCb,
       fetchInventoryOverview: () => dispatch(fetchInventoryOverview()),
       fetchUsers: (role) => dispatch(fetchUsers(role)),
       saveUser: (id, payload) => dispatch(saveUser({ id, payload })),
       removeUser: (id) => dispatch(removeUser(id)),
-      fetchAdminOrders: () => dispatch(fetchAdminOrders()),
+      fetchAdminOrders: fetchAdminOrdersCb,
       updateOrderStatus: (id, payload) => dispatch(updateOrderStatus({ id, payload })),
       clearCartMessage: () => dispatch(clearCartMessage()),
       clearWishlistMessage: () => dispatch(clearWishlistMessage()),

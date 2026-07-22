@@ -10,7 +10,7 @@ const items = [
   { to: '/admin/brands', label: 'Brands' },
   { to: '/admin/categories', label: 'Categories' },
   { to: '/admin/orders', label: 'Orders' },
-  { to: '/admin/customers', label: 'Customers' },
+
   { to: '/admin/inventory', label: 'Inventory' },
   { to: '/admin/reports', label: 'Reports' },
   { to: '/admin/profile', label: 'Profile' },
