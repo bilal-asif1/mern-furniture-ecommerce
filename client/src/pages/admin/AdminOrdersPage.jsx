@@ -16,6 +16,7 @@ const formatOrderId = (id) => {
 
 function OrderDetailsModal({ order, onClose }) {
   if (!order) return null;
+  const deliveryInstructions = order.shippingAddress?.notes?.trim();
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
@@ -48,6 +49,13 @@ function OrderDetailsModal({ order, onClose }) {
               Payment Status: <span className={order.isPaid ? 'text-green-600' : 'text-amber-600'}>{order.isPaid ? 'Paid' : 'Unpaid'}</span>
             </p>
           </div>
+        </div>
+
+        <div className="mb-8 rounded-2xl border border-black/5 bg-[#fbf7f2] p-5">
+          <h3 className="text-xs uppercase tracking-widest text-text/50 font-semibold mb-2">Delivery Instructions</h3>
+          <p className="text-sm leading-7 text-text/80 whitespace-pre-wrap break-words">
+            {deliveryInstructions || 'No delivery instructions provided.'}
+          </p>
         </div>
 
         <h3 className="text-xs uppercase tracking-widest text-text/50 font-semibold mb-4 border-b border-black/5 pb-2">Order Items</h3>

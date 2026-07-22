@@ -25,6 +25,25 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
+const optionalProtect = asyncHandler(async (req, _res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+  if (!token) {
+    next();
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select('-password');
+  } catch (_error) {
+    req.user = null;
+  }
+
+  next();
+});
+
 const admin = (req, res, next) => {
   if (req.user?.role !== 'admin') {
     res.status(403);
@@ -33,4 +52,4 @@ const admin = (req, res, next) => {
   next();
 };
 
-export { protect, admin };
+export { protect, optionalProtect, admin };

@@ -21,6 +21,7 @@ const orderSchema = new mongoose.Schema(
       phone: String,
       address: String,
       city: String,
+      notes: String,
     },
     paymentMethod: { type: String, default: 'Card' },
     status: { type: String, default: 'Pending' },
