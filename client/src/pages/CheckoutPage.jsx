@@ -105,29 +105,29 @@ export default function CheckoutPage() {
             transition={{ delay: 0.1 }}
             className="grid gap-5 md:grid-cols-2"
           >
-            <Field label="Full Name"><TextInput value={form.fullName} onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))} placeholder="Junaid Khan" /></Field>
-            <Field label="City"><TextInput value={form.city} onChange={(event) => setForm((current) => ({ ...current, city: event.target.value }))} placeholder="Karachi" /></Field>
+            <Field label="Full Name"><TextInput value={form.fullName} onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))} placeholder="Enter your full name" autoComplete="name" /></Field>
+            <Field label="City"><TextInput value={form.city} onChange={(event) => setForm((current) => ({ ...current, city: event.target.value }))} placeholder="Select or enter your city" autoComplete="address-level2" /></Field>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Field label="Email"><TextInput value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} type="email" placeholder="you@example.com" /></Field>
+            <Field label="Email"><TextInput value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} type="email" placeholder="Enter your email address" autoComplete="email" /></Field>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Field label="Phone"><TextInput value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} placeholder="+92 300 1234567" /></Field>
+            <Field label="Phone"><TextInput value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} type="tel" placeholder="+92 3XX XXXXXXX" autoComplete="tel" /></Field>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Field label="Address"><TextInput value={form.address} onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))} placeholder="House no, street, area" /></Field>
+            <Field label="Address"><TextInput value={form.address} onChange={(event) => setForm((current) => ({ ...current, address: event.target.value }))} placeholder="House No, Street, Area, City" autoComplete="street-address" /></Field>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -151,7 +151,7 @@ export default function CheckoutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <Field label="Order Notes"><TextArea value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} placeholder="Any delivery instructions or notes..." /></Field>
+            <Field label="Order Notes"><TextArea value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} placeholder="Add delivery instructions (optional)" /></Field>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
