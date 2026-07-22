@@ -92,6 +92,16 @@ function AppBootstrap() {
     };
   }, [dispatch, token]);
 
+  // Load wishlist from localStorage for guest users
+  useEffect(() => {
+    if (token) return;
+
+    const guestWishlist = JSON.parse(localStorage.getItem('jf-wishlist') || '[]');
+    if (guestWishlist.length > 0) {
+      dispatch(setWishlistItems(guestWishlist));
+    }
+  }, [dispatch, token]);
+
   return null;
 }
 
@@ -243,7 +253,10 @@ export function useApp() {
       setCartItems: (items) => dispatch(setCartItems(items)),
       toggleWishlist: (product) => {
         dispatch(toggleItem(product));
-        handleWishlistSync(product.id || product._id);
+        // Only sync with backend if user is logged in
+        if (token) {
+          handleWishlistSync(product.id || product._id);
+        }
       },
       setWishlistItems: (items) => dispatch(setWishlistItems(items)),
       clearWishlist: () => {

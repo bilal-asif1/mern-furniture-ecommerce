@@ -867,6 +867,8 @@ const wishlistSlice = createSlice({
       const exists = state.items.some((item) => item.id === product.id);
       state.items = exists ? state.items.filter((item) => item.id !== product.id) : [...state.items, product];
       state.success = exists ? 'Removed from wishlist' : 'Added to wishlist';
+      // Persist to localStorage for guest users
+      storage.write(wishlistStorageKey, state.items);
     },
     setWishlistItems(state, action) {
       state.items = action.payload;
@@ -874,6 +876,8 @@ const wishlistSlice = createSlice({
     clearWishlist(state) {
       state.items = [];
       state.success = 'Wishlist cleared';
+      // Clear localStorage for guest users
+      storage.remove(wishlistStorageKey);
     },
     clearWishlistMessage(state) {
       state.error = '';
