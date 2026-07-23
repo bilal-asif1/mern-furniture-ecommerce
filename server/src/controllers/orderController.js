@@ -5,15 +5,10 @@ const serializeOrder = (order) => {
   if (!order) return order;
 
   const plainOrder = typeof order.toObject === 'function' ? order.toObject() : order;
-  const orderNotes = plainOrder.orderNotes || plainOrder.shippingAddress?.notes || '';
 
   return {
     ...plainOrder,
-    orderNotes,
-    shippingAddress: {
-      ...plainOrder.shippingAddress,
-      notes: plainOrder.shippingAddress?.notes || orderNotes,
-    },
+    orderNotes: plainOrder.orderNotes || '',
   };
 };
 
@@ -30,15 +25,13 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new Error('Shipping address and total price are required');
   }
 
-  const normalizedShippingAddress = {
-    ...shippingAddress,
-    notes: shippingAddress.notes || orderNotes || '',
-  };
+  const normalizedOrderNotes = orderNotes || '';
 
   const order = await Order.create({
     user: req.user?._id || null,
     orderItems,
-    shippingAddress: normalizedShippingAddress,
+    shippingAddress,
+    orderNotes: normalizedOrderNotes,
     paymentMethod,
     taxPrice,
     shippingPrice,
@@ -71,7 +64,7 @@ const getPublicOrderTracking = asyncHandler(async (req, res) => {
   res.json({
     _id: order._id,
     id: order._id,
-    orderNotes: order.shippingAddress?.notes || '',
+    orderNotes: order.orderNotes || '',
     status: order.status,
     createdAt: order.createdAt,
     deliveredAt: order.deliveredAt,

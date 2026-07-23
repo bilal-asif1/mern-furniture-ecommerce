@@ -148,7 +148,7 @@ const normalizeOrder = (order = {}) => ({
   ...order,
   id: getId(order),
   _id: getId(order),
-  orderNotes: order.orderNotes || order.shippingAddress?.notes || '',
+  orderNotes: order.orderNotes || '',
   orderItems: Array.isArray(order.orderItems)
     ? order.orderItems.map((item) => ({
         ...item,

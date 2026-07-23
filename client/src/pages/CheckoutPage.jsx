@@ -44,7 +44,6 @@ export default function CheckoutPage() {
         phone: form.phone,
         address: form.address,
         city: form.city,
-        notes: form.notes,
       },
       orderNotes: form.notes,
       paymentMethod: form.paymentMethod,
