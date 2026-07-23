@@ -15,6 +15,11 @@ const serializeOrder = (order) => {
 const createOrder = asyncHandler(async (req, res) => {
   const { orderItems, shippingAddress, orderNotes, paymentMethod, taxPrice = 0, shippingPrice = 0, totalPrice } = req.body;
 
+  console.log('=== CREATE ORDER DEBUG ===');
+  console.log('Received orderNotes:', orderNotes);
+  console.log('Type of orderNotes:', typeof orderNotes);
+  console.log('Full req.body:', JSON.stringify(req.body, null, 2));
+
   if (!orderItems || orderItems.length === 0) {
     res.status(400);
     throw new Error('Order items are required');
@@ -27,6 +32,8 @@ const createOrder = asyncHandler(async (req, res) => {
 
   const normalizedOrderNotes = orderNotes || '';
 
+  console.log('Normalized orderNotes:', normalizedOrderNotes);
+
   const order = await Order.create({
     user: req.user?._id || null,
     orderItems,
@@ -37,6 +44,10 @@ const createOrder = asyncHandler(async (req, res) => {
     shippingPrice,
     totalPrice,
   });
+
+  console.log('Order created with orderNotes:', order.orderNotes);
+  console.log('Serialized order:', JSON.stringify(serializeOrder(order), null, 2));
+
   res.status(201).json(serializeOrder(order));
 });
 
@@ -78,6 +89,12 @@ const getPublicOrderTracking = asyncHandler(async (req, res) => {
 
 const getAllOrders = asyncHandler(async (_req, res) => {
   const orders = await Order.find().sort({ createdAt: -1 }).populate('user', 'name email');
+  console.log('=== GET ALL ORDERS DEBUG ===');
+  console.log('Orders count:', orders.length);
+  if (orders.length > 0) {
+    console.log('First order orderNotes:', orders[0].orderNotes);
+    console.log('First serialized order:', JSON.stringify(serializeOrder(orders[0]), null, 2));
+  }
   res.json(orders.map(serializeOrder));
 });
 

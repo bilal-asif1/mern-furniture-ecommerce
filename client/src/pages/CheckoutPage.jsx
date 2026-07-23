@@ -52,6 +52,9 @@ export default function CheckoutPage() {
       totalPrice,
     };
 
+    console.log('Checkout payload being sent:', JSON.stringify(payload, null, 2));
+    console.log('Order notes value:', form.notes);
+
     const result = await createOrder(payload);
     if (result.meta.requestStatus === 'fulfilled') {
       clearCart();

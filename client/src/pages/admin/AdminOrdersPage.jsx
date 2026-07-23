@@ -98,7 +98,14 @@ export default function AdminOrdersPage() {
       setLoading(true);
       setError('');
       const data = await adminApi.orders(auth.token);
+      console.log('=== ADMIN ORDERS PAGE DEBUG ===');
+      console.log('Raw API response:', data);
       let fetchedOrders = Array.isArray(data) ? data : [];
+      console.log('Orders array length:', fetchedOrders.length);
+      if (fetchedOrders.length > 0) {
+        console.log('First order orderNotes:', fetchedOrders[0].orderNotes);
+        console.log('First order full object:', JSON.stringify(fetchedOrders[0], null, 2));
+      }
       fetchedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setOrders(fetchedOrders);
       const next = {};
