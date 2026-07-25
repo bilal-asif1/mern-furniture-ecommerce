@@ -21,6 +21,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  permanentlyDeleteProduct,
   restoreProduct,
   toggleProductStatus,
   createCategory,
@@ -157,6 +158,7 @@ export function useApp() {
     return dispatch(updateProduct({ id: idOrArgs, payload }));
   }, [dispatch]);
   const deleteProductCb = useCallback((id) => dispatch(deleteProduct(id)), [dispatch]);
+  const permanentlyDeleteProductCb = useCallback((id) => dispatch(permanentlyDeleteProduct(id)), [dispatch]);
   const restoreProductCb = useCallback((id) => dispatch(restoreProduct(id)), [dispatch]);
   const toggleProductStatusCb = useCallback((id) => dispatch(toggleProductStatus(id)), [dispatch]);
   const fetchAdminSummaryCb = useCallback(() => dispatch(fetchAdminSummary()), [dispatch]);
@@ -255,6 +257,7 @@ export function useApp() {
       createProduct: createProductCb,
       updateProduct: updateProductCb,
       deleteProduct: deleteProductCb,
+      permanentlyDeleteProduct: permanentlyDeleteProductCb,
       restoreProduct: restoreProductCb,
       toggleProductStatus: toggleProductStatusCb,
       createCategory: (payload) => dispatch(createCategory(payload)),

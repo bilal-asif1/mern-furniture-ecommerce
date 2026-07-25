@@ -107,6 +107,7 @@ export default function AdminProductsPage() {
     createProduct,
     updateProduct,
     deleteProduct,
+    permanentlyDeleteProduct,
     restoreProduct,
     toggleProductStatus,
     adminCatalogLoading,
@@ -120,6 +121,7 @@ export default function AdminProductsPage() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteMode, setDeleteMode] = useState('trash');
 
   useEffect(() => {
     fetchAdminProducts({ limit: 200 });
@@ -287,9 +289,16 @@ export default function AdminProductsPage() {
     }
   };
 
-  const promptDeleteProduct = (product) => {
+  const promptTrashProduct = (product) => {
     if (deletingId || saving) return;
     setDeleteTarget(product);
+    setDeleteMode('trash');
+  };
+
+  const promptPermanentDeleteProduct = (product) => {
+    if (deletingId || saving) return;
+    setDeleteTarget(product);
+    setDeleteMode('permanent');
   };
 
   const confirmDeleteProduct = async () => {
@@ -298,12 +307,17 @@ export default function AdminProductsPage() {
     const productId = deleteTarget.id;
     try {
       setDeletingId(productId);
-      await deleteProduct(productId).unwrap();
-      if (editingId === productId) {
-        resetForm();
+      if (deleteMode === 'permanent') {
+        await permanentlyDeleteProduct(productId).unwrap();
+        if (editingId === productId) {
+          resetForm();
+        }
+        showToast('Product deleted successfully');
+      } else {
+        await deleteProduct(productId).unwrap();
+        showToast('Product moved to trash');
       }
       setDeleteTarget(null);
-      showToast('Product deleted successfully');
     } catch (error) {
       showToast(error.message || 'Unable to delete product', 'error');
     } finally {
@@ -577,10 +591,13 @@ export default function AdminProductsPage() {
                             {deletingId === product.id ? 'Restoring...' : 'Restore'}
                           </Button>
                         ) : (
-                          <Button variant="dark" className="px-4 py-2" onClick={() => promptDeleteProduct(product)} disabled={deletingId === product.id}>
+                          <Button variant="dark" className="px-4 py-2" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Deleting...' : 'Trash'}
                           </Button>
                         )}
+                        <Button variant="danger" className="px-4 py-2" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                          {deletingId === product.id ? 'Deleting...' : 'Delete'}
+                        </Button>
                       </div>
                     </td>
                   </tr>
@@ -598,12 +615,19 @@ export default function AdminProductsPage() {
       <ConfirmationModal
         isOpen={Boolean(deleteTarget)}
         onClose={() => {
-          if (!deletingId) setDeleteTarget(null);
+          if (!deletingId) {
+            setDeleteTarget(null);
+            setDeleteMode('trash');
+          }
         }}
         onConfirm={confirmDeleteProduct}
-        title="Delete Product"
-        message="Are you sure you want to permanently delete this product? This action cannot be undone."
-        confirmButtonText="Delete Product"
+        title={deleteMode === 'permanent' ? 'Delete Product' : 'Move to Trash'}
+        message={
+          deleteMode === 'permanent'
+            ? 'Are you sure you want to permanently delete this product? This action cannot be undone.'
+            : 'Are you sure you want to move this product to trash? You can restore it later.'
+        }
+        confirmButtonText={deleteMode === 'permanent' ? 'Delete Product' : 'Trash Product'}
         isLoading={Boolean(deleteTarget && deletingId === deleteTarget.id)}
       />
     </AdminPageShell>

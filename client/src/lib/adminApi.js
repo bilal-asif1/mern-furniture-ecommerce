@@ -18,7 +18,8 @@ export const adminApi = {
   products: (token, params) => apiClient.get('/admin/products', { ...withAuth(token), params }).then((response) => response.data),
   createProduct: (token, body) => apiClient.post('/products', body, withAuth(token)).then((response) => response.data),
   updateProduct: (token, id, body) => apiClient.put(`/products/${id}`, body, withAuth(token)).then((response) => response.data),
-  deleteProduct: (token, id) => apiClient.delete(`/products/${id}`, withAuth(token)).then((response) => response.data),
+  deleteProduct: (token, id) => apiClient.delete(`/admin/products/${id}`, withAuth(token)).then((response) => response.data),
+  trashProduct: (token, id) => apiClient.delete(`/products/${id}`, withAuth(token)).then((response) => response.data),
   restoreProduct: (token, id) => apiClient.patch(`/products/${id}/restore`, {}, withAuth(token)).then((response) => response.data),
   toggleProductStatus: (token, id) => apiClient.patch(`/products/${id}/status`, {}, withAuth(token)).then((response) => response.data),
   users: (token, role) =>

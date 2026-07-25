@@ -186,6 +186,24 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 });
 
+const trashProduct = asyncHandler(async (req, res) => {
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      isDeleted: true,
+      deletedAt: new Date(),
+    },
+    { new: true },
+  ).populate('category', 'name slug');
+
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  res.json({ message: 'Product moved to trash', product: serializeProduct(product) });
+});
+
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
   if (!product) {
@@ -256,6 +274,7 @@ export {
   getProductBySlug,
   createProduct,
   updateProduct,
+  trashProduct,
   deleteProduct,
   restoreProduct,
   toggleProductStatus,

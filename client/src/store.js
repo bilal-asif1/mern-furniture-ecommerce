@@ -293,7 +293,17 @@ export const updateProduct = createAsyncThunk('catalog/updateProduct', async (ar
 export const deleteProduct = createAsyncThunk('catalog/deleteProduct', async (id, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.token;
-    await apiClient.delete(`/products/${id}`, withAuth(token));
+    const { data } = await apiClient.delete(`/products/${id}`, withAuth(token));
+    return normalizeProduct(data.product || data);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(unwrapApiError(error));
+  }
+});
+
+export const permanentlyDeleteProduct = createAsyncThunk('catalog/permanentlyDeleteProduct', async (id, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.token;
+    await apiClient.delete(`/admin/products/${id}`, withAuth(token));
     return id;
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
@@ -741,18 +751,40 @@ const catalogSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.mutationLoading = false;
-        state.success = 'Product deleted successfully';
-        state.products = state.products.filter((item) => item.id !== action.payload);
-        state.adminProducts = state.adminProducts.filter((item) => item.id !== action.payload);
-        if (state.product?.id === action.payload) state.product = null;
-        if (state.adminCount > 0) {
-          state.adminCount = Math.max(0, state.adminCount - 1);
-        }
-        if (state.count > 0) {
+        state.success = 'Product moved to trash';
+        const removedFromProducts = state.products.some((item) => item.id === action.payload.id);
+        state.products = state.products.filter((item) => item.id !== action.payload.id);
+        state.adminProducts = state.adminProducts.map((item) => (item.id === action.payload.id ? action.payload : item));
+        if (state.product?.id === action.payload.id) state.product = null;
+        if (removedFromProducts && state.count > 0) {
           state.count = Math.max(0, state.count - 1);
         }
       })
       .addCase(deleteProduct.rejected, (state, action) => {
+        state.mutationLoading = false;
+        state.error = action.payload || 'Unable to move product to trash';
+      })
+      .addCase(permanentlyDeleteProduct.pending, (state) => {
+        state.mutationLoading = true;
+        state.error = '';
+        state.success = '';
+      })
+      .addCase(permanentlyDeleteProduct.fulfilled, (state, action) => {
+        state.mutationLoading = false;
+        state.success = 'Product deleted successfully';
+        const removedFromProducts = state.products.some((item) => item.id === action.payload);
+        const removedFromAdminProducts = state.adminProducts.some((item) => item.id === action.payload);
+        state.products = state.products.filter((item) => item.id !== action.payload);
+        state.adminProducts = state.adminProducts.filter((item) => item.id !== action.payload);
+        if (state.product?.id === action.payload) state.product = null;
+        if (removedFromAdminProducts && state.adminCount > 0) {
+          state.adminCount = Math.max(0, state.adminCount - 1);
+        }
+        if (removedFromProducts && state.count > 0) {
+          state.count = Math.max(0, state.count - 1);
+        }
+      })
+      .addCase(permanentlyDeleteProduct.rejected, (state, action) => {
         state.mutationLoading = false;
         state.error = action.payload || 'Unable to delete product';
       })
@@ -1064,7 +1096,7 @@ const adminSlice = createSlice({
         state.success = 'User removed successfully';
       });
     builder
-      .addCase(deleteProduct.fulfilled, (state, action) => {
+      .addCase(permanentlyDeleteProduct.fulfilled, (state, action) => {
         const removedId = action.payload;
         const removedFromInventory = state.inventory.products.some((item) => item.id === removedId);
         const removedFromLowStock = state.inventory.lowStock.some((item) => item.id === removedId);
