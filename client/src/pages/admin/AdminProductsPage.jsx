@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import AdminPageShell from '../../components/AdminPageShell';
 import Button from '../../components/Button';
+import ConfirmationModal from '../../components/ConfirmationModal';
 import { Field, SelectField, TextArea, TextInput } from '../../components/Field';
+import Toast from '../../components/Toast';
 import { useApp } from '../../context/AppContext';
 
 const createId = () => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
@@ -110,10 +112,14 @@ export default function AdminProductsPage() {
     adminCatalogLoading,
     catalogError,
     catalogSuccess,
+    toast,
+    showToast,
   } = useApp();
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
     fetchAdminProducts({ limit: 200 });
@@ -269,19 +275,51 @@ export default function AdminProductsPage() {
     });
   };
 
-  const handleDelete = async (product) => {
-    if (!window.confirm(product.isDeleted ? 'Restore this product?' : 'Move this product to trash?')) return;
-    if (product.isDeleted) {
-      await restoreProduct(product.id);
-    } else {
-      await deleteProduct(product.id);
+  const handleRestore = async (product) => {
+    try {
+      setDeletingId(product.id);
+      await restoreProduct(product.id).unwrap();
+      showToast('Product restored successfully');
+    } catch (error) {
+      showToast(error.message || 'Unable to restore product', 'error');
+    } finally {
+      setDeletingId('');
     }
-    fetchAdminProducts({ limit: 200 });
+  };
+
+  const promptDeleteProduct = (product) => {
+    if (deletingId || saving) return;
+    setDeleteTarget(product);
+  };
+
+  const confirmDeleteProduct = async () => {
+    if (!deleteTarget || deletingId) return;
+
+    const productId = deleteTarget.id;
+    try {
+      setDeletingId(productId);
+      await deleteProduct(productId).unwrap();
+      if (editingId === productId) {
+        resetForm();
+      }
+      setDeleteTarget(null);
+      showToast('Product deleted successfully');
+    } catch (error) {
+      showToast(error.message || 'Unable to delete product', 'error');
+    } finally {
+      setDeletingId('');
+    }
   };
 
   const handleStatusToggle = async (product) => {
-    await toggleProductStatus(product.id);
-    fetchAdminProducts({ limit: 200 });
+    try {
+      setDeletingId(product.id);
+      await toggleProductStatus(product.id).unwrap();
+    } catch (_error) {
+      // The catalog slice already records a user-facing error message.
+    } finally {
+      setDeletingId('');
+    }
   };
 
   return (
@@ -292,6 +330,7 @@ export default function AdminProductsPage() {
     >
       {catalogError ? <div className="mb-4 rounded-3xl bg-red-50 px-5 py-4 text-sm text-red-700">{catalogError}</div> : null}
       {catalogSuccess ? <div className="mb-4 rounded-3xl bg-green-50 px-5 py-4 text-sm text-green-700">{catalogSuccess}</div> : null}
+      <Toast message={toast.message} type={toast.type} />
 
       <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
         <form onSubmit={submit} className="rounded-3xl bg-white p-6 shadow-card">
@@ -530,12 +569,18 @@ export default function AdminProductsPage() {
                     <td className="py-4 pr-4">
                       <div className="flex flex-wrap gap-2">
                         <Button variant="ghost" className="px-4 py-2" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="px-4 py-2" onClick={() => handleStatusToggle(product)}>
+                        <Button variant="secondary" className="px-4 py-2" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
-                        <Button variant={product.isDeleted ? 'primary' : 'dark'} className="px-4 py-2" onClick={() => handleDelete(product)}>
-                          {product.isDeleted ? 'Restore' : 'Trash'}
-                        </Button>
+                        {product.isDeleted ? (
+                          <Button variant="primary" className="px-4 py-2" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                            {deletingId === product.id ? 'Restoring...' : 'Restore'}
+                          </Button>
+                        ) : (
+                          <Button variant="dark" className="px-4 py-2" onClick={() => promptDeleteProduct(product)} disabled={deletingId === product.id}>
+                            {deletingId === product.id ? 'Deleting...' : 'Trash'}
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -550,6 +595,17 @@ export default function AdminProductsPage() {
           </div>
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => {
+          if (!deletingId) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDeleteProduct}
+        title="Delete Product"
+        message="Are you sure you want to permanently delete this product? This action cannot be undone."
+        confirmButtonText="Delete Product"
+        isLoading={Boolean(deleteTarget && deletingId === deleteTarget.id)}
+      />
     </AdminPageShell>
   );
 }

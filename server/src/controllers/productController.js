@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/Product.js';
 import slugify from '../utils/slugify.js';
-import { normalizeProductPayload } from '../utils/productMedia.js';
+import { deleteImageValue, normalizeProductPayload } from '../utils/productMedia.js';
 
 const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
   const filter = {};
@@ -187,19 +187,21 @@ const updateProduct = asyncHandler(async (req, res) => {
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findByIdAndUpdate(
-    req.params.id,
-    {
-      isDeleted: true,
-      deletedAt: new Date(),
-    },
-    { new: true },
-  );
+  const product = await Product.findById(req.params.id);
   if (!product) {
     res.status(404);
     throw new Error('Product not found');
   }
-  res.json({ message: 'Product moved to trash', product: serializeProduct(product) });
+
+  const imagesToDelete = new Set([
+    ...(Array.isArray(product.images) ? product.images : []),
+    product.thumbnailImage || '',
+  ]);
+
+  await Promise.all(Array.from(imagesToDelete).filter(Boolean).map((image) => deleteImageValue(image)));
+  await Product.findByIdAndDelete(req.params.id);
+
+  res.json({ message: 'Product deleted successfully', product: serializeProduct(product) });
 });
 
 const restoreProduct = asyncHandler(async (req, res) => {

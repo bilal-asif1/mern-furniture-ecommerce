@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import AdminPageShell from '../../components/AdminPageShell';
 import Button from '../../components/Button';
+import ConfirmationModal from '../../components/ConfirmationModal';
+import Toast from '../../components/Toast';
 import { SelectField } from '../../components/Field';
 import { useApp } from '../../context/AppContext';
 import { adminApi } from '../../lib/adminApi';
@@ -85,27 +87,22 @@ function OrderDetailsModal({ order, onClose }) {
 }
 
 export default function AdminOrdersPage() {
-  const { auth } = useApp();
+  const { auth, toast, showToast } = useApp();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [savingId, setSavingId] = useState('');
+  const [deletingId, setDeletingId] = useState('');
   const [statusMap, setStatusMap] = useState({});
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError('');
       const data = await adminApi.orders(auth.token);
-      console.log('=== ADMIN ORDERS PAGE DEBUG ===');
-      console.log('Raw API response:', data);
       let fetchedOrders = Array.isArray(data) ? data : [];
-      console.log('Orders array length:', fetchedOrders.length);
-      if (fetchedOrders.length > 0) {
-        console.log('First order orderNotes:', fetchedOrders[0].orderNotes);
-        console.log('First order full object:', JSON.stringify(fetchedOrders[0], null, 2));
-      }
       fetchedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setOrders(fetchedOrders);
       const next = {};
@@ -128,19 +125,7 @@ export default function AdminOrdersPage() {
     try {
       setSavingId(id);
       setError('');
-      // Use original logic if available, assuming orderApi is available or adminApi.updateOrder
-      // Wait, original AdminOrdersPage used `orderApi.update`, which was not imported!
-      // Let's use fetch directly since it was missing in the original file actually, or I can check.
-      // Ah, original file had `await orderApi.update(auth.token, id, { status: statusMap[id] });` but orderApi was not imported! Let's use standard fetch to be safe.
-      const res = await fetch(`http://localhost:5000/api/orders/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${auth.token}`
-        },
-        body: JSON.stringify({ status: statusMap[id] })
-      });
-      if (!res.ok) throw new Error('Failed to update order');
+      await adminApi.updateOrder(auth.token, id, { status: statusMap[id] });
       await loadData();
     } catch (err) {
       setError(err.message || 'Unable to update order');
@@ -149,10 +134,39 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const promptDeleteOrder = (order) => {
+    if (deletingId || savingId) return;
+    setDeleteTarget(order);
+  };
+
+  const confirmDeleteOrder = async () => {
+    if (!deleteTarget || deletingId) return;
+
+    const orderId = deleteTarget._id;
+    try {
+      setDeletingId(orderId);
+      await adminApi.deleteOrder(auth.token, orderId);
+      setOrders((current) => current.filter((order) => order._id !== orderId));
+      setStatusMap((current) => {
+        const next = { ...current };
+        delete next[orderId];
+        return next;
+      });
+      setSelectedOrder((current) => (current?._id === orderId ? null : current));
+      setDeleteTarget(null);
+      showToast('Order deleted successfully');
+    } catch (err) {
+      showToast(err.message || 'Unable to delete order', 'error');
+    } finally {
+      setDeletingId('');
+    }
+  };
+
   return (
     <AdminPageShell title="Orders" description="Review order status, fulfillment progress, and customer purchase history.">
       {error ? <div className="mb-4 rounded-3xl bg-red-50 px-5 py-4 text-sm text-red-700">{error}</div> : null}
       {loading ? <div className="rounded-3xl bg-white p-6 shadow-card">Loading orders...</div> : null}
+      <Toast message={toast.message} type={toast.type} />
       <div className="grid gap-4">
         {orders.map((order) => (
           <div key={order._id} className="flex flex-col gap-6 rounded-3xl bg-white p-6 shadow-card lg:flex-row lg:items-center lg:justify-between">
@@ -223,8 +237,16 @@ export default function AdminOrdersPage() {
               <SelectField value={statusMap[order._id] || order.status} onChange={(event) => setStatusMap((current) => ({ ...current, [order._id]: event.target.value }))}>
                 {statuses.map((status) => <option key={status}>{status}</option>)}
               </SelectField>
-              <Button onClick={() => updateStatus(order._id)} disabled={savingId === order._id}>
+              <Button onClick={() => updateStatus(order._id)} disabled={savingId === order._id || deletingId === order._id}>
                 {savingId === order._id ? 'Saving...' : 'Save Status'}
+              </Button>
+              <Button
+                variant="danger"
+                className="sm:col-span-3"
+                onClick={() => promptDeleteOrder(order)}
+                disabled={savingId === order._id || deletingId === order._id}
+              >
+                {deletingId === order._id ? 'Deleting...' : 'Delete Order'}
               </Button>
             </div>
           </div>
@@ -232,6 +254,17 @@ export default function AdminOrdersPage() {
         {!orders.length && !loading ? <div className="rounded-3xl bg-white p-6 shadow-card">No orders found.</div> : null}
       </div>
       <OrderDetailsModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
+      <ConfirmationModal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => {
+          if (!deletingId) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDeleteOrder}
+        title="Delete Order"
+        message="Are you sure you want to permanently delete this order? This action cannot be undone."
+        confirmButtonText="Delete Order"
+        isLoading={Boolean(deleteTarget && deletingId === deleteTarget._id)}
+      />
     </AdminPageShell>
   );
 }

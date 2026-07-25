@@ -1,4 +1,6 @@
 import configureCloudinary from '../config/cloudinary.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 const cloudinary = configureCloudinary();
 const CLOUDINARY_FOLDER = 'junaid-furniture/products';
@@ -107,6 +109,23 @@ const uploadImageValue = async (value, { fallback = '' } = {}) => {
 };
 
 const deleteImageValue = async (value) => {
+  if (isLocalUploadPath(value)) {
+    const relativePath = value.replace(/^\/+/, '');
+    const resolvedPath = path.resolve(process.cwd(), 'public', relativePath);
+    const uploadsRoot = path.resolve(process.cwd(), 'public', 'uploads', 'products');
+
+    if (!resolvedPath.startsWith(uploadsRoot)) {
+      return;
+    }
+
+    try {
+      await fs.unlink(resolvedPath);
+    } catch (_error) {
+      // Ignore local cleanup failures so product updates and deletes still succeed.
+    }
+    return;
+  }
+
   if (!cloudinary) return;
 
   const publicId = extractCloudinaryPublicId(value);

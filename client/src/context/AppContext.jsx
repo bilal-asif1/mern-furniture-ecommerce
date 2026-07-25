@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback, useState } from 'react';
+import { useEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import {
   store,
@@ -123,10 +123,24 @@ export function useApp() {
   const ordersState = useSelector((state) => state.orders);
   const adminState = useSelector((state) => state.admin);
   const [toast, setToast] = useState({ message: '', type: 'success' });
+  const toastTimerRef = useRef(null);
 
   const showToast = useCallback((message, type = 'success') => {
+    if (toastTimerRef.current) {
+      window.clearTimeout(toastTimerRef.current);
+    }
+
     setToast({ message, type });
-    setTimeout(() => setToast({ message: '', type: 'success' }), 2500);
+    toastTimerRef.current = window.setTimeout(() => {
+      setToast({ message: '', type: 'success' });
+      toastTimerRef.current = null;
+    }, 2500);
+  }, []);
+
+  useEffect(() => () => {
+    if (toastTimerRef.current) {
+      window.clearTimeout(toastTimerRef.current);
+    }
   }, []);
 
   const fetchCategoriesCb = useCallback(() => dispatch(fetchCategories()), [dispatch]);
@@ -221,6 +235,8 @@ export function useApp() {
       adminUsersLoading: adminState.usersLoading,
       adminError: adminState.error,
       adminSuccess: adminState.success,
+      toast,
+      showToast,
       cartCount: cartState.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
       cartSubtotal: cartState.items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0),
       isWishlisted: (productId) => wishlistState.items.some((item) => item.id === productId || item._id === productId),
@@ -340,6 +356,8 @@ export function useApp() {
     adminState.usersLoading,
     adminState.error,
     adminState.success,
+    toast,
+    showToast,
     dispatch,
   ]);
 }

@@ -293,8 +293,8 @@ export const updateProduct = createAsyncThunk('catalog/updateProduct', async (ar
 export const deleteProduct = createAsyncThunk('catalog/deleteProduct', async (id, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.token;
-    const { data } = await apiClient.delete(`/products/${id}`, withAuth(token));
-    return normalizeProduct(data.product || { id, _id: id, isDeleted: true });
+    await apiClient.delete(`/products/${id}`, withAuth(token));
+    return id;
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
@@ -741,9 +741,16 @@ const catalogSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.mutationLoading = false;
-        state.success = 'Product moved to trash';
-        state.products = state.products.filter((item) => item.id !== action.payload.id);
-        state.adminProducts = state.adminProducts.map((item) => (item.id === action.payload.id ? action.payload : item));
+        state.success = 'Product deleted successfully';
+        state.products = state.products.filter((item) => item.id !== action.payload);
+        state.adminProducts = state.adminProducts.filter((item) => item.id !== action.payload);
+        if (state.product?.id === action.payload) state.product = null;
+        if (state.adminCount > 0) {
+          state.adminCount = Math.max(0, state.adminCount - 1);
+        }
+        if (state.count > 0) {
+          state.count = Math.max(0, state.count - 1);
+        }
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.mutationLoading = false;
@@ -1055,6 +1062,24 @@ const adminSlice = createSlice({
       .addCase(removeUser.fulfilled, (state, action) => {
         state.users = state.users.filter((item) => item._id !== action.payload);
         state.success = 'User removed successfully';
+      });
+    builder
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        const removedId = action.payload;
+        const removedFromInventory = state.inventory.products.some((item) => item.id === removedId);
+        const removedFromLowStock = state.inventory.lowStock.some((item) => item.id === removedId);
+
+        state.inventory.products = state.inventory.products.filter((item) => item.id !== removedId);
+        state.inventory.lowStock = state.inventory.lowStock.filter((item) => item.id !== removedId);
+        if (removedFromInventory && state.inventory.totalProducts > 0) {
+          state.inventory.totalProducts = Math.max(0, state.inventory.totalProducts - 1);
+        }
+        if (removedFromLowStock && state.inventory.lowStockCount > 0) {
+          state.inventory.lowStockCount = Math.max(0, state.inventory.lowStockCount - 1);
+        }
+        if (state.summary?.products > 0) {
+          state.summary = { ...state.summary, products: Math.max(0, state.summary.products - 1) };
+        }
       });
   },
 });

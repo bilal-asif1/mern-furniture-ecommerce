@@ -3,6 +3,7 @@ import { admin, protect } from '../middleware/authMiddleware.js';
 import { deleteUser, getUsers, updateUser } from '../controllers/userController.js';
 import { getDashboardSummary, getInventoryOverview, getRevenueAnalytics } from '../controllers/adminController.js';
 import { createProduct, deleteProduct, getAdminProducts, restoreProduct, toggleProductStatus, updateProduct } from '../controllers/productController.js';
+import { deleteOrder } from '../controllers/orderController.js';
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.put('/products/:id', protect, admin, updateProduct);
 router.delete('/products/:id', protect, admin, deleteProduct);
 router.patch('/products/:id/restore', protect, admin, restoreProduct);
 router.patch('/products/:id/status', protect, admin, toggleProductStatus);
+router.delete('/orders/:id', protect, admin, deleteOrder);
 
 export default router;
