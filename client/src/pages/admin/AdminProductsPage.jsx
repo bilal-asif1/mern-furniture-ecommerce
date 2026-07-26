@@ -357,12 +357,12 @@ export default function AdminProductsPage() {
             </span>
           </div>
 
-          <div className="mt-6 space-y-5">
-            <div className="grid gap-5 md:grid-cols-2">
+          <div className="mt-6 space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Product Name"><TextInput value={form.name} onChange={(event) => setField('name', event.target.value)} /></Field>
               <Field label="SKU"><TextInput value={form.sku} onChange={(event) => setField('sku', event.target.value)} /></Field>
             </div>
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Category">
                 <SelectField value={form.category} onChange={(event) => setField('category', event.target.value)}>
                   <option value="">Select category</option>
@@ -382,27 +382,27 @@ export default function AdminProductsPage() {
             <Field label="Short Description"><TextArea rows={3} value={form.shortDescription} onChange={(event) => setField('shortDescription', event.target.value)} /></Field>
             <Field label="Description"><TextArea rows={5} value={form.description} onChange={(event) => setField('description', event.target.value)} /></Field>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Price (PKR)"><TextInput type="number" value={form.price} onChange={(event) => setField('price', event.target.value)} /></Field>
               <Field label="Discount Price"><TextInput type="number" value={form.discountPrice} onChange={(event) => setField('discountPrice', event.target.value)} /></Field>
               <Field label="Discount %"><TextInput type="number" value={form.discountPercentage} onChange={(event) => setField('discountPercentage', event.target.value)} /></Field>
               <Field label="Stock Qty"><TextInput type="number" value={form.stock} onChange={(event) => setField('stock', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Material"><TextInput value={form.material} onChange={(event) => setField('material', event.target.value)} /></Field>
               <Field label="Color"><TextInput value={form.color} onChange={(event) => setField('color', event.target.value)} /></Field>
               <Field label="Weight"><TextInput type="number" value={form.weight} onChange={(event) => setField('weight', event.target.value)} /></Field>
               <Field label="Warranty"><TextInput value={form.warranty} onChange={(event) => setField('warranty', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-3">
               <Field label="Width"><TextInput type="number" value={form.dimensions.width} onChange={(event) => setDimension('width', event.target.value)} /></Field>
               <Field label="Height"><TextInput type="number" value={form.dimensions.height} onChange={(event) => setDimension('height', event.target.value)} /></Field>
               <Field label="Depth"><TextInput type="number" value={form.dimensions.depth} onChange={(event) => setDimension('depth', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Tags" hint="Comma separated keywords">
                 <TextInput value={form.tags} onChange={(event) => setField('tags', event.target.value)} />
               </Field>
@@ -426,7 +426,7 @@ export default function AdminProductsPage() {
               </label>
             </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Status">
                 <SelectField value={form.productStatus} onChange={(event) => setField('productStatus', event.target.value)}>
                   <option value="active">Active</option>
@@ -524,46 +524,44 @@ export default function AdminProductsPage() {
           {adminCatalogLoading ? <div className="mt-6 text-sm text-text/60">Loading products...</div> : null}
 
           <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full text-left text-sm">
-              <thead className="text-xs uppercase tracking-[0.2em] text-text/50">
-                <tr>
-                  <th className="py-3 pr-4">Product</th>
-                  <th className="py-3 pr-4">Category</th>
-                  <th className="py-3 pr-4">Price</th>
-                  <th className="py-3 pr-4">Status</th>
-                  <th className="py-3 pr-4">Flags</th>
-                  <th className="py-3 pr-4">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/5">
+            <div className="min-w-[1600px]">
+              <div className="grid grid-cols-[340px_180px_180px_140px_200px_360px] gap-4 border-b border-black/10 pb-3 text-xs font-semibold uppercase tracking-[0.2em] text-text/50">
+                <div>Product</div>
+                <div>Category</div>
+                <div>Price</div>
+                <div>Status</div>
+                <div>Flags</div>
+                <div>Actions</div>
+              </div>
+              <div className="divide-y divide-black/5">
                 {adminProducts.map((product) => (
-                  <tr key={product.id} className={product.isDeleted ? 'opacity-60' : ''}>
-                    <td className="py-4 pr-4">
+                  <div key={product.id} className={`grid grid-cols-[340px_180px_180px_140px_200px_360px] gap-4 py-4 ${product.isDeleted ? 'opacity-60' : ''}`}>
+                    <div className="min-w-0">
                       <div className="flex items-center gap-3">
                         <img
                           src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
                           alt={product.name}
-                          className="h-14 w-14 rounded-2xl object-cover"
+                          className="h-14 w-14 shrink-0 rounded-2xl object-cover"
                           onError={(event) => {
                             event.currentTarget.onerror = null;
                             event.currentTarget.src = '/product-placeholder.svg';
                           }}
                         />
-                        <div>
-                          <div className="font-semibold text-text">{product.name}</div>
-                          <div className="text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
+                        <div className="min-w-0">
+                          <div className="break-words font-semibold leading-6 text-text">{product.name}</div>
+                          <div className="mt-1 break-words text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
                         </div>
                       </div>
-                    </td>
-                    <td className="py-4 pr-4 text-text/70">{product.categoryName || 'Unassigned'}</td>
-                    <td className="py-4 pr-4 text-text/70">
-                      <div className="font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
+                    </div>
+                    <div className="min-w-0 whitespace-normal break-words text-text/70">{product.categoryName || 'Unassigned'}</div>
+                    <div className="min-w-0 text-text/70">
+                      <div className="break-words font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
                       {product.discountPrice ? (
                         <div className="text-xs text-text/50">Sale: PKR {Number(product.discountPrice).toLocaleString()}</div>
                       ) : null}
-                    </td>
-                    <td className="py-4 pr-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    </div>
+                    <div className="min-w-0">
+                      <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
                         product.isDeleted
                           ? 'bg-red-50 text-red-700'
                           : product.productStatus === 'active'
@@ -572,43 +570,41 @@ export default function AdminProductsPage() {
                       }`}>
                         {product.isDeleted ? 'Deleted' : product.productStatus === 'active' ? 'Active' : 'Inactive'}
                       </span>
-                    </td>
-                    <td className="py-4 pr-4">
+                    </div>
+                    <div className="min-w-0">
                       <div className="flex flex-wrap gap-2">
                         {product.featured ? <span className="rounded-full bg-[#f7efe3] px-3 py-1 text-xs font-semibold text-primary">Featured</span> : null}
                         {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-3 py-1 text-xs font-semibold text-white">Best Seller</span> : null}
                         {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-3 py-1 text-xs font-semibold text-[#1d4ed8]">New Arrival</span> : null}
                       </div>
-                    </td>
-                    <td className="py-4 pr-4">
+                    </div>
+                    <div className="min-w-0">
                       <div className="flex flex-wrap gap-2">
-                        <Button variant="ghost" className="px-4 py-2" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="px-4 py-2" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
+                        <Button variant="ghost" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => editProduct(product)}>Edit</Button>
+                        <Button variant="secondary" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
                         {product.isDeleted ? (
-                          <Button variant="primary" className="px-4 py-2" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                          <Button variant="primary" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Restoring...' : 'Restore'}
                           </Button>
                         ) : (
-                          <Button variant="dark" className="px-4 py-2" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
+                          <Button variant="dark" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Deleting...' : 'Trash'}
                           </Button>
                         )}
-                        <Button variant="danger" className="px-4 py-2" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                        <Button variant="danger" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
                           {deletingId === product.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
                 {!adminProducts.length ? (
-                  <tr>
-                    <td className="py-4 text-text/60" colSpan={6}>No products found.</td>
-                  </tr>
+                  <div className="py-4 text-text/60">No products found.</div>
                 ) : null}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
