@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import AdminPageShell from '../../components/AdminPageShell';
 import Button from '../../components/Button';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -523,92 +524,85 @@ export default function AdminProductsPage() {
           </div>
           {adminCatalogLoading ? <div className="mt-6 text-sm text-text/60">Loading products...</div> : null}
 
-          <div className="mt-6 overflow-x-auto pb-2">
-            <table className="min-w-[1100px] w-full table-auto text-left text-sm">
-              <thead className="text-[11px] uppercase tracking-[0.17em] text-text/50">
-                <tr>
-                  <th className="w-[240px] py-2 pr-2 whitespace-nowrap">Product</th>
-                  <th className="w-[90px] py-2 pr-2 whitespace-nowrap">Category</th>
-                  <th className="w-[90px] py-2 pr-2 whitespace-nowrap">Price</th>
-                  <th className="w-[80px] py-2 pr-2 whitespace-nowrap">Status</th>
-                  <th className="w-[110px] py-2 pr-2 whitespace-nowrap">Flags</th>
-                  <th className="w-[200px] py-2 pr-6 whitespace-nowrap">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/5">
-                {adminProducts.map((product) => (
-                  <tr key={product.id} className={product.isDeleted ? 'opacity-60' : ''}>
-                    <td className="py-3 pr-2 align-top">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <img
-                          src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
-                          alt={product.name}
-                          className="h-12 w-12 shrink-0 rounded-xl object-cover"
-                          onError={(event) => {
-                            event.currentTarget.onerror = null;
-                            event.currentTarget.src = '/product-placeholder.svg';
-                          }}
-                        />
-                        <div className="min-w-0">
-                          <div className="break-words font-semibold leading-5 text-text text-sm">{product.name}</div>
-                          <div className="mt-0.5 break-words text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
-                        </div>
+          <div className="mt-6">
+            <div className="grid gap-4 text-sm" style={{ gridTemplateColumns: 'minmax(220px, 2fr) 90px 90px 70px 70px 170px' }}>
+              <div className="text-[11px] uppercase tracking-[0.17em] text-text/50 font-semibold">Product</div>
+              <div className="text-[11px] uppercase tracking-[0.17em] text-text/50 font-semibold">Category</div>
+              <div className="text-[11px] uppercase tracking-[0.17em] text-text/50 font-semibold">Price</div>
+              <div className="text-[11px] uppercase tracking-[0.17em] text-text/50 font-semibold">Status</div>
+              <div className="text-[11px] uppercase tracking-[0.17em] text-text/50 font-semibold">Flags</div>
+              <div className="text-[11px] uppercase tracking-[0.17em] text-text/50 font-semibold">Actions</div>
+
+              {adminProducts.map((product) => (
+                <React.Fragment key={product.id}>
+                  <div className={`py-3 ${product.isDeleted ? 'opacity-60' : ''}`}>
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
+                        alt={product.name}
+                        className="h-12 w-12 shrink-0 rounded-xl object-cover"
+                        onError={(event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = '/product-placeholder.svg';
+                        }}
+                      />
+                      <div className="min-w-0">
+                        <div className="break-words font-semibold leading-5 text-text text-sm line-clamp-2">{product.name}</div>
+                        <div className="mt-0.5 break-words text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
                       </div>
-                    </td>
-                    <td className="py-3 pr-2 align-top whitespace-normal break-words text-text/70 text-sm">{product.categoryName || 'Unassigned'}</td>
-                    <td className="py-3 pr-2 align-top text-text/70 text-sm">
-                      <div className="break-words font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
-                      {product.discountPrice ? (
-                        <div className="text-xs text-text/50">Sale: PKR {Number(product.discountPrice).toLocaleString()}</div>
-                      ) : null}
-                    </td>
-                    <td className="py-3 pr-2 align-top">
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                        product.isDeleted
-                          ? 'bg-red-50 text-red-700'
-                          : product.productStatus === 'active'
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-amber-50 text-amber-700'
-                      }`}>
-                        {product.isDeleted ? 'Deleted' : product.productStatus === 'active' ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="py-3 pr-2 align-top">
-                      <div className="flex flex-wrap gap-1.5">
-                        {product.featured ? <span className="rounded-full bg-[#f7efe3] px-2 py-0.5 text-xs font-medium text-primary">Featured</span> : null}
-                        {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-2 py-0.5 text-xs font-medium text-white">Best Seller</span> : null}
-                        {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-2 py-0.5 text-xs font-medium text-[#1d4ed8]">New Arrival</span> : null}
-                      </div>
-                    </td>
-                    <td className="py-3 pr-6 align-top">
-                      <div className="grid grid-cols-2 gap-1.5">
-                        <Button variant="ghost" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
-                          {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
+                    </div>
+                  </div>
+                  <div className={`py-3 text-text/70 text-sm ${product.isDeleted ? 'opacity-60' : ''}`}>{product.categoryName || 'Unassigned'}</div>
+                  <div className={`py-3 text-text/70 text-sm ${product.isDeleted ? 'opacity-60' : ''}`}>
+                    <div className="break-words font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
+                    {product.discountPrice ? (
+                      <div className="text-xs text-text/50">Sale: PKR {Number(product.discountPrice).toLocaleString()}</div>
+                    ) : null}
+                  </div>
+                  <div className={`py-3 ${product.isDeleted ? 'opacity-60' : ''}`}>
+                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+                      product.isDeleted
+                        ? 'bg-red-50 text-red-700'
+                        : product.productStatus === 'active'
+                          ? 'bg-green-50 text-green-700'
+                          : 'bg-amber-50 text-amber-700'
+                    }`}>
+                      {product.isDeleted ? 'Deleted' : product.productStatus === 'active' ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  <div className={`py-3 ${product.isDeleted ? 'opacity-60' : ''}`}>
+                    <div className="flex flex-wrap gap-1.5">
+                      {product.featured ? <span className="rounded-full bg-[#f7efe3] px-2 py-0.5 text-xs font-medium text-primary">Featured</span> : null}
+                      {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-2 py-0.5 text-xs font-medium text-white">Best Seller</span> : null}
+                      {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-2 py-0.5 text-xs font-medium text-[#1d4ed8]">New Arrival</span> : null}
+                    </div>
+                  </div>
+                  <div className={`py-3 ${product.isDeleted ? 'opacity-60' : ''}`}>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <Button variant="ghost" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
+                      <Button variant="secondary" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
+                        {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
+                      </Button>
+                      {product.isDeleted ? (
+                        <Button variant="primary" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                          {deletingId === product.id ? 'Restoring...' : 'Restore'}
                         </Button>
-                        {product.isDeleted ? (
-                          <Button variant="primary" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
-                            {deletingId === product.id ? 'Restoring...' : 'Restore'}
-                          </Button>
-                        ) : (
-                          <Button variant="dark" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
-                            {deletingId === product.id ? 'Deleting...' : 'Trash'}
-                          </Button>
-                        )}
-                        <Button variant="danger" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
-                          {deletingId === product.id ? 'Deleting...' : 'Delete'}
+                      ) : (
+                        <Button variant="dark" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
+                          {deletingId === product.id ? 'Deleting...' : 'Trash'}
                         </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                {!adminProducts.length ? (
-                  <tr>
-                    <td className="py-3 text-text/60 text-sm" colSpan={6}>No products found.</td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
+                      )}
+                      <Button variant="danger" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                        {deletingId === product.id ? 'Deleting...' : 'Delete'}
+                      </Button>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ))}
+              {!adminProducts.length ? (
+                <div className="col-span-6 py-3 text-text/60 text-sm">No products found.</div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
