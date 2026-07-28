@@ -177,10 +177,10 @@ const createProduct = asyncHandler(async (req, res) => {
 
     // Generate demo rating and review count for new products if not provided
     if (!payload.rating || payload.rating === 0) {
-      payload.rating = Number((Math.random() * (4.9 - 4.1) + 4.1).toFixed(1));
+      payload.rating = Number((Math.random() * (4.9 - 4.2) + 4.2).toFixed(1));
     }
     if (!payload.reviewCount || payload.reviewCount === 0) {
-      payload.reviewCount = Math.floor(Math.random() * (350 - 12 + 1)) + 12;
+      payload.reviewCount = Math.floor(Math.random() * (250 - 25 + 1)) + 25;
     }
 
     const product = await Product.create(payload);
