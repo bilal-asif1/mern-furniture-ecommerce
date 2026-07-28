@@ -1,7 +1,7 @@
 export function Field({ label, children, hint }) {
   return (
     <label className="block">
-      <span className="mb-2.5 block text-sm font-semibold uppercase tracking-[0.18em] text-text/70">{label}</span>
+      <span className="mb-2.5 block text-xs font-semibold uppercase tracking-[0.12em] text-text/70">{label}</span>
       {children}
       {hint ? <span className="mt-2 block text-xs text-text/50">{hint}</span> : null}
     </label>
