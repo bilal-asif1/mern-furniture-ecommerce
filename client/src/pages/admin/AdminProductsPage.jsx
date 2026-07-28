@@ -346,7 +346,7 @@ export default function AdminProductsPage() {
       {catalogSuccess ? <div className="mb-4 rounded-3xl bg-green-50 px-5 py-4 text-sm text-green-700">{catalogSuccess}</div> : null}
       <Toast message={toast.message} type={toast.type} />
 
-      <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
         <form onSubmit={submit} className="rounded-3xl bg-white p-8 shadow-card">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <h2 className="font-display text-2xl font-semibold text-text">
@@ -525,20 +525,20 @@ export default function AdminProductsPage() {
 
           <div className="mt-6 overflow-x-auto pb-2">
             <table className="min-w-[1100px] w-full table-auto text-left text-sm">
-              <thead className="text-xs uppercase tracking-[0.2em] text-text/50">
+              <thead className="text-[11px] uppercase tracking-[0.17em] text-text/50">
                 <tr>
-                  <th className="w-[220px] py-2 pr-4 whitespace-nowrap">Product</th>
-                  <th className="w-[100px] py-2 pr-4 whitespace-nowrap">Category</th>
-                  <th className="w-[100px] py-2 pr-4 whitespace-nowrap">Price</th>
-                  <th className="w-[85px] py-2 pr-4 whitespace-nowrap">Status</th>
-                  <th className="w-[120px] py-2 pr-4 whitespace-nowrap">Flags</th>
-                  <th className="w-[350px] py-2 pr-6 whitespace-nowrap">Actions</th>
+                  <th className="w-[240px] py-2 pr-2 whitespace-nowrap">Product</th>
+                  <th className="w-[90px] py-2 pr-2 whitespace-nowrap">Category</th>
+                  <th className="w-[90px] py-2 pr-2 whitespace-nowrap">Price</th>
+                  <th className="w-[80px] py-2 pr-2 whitespace-nowrap">Status</th>
+                  <th className="w-[110px] py-2 pr-2 whitespace-nowrap">Flags</th>
+                  <th className="w-[200px] py-2 pr-6 whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {adminProducts.map((product) => (
                   <tr key={product.id} className={product.isDeleted ? 'opacity-60' : ''}>
-                    <td className="py-3 pr-4 align-top">
+                    <td className="py-3 pr-2 align-top">
                       <div className="flex min-w-0 items-center gap-2">
                         <img
                           src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
@@ -555,14 +555,14 @@ export default function AdminProductsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 pr-4 align-top whitespace-normal break-words text-text/70 text-sm">{product.categoryName || 'Unassigned'}</td>
-                    <td className="py-3 pr-4 align-top text-text/70 text-sm">
+                    <td className="py-3 pr-2 align-top whitespace-normal break-words text-text/70 text-sm">{product.categoryName || 'Unassigned'}</td>
+                    <td className="py-3 pr-2 align-top text-text/70 text-sm">
                       <div className="break-words font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
                       {product.discountPrice ? (
                         <div className="text-xs text-text/50">Sale: PKR {Number(product.discountPrice).toLocaleString()}</div>
                       ) : null}
                     </td>
-                    <td className="py-3 pr-4 align-top">
+                    <td className="py-3 pr-2 align-top">
                       <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                         product.isDeleted
                           ? 'bg-red-50 text-red-700'
@@ -573,7 +573,7 @@ export default function AdminProductsPage() {
                         {product.isDeleted ? 'Deleted' : product.productStatus === 'active' ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 align-top">
+                    <td className="py-3 pr-2 align-top">
                       <div className="flex flex-wrap gap-1.5">
                         {product.featured ? <span className="rounded-full bg-[#f7efe3] px-2 py-0.5 text-xs font-medium text-primary">Featured</span> : null}
                         {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-2 py-0.5 text-xs font-medium text-white">Best Seller</span> : null}
@@ -581,21 +581,21 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="py-3 pr-6 align-top">
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="ghost" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <Button variant="ghost" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
+                        <Button variant="secondary" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
                         {product.isDeleted ? (
-                          <Button variant="primary" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                          <Button variant="primary" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Restoring...' : 'Restore'}
                           </Button>
                         ) : (
-                          <Button variant="dark" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
+                          <Button variant="dark" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Deleting...' : 'Trash'}
                           </Button>
                         )}
-                        <Button variant="danger" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                        <Button variant="danger" className="h-7 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
                           {deletingId === product.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
