@@ -527,12 +527,12 @@ export default function AdminProductsPage() {
             <table className="min-w-[1100px] w-full table-auto text-left text-sm">
               <thead className="text-xs uppercase tracking-[0.2em] text-text/50">
                 <tr>
-                  <th className="w-[230px] py-2 pr-4 whitespace-nowrap">Product</th>
-                  <th className="w-[110px] py-2 pr-4 whitespace-nowrap">Category</th>
-                  <th className="w-[110px] py-2 pr-4 whitespace-nowrap">Price</th>
-                  <th className="w-[90px] py-2 pr-4 whitespace-nowrap">Status</th>
-                  <th className="w-[130px] py-2 pr-4 whitespace-nowrap">Flags</th>
-                  <th className="w-[300px] py-2 pr-6 whitespace-nowrap">Actions</th>
+                  <th className="w-[220px] py-2 pr-4 whitespace-nowrap">Product</th>
+                  <th className="w-[100px] py-2 pr-4 whitespace-nowrap">Category</th>
+                  <th className="w-[100px] py-2 pr-4 whitespace-nowrap">Price</th>
+                  <th className="w-[85px] py-2 pr-4 whitespace-nowrap">Status</th>
+                  <th className="w-[120px] py-2 pr-4 whitespace-nowrap">Flags</th>
+                  <th className="w-[350px] py-2 pr-6 whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
@@ -581,21 +581,21 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="py-3 pr-6 align-top">
-                      <div className="flex flex-wrap gap-1.5">
-                        <Button variant="ghost" className="h-8 px-3 text-xs font-medium rounded-full whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="h-8 px-3 text-xs font-medium rounded-full whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="ghost" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
+                        <Button variant="secondary" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
                         {product.isDeleted ? (
-                          <Button variant="primary" className="h-8 px-3 text-xs font-medium rounded-full whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                          <Button variant="primary" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Restoring...' : 'Restore'}
                           </Button>
                         ) : (
-                          <Button variant="dark" className="h-8 px-3 text-xs font-medium rounded-full whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
+                          <Button variant="dark" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Deleting...' : 'Trash'}
                           </Button>
                         )}
-                        <Button variant="danger" className="h-8 px-3 text-xs font-medium rounded-full whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                        <Button variant="danger" className="h-7 px-2.5 text-[11px] font-medium rounded-full whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
                           {deletingId === product.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
