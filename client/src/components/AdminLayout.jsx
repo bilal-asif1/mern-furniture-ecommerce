@@ -22,14 +22,14 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="grid lg:grid-cols-[210px_1fr]">
-        <aside className={`fixed inset-y-0 left-0 z-40 w-[210px] transform border-r border-black/5 bg-[#efe7df] transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className="grid lg:grid-cols-[180px_1fr]">
+        <aside className={`fixed inset-y-0 left-0 z-40 w-[180px] transform border-r border-black/5 bg-[#efe7df] transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
           <div className="flex h-full flex-col">
-            <div className="flex items-start justify-between gap-2 p-3">
+            <div className="flex items-start justify-between gap-2 p-2.5">
               <div>
                 <Logo className="h-8 w-auto" />
-                <p className="mt-2 text-sm font-semibold text-text">Admin Panel</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-[0.25em] text-primary">{auth?.user?.name || 'Admin'}</p>
+                <p className="mt-1.5 text-sm font-semibold text-text">Admin Panel</p>
+                <p className="mt-0.5 text-xs font-semibold uppercase tracking-[0.25em] text-primary">{auth?.user?.name || 'Admin'}</p>
               </div>
               <button className="lg:hidden rounded-full bg-white px-3 py-2 text-sm font-semibold text-text shadow-card" onClick={() => setMobileOpen(false)} type="button">
                 Close
@@ -43,14 +43,14 @@ export default function AdminLayout() {
                 end={item.to === '/admin'}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `mb-2 block rounded-2xl px-3 py-2 text-sm font-semibold transition ${isActive ? 'bg-primary text-white shadow-soft' : 'text-text/70 hover:bg-white/60'}`
+                  `mb-2 block rounded-2xl px-2.5 py-1.5 text-sm font-semibold transition ${isActive ? 'bg-primary text-white shadow-soft' : 'text-text/70 hover:bg-white/60'}`
                 }
               >
                 {item.label}
               </NavLink>
             ))}
             </nav>
-            <div className="mt-auto p-3">
+            <div className="mt-auto p-2.5">
               <Button variant="ghost" className="w-full" onClick={logout}>
                 Sign Out
               </Button>

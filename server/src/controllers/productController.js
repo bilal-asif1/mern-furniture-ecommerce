@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Product from '../models/Product.js';
+import Review from '../models/Review.js';
 import slugify from '../utils/slugify.js';
 import { deleteImageValue, normalizeProductPayload } from '../utils/productMedia.js';
 
@@ -75,10 +76,18 @@ const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
   return filter;
 };
 
-const serializeProduct = (product) => {
+const serializeProduct = async (product) => {
   if (!product) return product;
 
   const json = typeof product.toObject === 'function' ? product.toObject() : product;
+  
+  // Check if product has real reviews and calculate rating if so
+  const reviewStats = await calculateRatingFromReviews(json._id);
+  if (reviewStats.reviewCount > 0) {
+    json.rating = reviewStats.rating;
+    json.reviewCount = reviewStats.reviewCount;
+  }
+
   return {
     ...json,
     thumbnailImage: json.thumbnailImage || json.images?.[0] || '',
@@ -89,6 +98,16 @@ const respondWithProductError = (res, error, fallbackMessage) => {
   const statusCode = error?.statusCode || error?.status || 500;
   const message = error?.message || fallbackMessage;
   return res.status(statusCode).json({ message });
+};
+
+const calculateRatingFromReviews = async (productId) => {
+  const reviews = await Review.find({ product: productId });
+  if (reviews.length === 0) {
+    return { rating: 0, reviewCount: 0 };
+  }
+  const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+  const averageRating = Number((totalRating / reviews.length).toFixed(1));
+  return { rating: averageRating, reviewCount: reviews.length };
 };
 
 const getProducts = asyncHandler(async (req, res) => {
@@ -121,7 +140,8 @@ const getProducts = asyncHandler(async (req, res) => {
     .limit(limit)
     .skip(limit * (page - 1));
 
-  res.json({ products: products.map(serializeProduct), page, pages: Math.ceil(count / limit), count });
+  const serializedProducts = await Promise.all(products.map(serializeProduct));
+  res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });
 });
 
 const getProductBySlug = asyncHandler(async (req, res) => {
@@ -137,7 +157,7 @@ const getProductBySlug = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Product not found');
   }
-  res.json(serializeProduct(product));
+  res.json(await serializeProduct(product));
 });
 
 const createProduct = asyncHandler(async (req, res) => {
@@ -155,9 +175,17 @@ const createProduct = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: 'Product already exists' });
     }
 
+    // Generate demo rating and review count for new products if not provided
+    if (!payload.rating || payload.rating === 0) {
+      payload.rating = Number((Math.random() * (4.9 - 4.1) + 4.1).toFixed(1));
+    }
+    if (!payload.reviewCount || payload.reviewCount === 0) {
+      payload.reviewCount = Math.floor(Math.random() * (350 - 12 + 1)) + 12;
+    }
+
     const product = await Product.create(payload);
     await product.populate('category', 'name slug');
-    return res.status(201).json(serializeProduct(product));
+    return res.status(201).json(await serializeProduct(product));
   } catch (error) {
     return respondWithProductError(res, error, 'Unable to create product');
   }
@@ -180,7 +208,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       runValidators: true,
     });
     await updated.populate('category', 'name slug');
-    return res.json(serializeProduct(updated));
+    return res.json(await serializeProduct(updated));
   } catch (error) {
     return respondWithProductError(res, error, 'Unable to update product');
   }
@@ -201,7 +229,7 @@ const trashProduct = asyncHandler(async (req, res) => {
     throw new Error('Product not found');
   }
 
-  res.json({ message: 'Product moved to trash', product: serializeProduct(product) });
+  res.json({ message: 'Product moved to trash', product: await serializeProduct(product) });
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
@@ -219,7 +247,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
   await Promise.all(Array.from(imagesToDelete).filter(Boolean).map((image) => deleteImageValue(image)));
   await Product.findByIdAndDelete(req.params.id);
 
-  res.json({ message: 'Product deleted successfully', product: serializeProduct(product) });
+  res.json({ message: 'Product deleted successfully', product: await serializeProduct(product) });
 });
 
 const restoreProduct = asyncHandler(async (req, res) => {
@@ -237,7 +265,7 @@ const restoreProduct = asyncHandler(async (req, res) => {
     throw new Error('Product not found');
   }
 
-  res.json({ message: 'Product restored', product: serializeProduct(product) });
+  res.json({ message: 'Product restored', product: await serializeProduct(product) });
 });
 
 const toggleProductStatus = asyncHandler(async (req, res) => {
@@ -251,7 +279,7 @@ const toggleProductStatus = asyncHandler(async (req, res) => {
   await product.save();
   await product.populate('category', 'name slug');
 
-  res.json({ message: 'Product status updated', product: serializeProduct(product) });
+  res.json({ message: 'Product status updated', product: await serializeProduct(product) });
 });
 
 const getAdminProducts = asyncHandler(async (req, res) => {
@@ -266,7 +294,8 @@ const getAdminProducts = asyncHandler(async (req, res) => {
     .limit(limit)
     .skip(limit * (page - 1));
 
-  res.json({ products: products.map(serializeProduct), page, pages: Math.ceil(count / limit), count });
+  const serializedProducts = await Promise.all(products.map(serializeProduct));
+  res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });
 });
 
 export {

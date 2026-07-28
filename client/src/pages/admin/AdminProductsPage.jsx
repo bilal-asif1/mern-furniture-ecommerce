@@ -347,7 +347,7 @@ export default function AdminProductsPage() {
       {catalogSuccess ? <div className="mb-4 rounded-3xl bg-green-50 px-5 py-4 text-sm text-green-700">{catalogSuccess}</div> : null}
       <Toast message={toast.message} type={toast.type} />
 
-      <div className="grid gap-6 xl:grid-cols-[360px_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[390px_1fr]">
         <form onSubmit={submit} className="rounded-3xl bg-white p-8 shadow-card">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <h2 className="font-display text-2xl font-semibold text-text">
@@ -383,9 +383,11 @@ export default function AdminProductsPage() {
             <Field label="Short Description"><TextArea rows={2} value={form.shortDescription} onChange={(event) => setField('shortDescription', event.target.value)} /></Field>
             <Field label="Description"><TextArea rows={3} value={form.description} onChange={(event) => setField('description', event.target.value)} /></Field>
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Price (PKR)"><TextInput type="number" value={form.price} onChange={(event) => setField('price', event.target.value)} /></Field>
               <Field label="Discount Price"><TextInput type="number" value={form.discountPrice} onChange={(event) => setField('discountPrice', event.target.value)} /></Field>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Discount %"><TextInput type="number" value={form.discountPercentage} onChange={(event) => setField('discountPercentage', event.target.value)} /></Field>
               <Field label="Stock Qty"><TextInput type="number" value={form.stock} onChange={(event) => setField('stock', event.target.value)} /></Field>
             </div>
