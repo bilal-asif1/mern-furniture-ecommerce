@@ -357,12 +357,12 @@ export default function AdminProductsPage() {
             </span>
           </div>
 
-          <div className="space-y-5">
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+          <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Product Name"><TextInput value={form.name} onChange={(event) => setField('name', event.target.value)} /></Field>
               <Field label="SKU"><TextInput value={form.sku} onChange={(event) => setField('sku', event.target.value)} /></Field>
             </div>
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Category">
                 <SelectField value={form.category} onChange={(event) => setField('category', event.target.value)}>
                   <option value="">Select category</option>
@@ -382,27 +382,27 @@ export default function AdminProductsPage() {
             <Field label="Short Description"><TextArea rows={2} value={form.shortDescription} onChange={(event) => setField('shortDescription', event.target.value)} /></Field>
             <Field label="Description"><TextArea rows={3} value={form.description} onChange={(event) => setField('description', event.target.value)} /></Field>
 
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Price (PKR)"><TextInput type="number" value={form.price} onChange={(event) => setField('price', event.target.value)} /></Field>
               <Field label="Discount Price"><TextInput type="number" value={form.discountPrice} onChange={(event) => setField('discountPrice', event.target.value)} /></Field>
               <Field label="Discount %"><TextInput type="number" value={form.discountPercentage} onChange={(event) => setField('discountPercentage', event.target.value)} /></Field>
               <Field label="Stock Qty"><TextInput type="number" value={form.stock} onChange={(event) => setField('stock', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Material"><TextInput value={form.material} onChange={(event) => setField('material', event.target.value)} /></Field>
               <Field label="Color"><TextInput value={form.color} onChange={(event) => setField('color', event.target.value)} /></Field>
               <Field label="Weight"><TextInput type="number" value={form.weight} onChange={(event) => setField('weight', event.target.value)} /></Field>
               <Field label="Warranty"><TextInput value={form.warranty} onChange={(event) => setField('warranty', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-3">
               <Field label="Width"><TextInput type="number" value={form.dimensions.width} onChange={(event) => setDimension('width', event.target.value)} /></Field>
               <Field label="Height"><TextInput type="number" value={form.dimensions.height} onChange={(event) => setDimension('height', event.target.value)} /></Field>
               <Field label="Depth"><TextInput type="number" value={form.dimensions.depth} onChange={(event) => setDimension('depth', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Tags" hint="Comma separated keywords">
                 <TextInput value={form.tags} onChange={(event) => setField('tags', event.target.value)} />
               </Field>
@@ -411,7 +411,7 @@ export default function AdminProductsPage() {
               </Field>
             </div>
 
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-3">
               <label className="flex items-center gap-2 rounded-xl border border-black/10 px-3 py-2 text-sm font-medium text-text">
                 <input type="checkbox" checked={form.featured} onChange={(event) => setField('featured', event.target.checked)} />
                 Featured
@@ -426,7 +426,7 @@ export default function AdminProductsPage() {
               </label>
             </div>
 
-            <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+            <div className="grid gap-6 md:grid-cols-2">
               <Field label="Status">
                 <SelectField value={form.productStatus} onChange={(event) => setField('productStatus', event.target.value)}>
                   <option value="active">Active</option>
@@ -527,12 +527,12 @@ export default function AdminProductsPage() {
             <table className="min-w-[1100px] w-full table-auto text-left text-sm">
               <thead className="text-xs uppercase tracking-[0.2em] text-text/50">
                 <tr>
-                  <th className="w-[260px] py-2 pr-4 whitespace-nowrap">Product</th>
-                  <th className="w-[130px] py-2 pr-4 whitespace-nowrap">Category</th>
-                  <th className="w-[130px] py-2 pr-4 whitespace-nowrap">Price</th>
-                  <th className="w-[110px] py-2 pr-4 whitespace-nowrap">Status</th>
-                  <th className="w-[150px] py-2 pr-4 whitespace-nowrap">Flags</th>
-                  <th className="w-[320px] py-2 pr-4 whitespace-nowrap">Actions</th>
+                  <th className="w-[250px] py-2 pr-4 whitespace-nowrap">Product</th>
+                  <th className="w-[120px] py-2 pr-4 whitespace-nowrap">Category</th>
+                  <th className="w-[120px] py-2 pr-4 whitespace-nowrap">Price</th>
+                  <th className="w-[100px] py-2 pr-4 whitespace-nowrap">Status</th>
+                  <th className="w-[140px] py-2 pr-4 whitespace-nowrap">Flags</th>
+                  <th className="w-[260px] py-2 pr-6 whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
@@ -580,22 +580,22 @@ export default function AdminProductsPage() {
                         {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-2 py-0.5 text-xs font-medium text-[#1d4ed8]">New Arrival</span> : null}
                       </div>
                     </td>
-                    <td className="py-3 pr-4 align-top">
-                      <div className="flex flex-col gap-2">
-                        <Button variant="ghost" className="w-[100px] px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="w-[100px] px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
+                    <td className="py-3 pr-6 align-top">
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="ghost" className="px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => editProduct(product)}>Edit</Button>
+                        <Button variant="secondary" className="px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
                         {product.isDeleted ? (
-                          <Button variant="primary" className="w-[100px] px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                          <Button variant="primary" className="px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Restoring...' : 'Restore'}
                           </Button>
                         ) : (
-                          <Button variant="dark" className="w-[100px] px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
+                          <Button variant="dark" className="px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Deleting...' : 'Trash'}
                           </Button>
                         )}
-                        <Button variant="danger" className="w-[100px] px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                        <Button variant="danger" className="px-3 py-1.5 text-xs font-medium whitespace-nowrap" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
                           {deletingId === product.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
