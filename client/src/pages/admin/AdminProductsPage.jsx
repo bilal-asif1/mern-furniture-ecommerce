@@ -362,7 +362,7 @@ export default function AdminProductsPage() {
               <Field label="Product Name"><TextInput value={form.name} onChange={(event) => setField('name', event.target.value)} /></Field>
               <Field label="SKU"><TextInput value={form.sku} onChange={(event) => setField('sku', event.target.value)} /></Field>
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-8 md:grid-cols-2">
               <Field label="Category">
                 <SelectField value={form.category} onChange={(event) => setField('category', event.target.value)}>
                   <option value="">Select category</option>
