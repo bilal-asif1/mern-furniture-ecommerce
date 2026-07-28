@@ -523,25 +523,27 @@ export default function AdminProductsPage() {
           </div>
           {adminCatalogLoading ? <div className="mt-6 text-sm text-text/60">Loading products...</div> : null}
 
-          <div className="mt-6 overflow-x-auto">
-            <div className="min-w-[1600px]">
-              <div className="grid grid-cols-[340px_180px_180px_140px_200px_360px] gap-4 border-b border-black/10 pb-3 text-xs font-semibold uppercase tracking-[0.2em] text-text/50">
-                <div>Product</div>
-                <div>Category</div>
-                <div>Price</div>
-                <div>Status</div>
-                <div>Flags</div>
-                <div>Actions</div>
-              </div>
-              <div className="divide-y divide-black/5">
+          <div className="mt-6 overflow-x-auto pb-2">
+            <table className="min-w-[1380px] table-auto text-left text-sm">
+              <thead className="text-xs uppercase tracking-[0.2em] text-text/50">
+                <tr>
+                  <th className="min-w-[320px] py-3 pr-6 whitespace-nowrap">Product</th>
+                  <th className="min-w-[170px] py-3 pr-6 whitespace-nowrap">Category</th>
+                  <th className="min-w-[170px] py-3 pr-6 whitespace-nowrap">Price</th>
+                  <th className="min-w-[130px] py-3 pr-6 whitespace-nowrap">Status</th>
+                  <th className="min-w-[190px] py-3 pr-6 whitespace-nowrap">Flags</th>
+                  <th className="min-w-[340px] py-3 pr-4 whitespace-nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/5">
                 {adminProducts.map((product) => (
-                  <div key={product.id} className={`grid grid-cols-[340px_180px_180px_140px_200px_360px] gap-4 py-4 ${product.isDeleted ? 'opacity-60' : ''}`}>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-3">
+                  <tr key={product.id} className={product.isDeleted ? 'opacity-60' : ''}>
+                    <td className="py-4 pr-6 align-top">
+                      <div className="flex min-w-0 items-center gap-3">
                         <img
                           src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
                           alt={product.name}
-                          className="h-14 w-14 shrink-0 rounded-2xl object-cover"
+                          className="h-14 w-14 rounded-2xl object-cover"
                           onError={(event) => {
                             event.currentTarget.onerror = null;
                             event.currentTarget.src = '/product-placeholder.svg';
@@ -552,16 +554,16 @@ export default function AdminProductsPage() {
                           <div className="mt-1 break-words text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
                         </div>
                       </div>
-                    </div>
-                    <div className="min-w-0 whitespace-normal break-words text-text/70">{product.categoryName || 'Unassigned'}</div>
-                    <div className="min-w-0 text-text/70">
+                    </td>
+                    <td className="py-4 pr-6 align-top whitespace-normal break-words text-text/70">{product.categoryName || 'Unassigned'}</td>
+                    <td className="py-4 pr-6 align-top text-text/70">
                       <div className="break-words font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
                       {product.discountPrice ? (
                         <div className="text-xs text-text/50">Sale: PKR {Number(product.discountPrice).toLocaleString()}</div>
                       ) : null}
-                    </div>
-                    <div className="min-w-0">
-                      <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                    </td>
+                    <td className="py-4 pr-6 align-top">
+                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
                         product.isDeleted
                           ? 'bg-red-50 text-red-700'
                           : product.productStatus === 'active'
@@ -570,16 +572,16 @@ export default function AdminProductsPage() {
                       }`}>
                         {product.isDeleted ? 'Deleted' : product.productStatus === 'active' ? 'Active' : 'Inactive'}
                       </span>
-                    </div>
-                    <div className="min-w-0">
+                    </td>
+                    <td className="py-4 pr-6 align-top">
                       <div className="flex flex-wrap gap-2">
                         {product.featured ? <span className="rounded-full bg-[#f7efe3] px-3 py-1 text-xs font-semibold text-primary">Featured</span> : null}
                         {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-3 py-1 text-xs font-semibold text-white">Best Seller</span> : null}
                         {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-3 py-1 text-xs font-semibold text-[#1d4ed8]">New Arrival</span> : null}
                       </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap gap-2">
+                    </td>
+                    <td className="py-4 pr-4 align-top">
+                      <div className="flex min-w-[320px] flex-wrap gap-2">
                         <Button variant="ghost" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => editProduct(product)}>Edit</Button>
                         <Button variant="secondary" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
@@ -597,14 +599,16 @@ export default function AdminProductsPage() {
                           {deletingId === product.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
                 ))}
                 {!adminProducts.length ? (
-                  <div className="py-4 text-text/60">No products found.</div>
+                  <tr>
+                    <td className="py-4 text-text/60" colSpan={6}>No products found.</td>
+                  </tr>
                 ) : null}
-              </div>
-            </div>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
