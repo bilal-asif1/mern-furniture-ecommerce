@@ -346,9 +346,9 @@ export default function AdminProductsPage() {
       {catalogSuccess ? <div className="mb-4 rounded-3xl bg-green-50 px-5 py-4 text-sm text-green-700">{catalogSuccess}</div> : null}
       <Toast message={toast.message} type={toast.type} />
 
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <form onSubmit={submit} className="rounded-3xl bg-white p-6 shadow-card">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <form onSubmit={submit} className="max-h-[calc(100vh-180px)] overflow-y-auto rounded-3xl bg-white p-6 shadow-card">
+          <div className="flex flex-wrap items-center justify-between gap-3 sticky top-0 bg-white z-10 pb-4">
             <h2 className="font-display text-3xl font-semibold text-text">
               {editingId ? 'Edit Product' : 'Add Product'}
             </h2>
@@ -357,12 +357,12 @@ export default function AdminProductsPage() {
             </span>
           </div>
 
-          <div className="mt-6 space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <Field label="Product Name"><TextInput value={form.name} onChange={(event) => setField('name', event.target.value)} /></Field>
               <Field label="SKU"><TextInput value={form.sku} onChange={(event) => setField('sku', event.target.value)} /></Field>
             </div>
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <Field label="Category">
                 <SelectField value={form.category} onChange={(event) => setField('category', event.target.value)}>
                   <option value="">Select category</option>
@@ -379,30 +379,30 @@ export default function AdminProductsPage() {
                 </SelectField>
               </Field>
             </div>
-            <Field label="Short Description"><TextArea rows={3} value={form.shortDescription} onChange={(event) => setField('shortDescription', event.target.value)} /></Field>
-            <Field label="Description"><TextArea rows={5} value={form.description} onChange={(event) => setField('description', event.target.value)} /></Field>
+            <Field label="Short Description"><TextArea rows={2} value={form.shortDescription} onChange={(event) => setField('shortDescription', event.target.value)} /></Field>
+            <Field label="Description"><TextArea rows={3} value={form.description} onChange={(event) => setField('description', event.target.value)} /></Field>
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Price (PKR)"><TextInput type="number" value={form.price} onChange={(event) => setField('price', event.target.value)} /></Field>
               <Field label="Discount Price"><TextInput type="number" value={form.discountPrice} onChange={(event) => setField('discountPrice', event.target.value)} /></Field>
               <Field label="Discount %"><TextInput type="number" value={form.discountPercentage} onChange={(event) => setField('discountPercentage', event.target.value)} /></Field>
               <Field label="Stock Qty"><TextInput type="number" value={form.stock} onChange={(event) => setField('stock', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <Field label="Material"><TextInput value={form.material} onChange={(event) => setField('material', event.target.value)} /></Field>
               <Field label="Color"><TextInput value={form.color} onChange={(event) => setField('color', event.target.value)} /></Field>
               <Field label="Weight"><TextInput type="number" value={form.weight} onChange={(event) => setField('weight', event.target.value)} /></Field>
               <Field label="Warranty"><TextInput value={form.warranty} onChange={(event) => setField('warranty', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
               <Field label="Width"><TextInput type="number" value={form.dimensions.width} onChange={(event) => setDimension('width', event.target.value)} /></Field>
               <Field label="Height"><TextInput type="number" value={form.dimensions.height} onChange={(event) => setDimension('height', event.target.value)} /></Field>
               <Field label="Depth"><TextInput type="number" value={form.dimensions.depth} onChange={(event) => setDimension('depth', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <Field label="Tags" hint="Comma separated keywords">
                 <TextInput value={form.tags} onChange={(event) => setField('tags', event.target.value)} />
               </Field>
@@ -411,22 +411,22 @@ export default function AdminProductsPage() {
               </Field>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <label className="flex items-center gap-3 rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text">
+            <div className="grid gap-3 md:grid-cols-3">
+              <label className="flex items-center gap-2 rounded-xl border border-black/10 px-3 py-2 text-sm font-medium text-text">
                 <input type="checkbox" checked={form.featured} onChange={(event) => setField('featured', event.target.checked)} />
-                Featured Product
+                Featured
               </label>
-              <label className="flex items-center gap-3 rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text">
+              <label className="flex items-center gap-2 rounded-xl border border-black/10 px-3 py-2 text-sm font-medium text-text">
                 <input type="checkbox" checked={form.bestSeller} onChange={(event) => setField('bestSeller', event.target.checked)} />
                 Best Seller
               </label>
-              <label className="flex items-center gap-3 rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text">
+              <label className="flex items-center gap-2 rounded-xl border border-black/10 px-3 py-2 text-sm font-medium text-text">
                 <input type="checkbox" checked={form.newArrival} onChange={(event) => setField('newArrival', event.target.checked)} />
                 New Arrival
               </label>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               <Field label="Status">
                 <SelectField value={form.productStatus} onChange={(event) => setField('productStatus', event.target.value)}>
                   <option value="active">Active</option>
@@ -444,21 +444,21 @@ export default function AdminProductsPage() {
                 multiple
                 accept="image/*"
                 onChange={(event) => addImages(event.target.files)}
-                className="block w-full rounded-2xl border border-dashed border-black/15 bg-[#fbf8f4] px-4 py-3 text-sm text-text/70 file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-xs file:font-semibold file:text-white"
+                className="block w-full rounded-xl border border-dashed border-black/15 bg-[#fbf8f4] px-3 py-2 text-sm text-text/70 file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white"
               />
             </Field>
 
-            <div className="rounded-3xl border border-black/10 bg-[#fcfaf7] p-4">
+            <div className="rounded-2xl border border-black/10 bg-[#fcfaf7] p-4">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-text/70">Media Preview</h3>
                 <span className="text-xs text-text/50">{form.images.length} images</span>
               </div>
               {effectiveThumbnail ? (
-                <div className="mt-4 overflow-hidden rounded-3xl border border-black/10 bg-white">
+                <div className="mt-3 overflow-hidden rounded-2xl border border-black/10 bg-white">
                   <img
                     src={effectiveThumbnail}
                     alt="Thumbnail preview"
-                    className="h-64 w-full object-cover"
+                    className="h-48 w-full object-cover"
                     onError={(event) => {
                       event.currentTarget.onerror = null;
                       event.currentTarget.src = '/product-placeholder.svg';
@@ -466,24 +466,24 @@ export default function AdminProductsPage() {
                   />
                 </div>
               ) : (
-                <div className="mt-4 rounded-3xl border border-dashed border-black/10 px-4 py-14 text-center text-sm text-text/50">
+                <div className="mt-3 rounded-2xl border border-dashed border-black/10 px-4 py-10 text-center text-sm text-text/50">
                   Thumbnail preview appears here.
                 </div>
               )}
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
                 {form.images.map((image, index) => (
-                  <div key={image.id} className="overflow-hidden rounded-2xl border border-black/10 bg-white">
+                  <div key={image.id} className="overflow-hidden rounded-xl border border-black/10 bg-white">
                     <img
                       src={image.value}
                       alt={`Product ${index + 1}`}
-                      className="h-36 w-full object-cover"
+                      className="h-32 w-full object-cover"
                       onError={(event) => {
                         event.currentTarget.onerror = null;
                         event.currentTarget.src = '/product-placeholder.svg';
                       }}
                     />
-                    <div className="flex items-center gap-2 border-t border-black/5 p-3">
-                      <label className="inline-flex flex-1 cursor-pointer items-center justify-center rounded-full bg-[#f7efe3] px-3 py-2 text-xs font-semibold text-primary">
+                    <div className="flex items-center gap-2 border-t border-black/5 p-2">
+                      <label className="inline-flex flex-1 cursor-pointer items-center justify-center rounded-full bg-[#f7efe3] px-2 py-1.5 text-xs font-medium text-primary">
                         Replace
                         <input
                           type="file"
@@ -495,7 +495,7 @@ export default function AdminProductsPage() {
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="inline-flex flex-1 items-center justify-center rounded-full bg-red-50 px-3 py-2 text-xs font-semibold text-red-700"
+                        className="inline-flex flex-1 items-center justify-center rounded-full bg-red-50 px-2 py-1.5 text-xs font-medium text-red-700"
                       >
                         Delete
                       </button>
@@ -506,11 +506,11 @@ export default function AdminProductsPage() {
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button className="min-w-40" type="submit" disabled={saving}>
-              {saving ? 'Saving...' : editingId ? 'Update Product' : 'Create Product'}
+          <div className="mt-4 flex flex-wrap gap-3 sticky bottom-0 bg-white pt-4 border-t border-black/5">
+            <Button className="min-w-32" type="submit" disabled={saving}>
+              {saving ? 'Saving...' : editingId ? 'Update' : 'Create'}
             </Button>
-            {editingId ? <Button variant="ghost" onClick={resetForm}>Clear Form</Button> : null}
+            {editingId ? <Button variant="ghost" onClick={resetForm}>Clear</Button> : null}
           </div>
         </form>
 
@@ -524,46 +524,46 @@ export default function AdminProductsPage() {
           {adminCatalogLoading ? <div className="mt-6 text-sm text-text/60">Loading products...</div> : null}
 
           <div className="mt-6 overflow-x-auto pb-2">
-            <table className="min-w-[1200px] w-full table-auto text-left text-sm">
+            <table className="min-w-[1000px] w-full table-auto text-left text-sm">
               <thead className="text-xs uppercase tracking-[0.2em] text-text/50">
                 <tr>
-                  <th className="w-[280px] py-3 pr-4 whitespace-nowrap">Product</th>
-                  <th className="w-[150px] py-3 pr-4 whitespace-nowrap">Category</th>
-                  <th className="w-[150px] py-3 pr-4 whitespace-nowrap">Price</th>
-                  <th className="w-[120px] py-3 pr-4 whitespace-nowrap">Status</th>
-                  <th className="w-[160px] py-3 pr-4 whitespace-nowrap">Flags</th>
-                  <th className="w-[340px] py-3 pr-4 whitespace-nowrap">Actions</th>
+                  <th className="w-[240px] py-2 pr-3 whitespace-nowrap">Product</th>
+                  <th className="w-[120px] py-2 pr-3 whitespace-nowrap">Category</th>
+                  <th className="w-[120px] py-2 pr-3 whitespace-nowrap">Price</th>
+                  <th className="w-[100px] py-2 pr-3 whitespace-nowrap">Status</th>
+                  <th className="w-[140px] py-2 pr-3 whitespace-nowrap">Flags</th>
+                  <th className="w-[280px] py-2 pr-3 whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
                 {adminProducts.map((product) => (
                   <tr key={product.id} className={product.isDeleted ? 'opacity-60' : ''}>
-                    <td className="py-4 pr-4 align-top">
-                      <div className="flex min-w-0 items-center gap-3">
+                    <td className="py-3 pr-3 align-top">
+                      <div className="flex min-w-0 items-center gap-2">
                         <img
                           src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
                           alt={product.name}
-                          className="h-14 w-14 shrink-0 rounded-2xl object-cover"
+                          className="h-12 w-12 shrink-0 rounded-xl object-cover"
                           onError={(event) => {
                             event.currentTarget.onerror = null;
                             event.currentTarget.src = '/product-placeholder.svg';
                           }}
                         />
                         <div className="min-w-0">
-                          <div className="break-words font-semibold leading-6 text-text">{product.name}</div>
-                          <div className="mt-1 break-words text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
+                          <div className="break-words font-semibold leading-5 text-text text-sm">{product.name}</div>
+                          <div className="mt-0.5 break-words text-xs text-text/50">SKU: {product.sku || 'N/A'}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-4 pr-4 align-top whitespace-normal break-words text-text/70">{product.categoryName || 'Unassigned'}</td>
-                    <td className="py-4 pr-4 align-top text-text/70">
+                    <td className="py-3 pr-3 align-top whitespace-normal break-words text-text/70 text-sm">{product.categoryName || 'Unassigned'}</td>
+                    <td className="py-3 pr-3 align-top text-text/70 text-sm">
                       <div className="break-words font-semibold text-text">PKR {Number(product.price || 0).toLocaleString()}</div>
                       {product.discountPrice ? (
                         <div className="text-xs text-text/50">Sale: PKR {Number(product.discountPrice).toLocaleString()}</div>
                       ) : null}
                     </td>
-                    <td className="py-4 pr-4 align-top">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    <td className="py-3 pr-3 align-top">
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                         product.isDeleted
                           ? 'bg-red-50 text-red-700'
                           : product.productStatus === 'active'
@@ -573,29 +573,29 @@ export default function AdminProductsPage() {
                         {product.isDeleted ? 'Deleted' : product.productStatus === 'active' ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="py-4 pr-4 align-top">
-                      <div className="flex flex-wrap gap-2">
-                        {product.featured ? <span className="rounded-full bg-[#f7efe3] px-3 py-1 text-xs font-semibold text-primary">Featured</span> : null}
-                        {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-3 py-1 text-xs font-semibold text-white">Best Seller</span> : null}
-                        {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-3 py-1 text-xs font-semibold text-[#1d4ed8]">New Arrival</span> : null}
+                    <td className="py-3 pr-3 align-top">
+                      <div className="flex flex-wrap gap-1.5">
+                        {product.featured ? <span className="rounded-full bg-[#f7efe3] px-2 py-0.5 text-xs font-medium text-primary">Featured</span> : null}
+                        {product.bestSeller ? <span className="rounded-full bg-[#1f2937] px-2 py-0.5 text-xs font-medium text-white">Best Seller</span> : null}
+                        {product.newArrival ? <span className="rounded-full bg-[#dff1ff] px-2 py-0.5 text-xs font-medium text-[#1d4ed8]">New Arrival</span> : null}
                       </div>
                     </td>
-                    <td className="py-4 pr-4 align-top">
-                      <div className="flex flex-wrap gap-2">
-                        <Button variant="ghost" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => editProduct(product)}>Edit</Button>
-                        <Button variant="secondary" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
+                    <td className="py-3 pr-3 align-top">
+                      <div className="grid grid-cols-4 gap-1">
+                        <Button variant="ghost" className="px-2 py-1.5 text-xs font-medium" onClick={() => editProduct(product)}>Edit</Button>
+                        <Button variant="secondary" className="px-2 py-1.5 text-xs font-medium" onClick={() => handleStatusToggle(product)} disabled={deletingId === product.id}>
                           {product.productStatus === 'active' ? 'Deactivate' : 'Activate'}
                         </Button>
                         {product.isDeleted ? (
-                          <Button variant="primary" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
+                          <Button variant="primary" className="px-2 py-1.5 text-xs font-medium" onClick={() => handleRestore(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Restoring...' : 'Restore'}
                           </Button>
                         ) : (
-                          <Button variant="dark" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
+                          <Button variant="dark" className="px-2 py-1.5 text-xs font-medium" onClick={() => promptTrashProduct(product)} disabled={deletingId === product.id}>
                             {deletingId === product.id ? 'Deleting...' : 'Trash'}
                           </Button>
                         )}
-                        <Button variant="danger" className="px-3 py-2 text-xs sm:px-4 sm:py-2 sm:text-sm" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
+                        <Button variant="danger" className="px-2 py-1.5 text-xs font-medium" onClick={() => promptPermanentDeleteProduct(product)} disabled={deletingId === product.id}>
                           {deletingId === product.id ? 'Deleting...' : 'Delete'}
                         </Button>
                       </div>
@@ -604,7 +604,7 @@ export default function AdminProductsPage() {
                 ))}
                 {!adminProducts.length ? (
                   <tr>
-                    <td className="py-4 text-text/60" colSpan={6}>No products found.</td>
+                    <td className="py-3 text-text/60 text-sm" colSpan={6}>No products found.</td>
                   </tr>
                 ) : null}
               </tbody>
