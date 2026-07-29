@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useEffect, useState, useMemo } from 'react';
+import { PieChart, Pie, Cell, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminPageShell from '../../components/AdminPageShell';
 import { useApp } from '../../context/AppContext';
 import { adminApi } from '../../lib/adminApi';
@@ -10,9 +10,10 @@ const COLORS = ['#8b5e3c', '#c58d57', '#eadfce', '#a67c52', '#d4a574'];
 
 export default function AdminReportsPage() {
   const { auth } = useApp();
-  const [analytics, setAnalytics] = useState(null);
-  const [dateFilter, setDateFilter] = useState('all');
-  const [customRange, setCustomRange] = useState({ start: '', end: '' });
+  const [summary, setSummary] = useState(null);
+  const [revenue, setRevenue] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -21,35 +22,16 @@ export default function AdminReportsPage() {
       try {
         setLoading(true);
         setError('');
-        
-        let params = {};
-        if (dateFilter === 'today') {
-          const today = new Date().toISOString().split('T')[0];
-          params = { startDate: today, endDate: today };
-        } else if (dateFilter === '7days') {
-          const end = new Date();
-          const start = new Date();
-          start.setDate(start.getDate() - 7);
-          params = { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
-        } else if (dateFilter === '30days') {
-          const end = new Date();
-          const start = new Date();
-          start.setDate(start.getDate() - 30);
-          params = { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
-        } else if (dateFilter === 'month') {
-          const now = new Date();
-          const start = new Date(now.getFullYear(), now.getMonth(), 1);
-          params = { startDate: start.toISOString().split('T')[0], endDate: now.toISOString().split('T')[0] };
-        } else if (dateFilter === 'year') {
-          const now = new Date();
-          const start = new Date(now.getFullYear(), 0, 1);
-          params = { startDate: start.toISOString().split('T')[0], endDate: now.toISOString().split('T')[0] };
-        } else if (dateFilter === 'custom' && customRange.start && customRange.end) {
-          params = { startDate: customRange.start, endDate: customRange.end };
-        }
-
-        const data = await adminApi.analytics(auth.token, params);
-        setAnalytics(data);
+        const [summaryData, revenueData, ordersData, productsData] = await Promise.all([
+          adminApi.summary(auth.token),
+          adminApi.revenue(auth.token),
+          adminApi.orders(auth.token),
+          adminApi.products(auth.token, { limit: 200 }),
+        ]);
+        setSummary(summaryData);
+        setRevenue(revenueData || []);
+        setOrders(ordersData || []);
+        setProducts(productsData?.products || []);
       } catch (err) {
         setError(err.message || 'Unable to load reports');
       } finally {
@@ -58,7 +40,135 @@ export default function AdminReportsPage() {
     };
 
     if (auth?.token) load();
-  }, [auth?.token, dateFilter, customRange]);
+  }, [auth?.token]);
+
+  // Compute analytics on frontend
+  const analytics = useMemo(() => {
+    if (!summary || !orders.length) return null;
+
+    // Calculate top selling products
+    const productSales = {};
+    orders.forEach(order => {
+      (order.orderItems || []).forEach(item => {
+        const productId = item.product?._id || item.product;
+        if (!productSales[productId]) {
+          productSales[productId] = {
+            productId,
+            name: item.name,
+            image: item.image || item.product?.images?.[0] || '',
+            unitsSold: 0,
+            revenue: 0,
+          };
+        }
+        productSales[productId].unitsSold += item.qty || 1;
+        productSales[productId].revenue += (item.price || 0) * (item.qty || 1);
+      });
+    });
+
+    const topSellingProducts = Object.values(productSales)
+      .sort((a, b) => b.unitsSold - a.unitsSold)
+      .slice(0, 10)
+      .map(product => ({
+        ...product,
+        stock: products.find(p => p._id === product.productId)?.stock || 0,
+      }));
+
+    // Calculate category revenue
+    const categoryRevenue = {};
+    orders.forEach(order => {
+      (order.orderItems || []).forEach(item => {
+        const categoryName = item.product?.category?.name || 'Uncategorized';
+        if (!categoryRevenue[categoryName]) {
+          categoryRevenue[categoryName] = 0;
+        }
+        categoryRevenue[categoryName] += (item.price || 0) * (item.qty || 1);
+      });
+    });
+
+    const categoryPerformance = Object.entries(categoryRevenue)
+      .map(([name, revenue]) => ({ name, revenue }))
+      .sort((a, b) => b.revenue - a.revenue);
+
+    // Calculate sales overview
+    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+    const totalOrders = orders.length;
+    const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+    
+    // Find best selling day
+    const daySales = {};
+    orders.forEach(order => {
+      if (order.createdAt) {
+        const day = new Date(order.createdAt).toLocaleDateString('en-US', { weekday: 'long' });
+        if (!daySales[day]) daySales[day] = 0;
+        daySales[day] += order.totalPrice || 0;
+      }
+    });
+    const bestSellingDay = Object.entries(daySales).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+    // Find best selling month
+    const monthSales = {};
+    orders.forEach(order => {
+      if (order.createdAt) {
+        const month = new Date(order.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        if (!monthSales[month]) monthSales[month] = 0;
+        monthSales[month] += order.totalPrice || 0;
+      }
+    });
+    const bestSellingMonth = Object.entries(monthSales).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+    const bestSellingCategory = categoryPerformance[0]?.name || 'N/A';
+    
+    // Calculate total discount given
+    let totalDiscount = 0;
+    orders.forEach(order => {
+      (order.orderItems || []).forEach(item => {
+        const product = products.find(p => p._id === (item.product?._id || item.product));
+        if (product && product.discountPrice && product.discountPrice < product.price) {
+          const discountPerUnit = product.price - product.discountPrice;
+          totalDiscount += discountPerUnit * (item.qty || 1);
+        }
+      });
+    });
+
+    // Recent transactions
+    const recentTransactions = orders.slice(0, 20).map(order => ({
+      id: order._id,
+      customer: order.user?.name || order.shippingAddress?.fullName || 'Guest',
+      orderId: order._id?.toString().slice(-8).toUpperCase() || 'N/A',
+      amount: order.totalPrice || 0,
+      status: order.status || 'Pending',
+      date: order.createdAt,
+    }));
+
+    // Monthly revenue for line chart
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlyChart = revenue.map(item => ({
+      month: monthNames[item.month - 1],
+      year: item.year,
+      revenue: item.revenue,
+    }));
+
+    return {
+      summary: {
+        totalRevenue: summary.revenue || 0,
+        totalOrders: summary.orders || 0,
+        totalCustomers: summary.customers || 0,
+        totalProducts: summary.products || 0,
+      },
+      topSellingProducts,
+      recentTransactions,
+      categoryPerformance,
+      salesOverview: {
+        averageOrderValue,
+        bestSellingDay,
+        bestSellingMonth,
+        bestSellingCategory,
+        totalDiscount,
+      },
+      monthlyRevenue: monthlyChart,
+      categoryRevenue: categoryPerformance,
+    };
+  }, [summary, orders, products]);
 
   const handleExport = (format) => {
     console.log(`Exporting as ${format}`);
@@ -81,50 +191,17 @@ export default function AdminReportsPage() {
       
       {analytics && (
         <>
-          {/* Date Filters & Export */}
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-2">
-              {['all', 'today', '7days', '30days', 'month', 'year', 'custom'].map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setDateFilter(filter)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                    dateFilter === filter
-                      ? 'bg-primary text-white'
-                      : 'bg-white text-text/70 hover:bg-white/80'
-                  }`}
-                >
-                  {filter === 'all' ? 'All Time' : filter === '7days' ? 'Last 7 Days' : filter === '30days' ? 'Last 30 Days' : filter === 'month' ? 'This Month' : filter === 'year' ? 'This Year' : filter === 'custom' ? 'Custom' : 'Today'}
-                </button>
-              ))}
-              {dateFilter === 'custom' && (
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    value={customRange.start}
-                    onChange={(e) => setCustomRange({ ...customRange, start: e.target.value })}
-                    className="rounded-full border border-black/10 px-3 py-2 text-sm"
-                  />
-                  <input
-                    type="date"
-                    value={customRange.end}
-                    onChange={(e) => setCustomRange({ ...customRange, end: e.target.value })}
-                    className="rounded-full border border-black/10 px-3 py-2 text-sm"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="flex gap-2">
-              {['PDF', 'Excel', 'CSV', 'Print'].map((format) => (
-                <button
-                  key={format}
-                  onClick={() => handleExport(format.toLowerCase())}
-                  className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text/70 hover:bg-white/80 transition"
-                >
-                  Export {format}
-                </button>
-              ))}
-            </div>
+          {/* Export Buttons */}
+          <div className="mb-6 flex flex-wrap items-center justify-end gap-2">
+            {['PDF', 'Excel', 'CSV', 'Print'].map((format) => (
+              <button
+                key={format}
+                onClick={() => handleExport(format.toLowerCase())}
+                className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text/70 hover:bg-white/80 transition"
+              >
+                Export {format}
+              </button>
+            ))}
           </div>
 
           {/* KPI Summary Cards */}
