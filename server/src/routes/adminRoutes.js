@@ -1,7 +1,7 @@
 import express from 'express';
 import { admin, protect } from '../middleware/authMiddleware.js';
 import { deleteUser, getUsers, updateUser } from '../controllers/userController.js';
-import { getDashboardSummary, getInventoryOverview, getRevenueAnalytics } from '../controllers/adminController.js';
+import { getDashboardSummary, getInventoryOverview, getRevenueAnalytics, getDetailedAnalytics } from '../controllers/adminController.js';
 import { createProduct, deleteProduct, getAdminProducts, restoreProduct, toggleProductStatus, updateProduct } from '../controllers/productController.js';
 import { deleteOrder } from '../controllers/orderController.js';
 
@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.get('/summary', protect, admin, getDashboardSummary);
 router.get('/analytics/revenue', protect, admin, getRevenueAnalytics);
+router.get('/analytics', protect, admin, getDetailedAnalytics);
 router.get('/inventory', protect, admin, getInventoryOverview);
 router.get('/users', protect, admin, getUsers);
 router.put('/users/:id', protect, admin, updateUser);

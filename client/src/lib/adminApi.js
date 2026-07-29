@@ -34,6 +34,7 @@ export const adminApi = {
   orders: (token) => apiClient.get('/orders', withAuth(token)).then((response) => response.data),
   updateOrder: (token, id, body) => apiClient.put(`/orders/${id}`, body, withAuth(token)).then((response) => response.data),
   deleteOrder: (token, id) => apiClient.delete(`/admin/orders/${id}`, withAuth(token)).then((response) => response.data),
+  analytics: (token, params) => apiClient.get('/admin/analytics', { ...withAuth(token), params }).then((response) => response.data),
 };
 
 export const productApi = {
