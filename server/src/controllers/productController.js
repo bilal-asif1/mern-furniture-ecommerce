@@ -2,7 +2,8 @@ import asyncHandler from 'express-async-handler';
 import Product from '../models/Product.js';
 import Review from '../models/Review.js';
 import slugify from '../utils/slugify.js';
-import { deleteImageValue, normalizeProductPayload } from '../utils/productMedia.js';
+import { deleteImageValue, normalizeProductPayload, extractCloudinaryPublicId } from '../utils/productMedia.js';
+import configureCloudinary from '../config/cloudinary.js';
 
 const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
   const filter = {};
@@ -239,15 +240,23 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new Error('Product not found');
   }
 
-  const imagesToDelete = new Set([
-    ...(Array.isArray(product.images) ? product.images : []),
-    product.thumbnailImage || '',
-  ]);
+  try {
+    const mainImage = product.thumbnailImage || (product.images && product.images[0]) || '';
+    const public_id = extractCloudinaryPublicId(mainImage);
+    
+    if (public_id) {
+      const cloudinary = configureCloudinary();
+      if (cloudinary) {
+        await cloudinary.uploader.destroy(public_id);
+      }
+    }
+  } catch (error) {
+    console.error('Cloudinary delete error:', error);
+  }
 
-  await Promise.all(Array.from(imagesToDelete).filter(Boolean).map((image) => deleteImageValue(image)));
   await Product.findByIdAndDelete(req.params.id);
 
-  res.json({ message: 'Product deleted successfully', product: await serializeProduct(product) });
+  res.status(200).json({ success: true, message: 'Product deleted successfully.' });
 });
 
 const restoreProduct = asyncHandler(async (req, res) => {
