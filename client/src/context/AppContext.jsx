@@ -53,7 +53,7 @@ import {
   clearAdminMessage,
   fetchBrands,
 } from '../store';
-import { formatCurrency, getEffectivePrice } from '../../utils/formatCurrency';
+import { getEffectivePrice } from '../utils/formatCurrency';
 
 function AppBootstrap() {
   const dispatch = useDispatch();
