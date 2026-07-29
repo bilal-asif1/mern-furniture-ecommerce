@@ -75,6 +75,8 @@ export default function HomePage() {
   const newArrivals = products.filter((product) => ['New Arrival', 'Trending'].includes(product.badge));
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const carouselRef = useRef(null);
+  const [activeWhyChoose, setActiveWhyChoose] = useState(0);
+  const whyChooseRef = useRef(null);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -85,6 +87,21 @@ export default function HomePage() {
       const cardWidth = carousel.offsetWidth;
       const newIndex = Math.round(scrollLeft / cardWidth);
       setActiveTestimonial(newIndex);
+    };
+
+    carousel.addEventListener('scroll', handleScroll);
+    return () => carousel.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const carousel = whyChooseRef.current;
+    if (!carousel) return;
+
+    const handleScroll = () => {
+      const scrollLeft = carousel.scrollLeft;
+      const cardWidth = carousel.offsetWidth;
+      const newIndex = Math.round(scrollLeft / cardWidth);
+      setActiveWhyChoose(newIndex);
     };
 
     carousel.addEventListener('scroll', handleScroll);
@@ -169,7 +186,7 @@ export default function HomePage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="grid gap-6 lg:grid-cols-[0.94fr_1.06fr]"
+          className="flex flex-col gap-6 lg:grid lg:grid-cols-[0.94fr_1.06fr]"
         >
           <motion.div
             variants={reveal}
@@ -189,7 +206,67 @@ export default function HomePage() {
               <Button to="/about" variant="ghost" className="min-w-32">Learn More</Button>
             </div>
           </motion.div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          
+          {/* Mobile Carousel */}
+          <div className="lg:hidden">
+            <div
+              ref={whyChooseRef}
+              className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide"
+              style={{
+                scrollSnapType: 'x mandatory',
+                WebkitOverflowScrolling: 'touch',
+              }}
+            >
+              {whyChooseItems.map((item, index) => (
+                <motion.article
+                  key={item.title}
+                  variants={reveal}
+                  custom={index * 0.08 + 0.04}
+                  whileHover={{ y: -6 }}
+                  className="group flex-shrink-0 w-[calc(100%-15px)] rounded-[1.8rem] border border-white/70 bg-white/88 p-5 shadow-[0_16px_45px_rgba(63,39,17,0.08)] transition-shadow duration-300 hover:shadow-[0_22px_55px_rgba(63,39,17,0.12)] sm:p-6"
+                  style={{ scrollSnapAlign: 'start' }}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f7efe3] text-primary shadow-sm transition-transform duration-300 group-hover:scale-105">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-text sm:text-xl">{item.title}</h4>
+                      <p className="mt-2 text-sm leading-7 text-text/65 sm:text-[15px]">{item.description}</p>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+
+            {/* Mobile Pagination Dots */}
+            <div className="flex justify-center gap-2 mt-4">
+              {whyChooseItems.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    const carousel = whyChooseRef.current;
+                    if (carousel) {
+                      const cardWidth = carousel.offsetWidth;
+                      carousel.scrollTo({
+                        left: index * cardWidth,
+                        behavior: 'smooth',
+                      });
+                    }
+                  }}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === activeWhyChoose
+                      ? 'w-6 bg-primary'
+                      : 'w-2 bg-primary/30'
+                  }`}
+                  aria-label={`Go to feature ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop/Tablet Grid */}
+          <div className="hidden lg:grid lg:grid-cols-2 lg:gap-4">
             {whyChooseItems.map((item, index) => (
               <motion.article
                 key={item.title}
