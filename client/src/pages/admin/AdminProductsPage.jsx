@@ -90,13 +90,6 @@ const readFileAsDataUrl = (file) =>
     reader.readAsDataURL(file);
   });
 
-const calculateDiscountPercentage = (price, discountPrice) => {
-  const currentPrice = Number(price);
-  const discountedPrice = Number(discountPrice);
-  if (!currentPrice || !discountedPrice || discountedPrice >= currentPrice) return '';
-  return String(Math.round(((currentPrice - discountedPrice) / currentPrice) * 100));
-};
-
 export default function AdminProductsPage() {
   const {
     adminProducts,
