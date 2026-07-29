@@ -68,3 +68,12 @@ body {
     linear-gradient(90deg, rgba(255, 255, 255, 0.45) 1px, transparent 1px);
   background-size: 48px 48px;
 }
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
