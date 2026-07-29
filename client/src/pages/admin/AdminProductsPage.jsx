@@ -6,6 +6,7 @@ import ConfirmationModal from '../../components/ConfirmationModal';
 import { Field, SelectField, TextArea, TextInput } from '../../components/Field';
 import Toast from '../../components/Toast';
 import { useApp } from '../../context/AppContext';
+import { calculateDiscountPercentage, calculateDiscountPrice } from '../../utils/formatCurrency';
 
 const createId = () => (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`);
 
@@ -219,7 +220,30 @@ export default function AdminProductsPage() {
     }));
   };
 
-  const setField = (key, value) => setForm((current) => ({ ...current, [key]: value }));
+  const setField = (key, value) => {
+    setForm((current) => {
+      const updated = { ...current, [key]: value };
+      
+      // Live calculation for pricing fields
+      if (key === 'price' || key === 'discountPercentage') {
+        const price = Number(updated.price) || 0;
+        const discountPercentage = Number(updated.discountPercentage) || 0;
+        if (price > 0 && discountPercentage > 0) {
+          updated.discountPrice = String(calculateDiscountPrice(price, discountPercentage));
+        }
+      }
+      
+      if (key === 'price' || key === 'discountPrice') {
+        const price = Number(updated.price) || 0;
+        const discountPrice = Number(updated.discountPrice) || 0;
+        if (price > 0 && discountPrice > 0 && discountPrice < price) {
+          updated.discountPercentage = String(calculateDiscountPercentage(price, discountPrice));
+        }
+      }
+      
+      return updated;
+    });
+  };
   const setDimension = (key, value) => setForm((current) => ({ ...current, dimensions: { ...current.dimensions, [key]: value } }));
 
   const submit = async (event) => {

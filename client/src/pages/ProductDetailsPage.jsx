@@ -7,6 +7,7 @@ import RatingStars from '../components/RatingStars';
 import EmptyState from '../components/EmptyState';
 import QuantityStepper from '../components/QuantityStepper';
 import { useApp } from '../context/AppContext';
+import { calculateDiscountPercentage } from '../utils/formatCurrency';
 
 export default function ProductDetailsPage() {
   const { slug } = useParams();
@@ -48,6 +49,11 @@ export default function ProductDetailsPage() {
 
   const wishlisted = isWishlisted(product.id);
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
+  
+  const originalPrice = Number(product.price) || 0;
+  const discountPrice = Number(product.discountPrice) || 0;
+  const discountPercentage = calculateDiscountPercentage(originalPrice, discountPrice);
+  const hasDiscount = discountPrice > 0 && discountPrice < originalPrice;
 
   return (
     <PageSection className="py-10">
@@ -116,7 +122,15 @@ export default function ProductDetailsPage() {
             className="mt-8 rounded-3xl bg-white p-6 shadow-card"
           >
             <p className="text-sm font-medium text-text/60">Price</p>
-            <p className="mt-1 text-4xl font-bold text-text">PKR {Number(product.price || 0).toLocaleString()}</p>
+            {hasDiscount ? (
+              <div className="mt-1">
+                <p className="text-2xl text-text/50 line-through">PKR {originalPrice.toLocaleString()}</p>
+                <p className="text-4xl font-bold text-text">PKR {discountPrice.toLocaleString()}</p>
+                <p className="mt-1 text-sm font-semibold text-primary">-{discountPercentage}% OFF</p>
+              </div>
+            ) : (
+              <p className="mt-1 text-4xl font-bold text-text">PKR {originalPrice.toLocaleString()}</p>
+            )}
             <div className="mt-6 flex flex-wrap items-center gap-4">
               <QuantityStepper value={qty} onChange={setQty} />
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

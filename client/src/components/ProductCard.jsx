@@ -3,11 +3,17 @@ import { motion } from 'framer-motion';
 import Button from './Button';
 import RatingStars from './RatingStars';
 import { useApp } from '../context/AppContext';
+import { calculateDiscountPercentage } from '../utils/formatCurrency';
 
 export default function ProductCard({ product, compact = false, index = 0 }) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const wishlisted = wishlist.some((item) => item.id === product.id);
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
+  
+  const originalPrice = Number(product.price) || 0;
+  const discountPrice = Number(product.discountPrice) || 0;
+  const discountPercentage = calculateDiscountPercentage(originalPrice, discountPrice);
+  const hasDiscount = discountPrice > 0 && discountPrice < originalPrice;
 
   return (
     <motion.article
@@ -17,7 +23,12 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
       whileHover={{ y: -8 }}
       className="group overflow-hidden rounded-3xl bg-white shadow-card"
     >
-      <Link to={`/product/${product.slug}`} className="block overflow-hidden">
+      <Link to={`/product/${product.slug}`} className="block overflow-hidden relative">
+          {hasDiscount && (
+            <div className="absolute top-3 left-3 z-10 rounded-full bg-primary px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
+              -{discountPercentage}% OFF
+            </div>
+          )}
           <motion.div
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.4 }}
@@ -86,7 +97,16 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
             <RatingStars value={product.rating} />
             <p className="mt-0.5 text-[10px] text-text/50 sm:mt-1 sm:text-xs">{product.reviews} reviews</p>
           </div>
-          <p className="shrink-0 text-base font-bold text-text sm:text-xl">PKR {Number(product.price || 0).toLocaleString()}</p>
+          <div className="shrink-0 text-right">
+            {hasDiscount ? (
+              <>
+                <p className="text-xs text-text/50 line-through sm:text-sm">PKR {originalPrice.toLocaleString()}</p>
+                <p className="text-base font-bold text-text sm:text-xl">PKR {discountPrice.toLocaleString()}</p>
+              </>
+            ) : (
+              <p className="text-base font-bold text-text sm:text-xl">PKR {originalPrice.toLocaleString()}</p>
+            )}
+          </div>
         </motion.div>
         <motion.div
           initial={{ opacity: 0 }}

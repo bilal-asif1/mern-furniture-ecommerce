@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import EmptyState from '../components/EmptyState';
 import QuantityStepper from '../components/QuantityStepper';
 import { useApp } from '../context/AppContext';
-import { formatCurrency } from '../utils/formatCurrency';
+import { formatCurrency, calculateDiscountPercentage } from '../utils/formatCurrency';
 
 export default function CartPage() {
   const { cart, cartSubtotal, removeFromCart, updateCartQty, clearCart, cartLoading, cartError, cartSuccess } = useApp();
@@ -32,41 +32,57 @@ export default function CartPage() {
               </motion.div>
             </div>
             <AnimatePresence mode="popLayout">
-              {cart.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="flex flex-col gap-5 rounded-3xl bg-white p-5 shadow-card sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="flex gap-4">
-                    <motion.img
-                      src={item.image || item.images?.[0]}
-                      alt={item.name}
-                      whileHover={{ scale: 1.05 }}
-                      className="h-24 w-24 rounded-2xl object-cover"
-                    />
-                    <div>
-                      <h3 className="text-lg font-semibold text-text">{item.name}</h3>
-                      <p className="text-sm text-text/60">{item.categoryName || item.category || 'Furniture'}</p>
-                      <p className="mt-2 text-sm font-semibold text-primary">{formatCurrency(item.price)}</p>
+              {cart.map((item, index) => {
+                const originalPrice = Number(item.price) || 0;
+                const discountPrice = Number(item.discountPrice) || 0;
+                const discountPercentage = calculateDiscountPercentage(originalPrice, discountPrice);
+                const hasDiscount = discountPrice > 0 && discountPrice < originalPrice;
+                const displayPrice = hasDiscount ? discountPrice : originalPrice;
+                
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="flex flex-col gap-5 rounded-3xl bg-white p-5 shadow-card sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex gap-4">
+                      <motion.img
+                        src={item.image || item.images?.[0]}
+                        alt={item.name}
+                        whileHover={{ scale: 1.05 }}
+                        className="h-24 w-24 rounded-2xl object-cover"
+                      />
+                      <div>
+                        <h3 className="text-lg font-semibold text-text">{item.name}</h3>
+                        <p className="text-sm text-text/60">{item.categoryName || item.category || 'Furniture'}</p>
+                        {hasDiscount ? (
+                          <div className="mt-2">
+                            <p className="text-xs text-text/50 line-through">{formatCurrency(originalPrice)}</p>
+                            <p className="text-sm font-semibold text-primary">{formatCurrency(displayPrice)}</p>
+                            <p className="text-xs font-semibold text-primary">-{discountPercentage}% OFF</p>
+                          </div>
+                        ) : (
+                          <p className="mt-2 text-sm font-semibold text-primary">{formatCurrency(displayPrice)}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <QuantityStepper value={item.quantity} onChange={(value) => updateCartQty({ id: item.id, quantity: value })} />
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="text-sm font-semibold text-[#8a4939]"
-                      onClick={() => removeFromCart(item.id)}
-                    >
-                      Remove
-                    </motion.button>
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="flex items-center gap-4">
+                      <QuantityStepper value={item.quantity} onChange={(value) => updateCartQty({ id: item.id, quantity: value })} />
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="text-sm font-semibold text-[#8a4939]"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        Remove
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </motion.div>
           <motion.aside
