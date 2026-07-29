@@ -6,7 +6,7 @@ import SectionTitle from '../components/SectionTitle';
 import Button from '../components/Button';
 import { Field, SelectField, TextArea, TextInput } from '../components/Field';
 import { useApp } from '../context/AppContext';
-import { formatCurrency } from '../utils/formatCurrency';
+import { formatCurrency, getEffectivePrice } from '../utils/formatCurrency';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -22,8 +22,7 @@ export default function CheckoutPage() {
   });
 
   const shippingPrice = cart.length ? 1000 : 0;
-  const taxPrice = Number((cartSubtotal * 0.08).toFixed(2));
-  const totalPrice = Number((cartSubtotal + shippingPrice + taxPrice).toFixed(2));
+  const totalPrice = Number((cartSubtotal + shippingPrice).toFixed(2));
 
   const placeOrder = async (event) => {
     event.preventDefault();
@@ -32,7 +31,7 @@ export default function CheckoutPage() {
       product: item.id,
       name: item.name,
       qty: item.quantity,
-      price: item.price,
+      price: getEffectivePrice(item),
       image: item.image || item.images?.[0] || '',
     }));
 
@@ -47,7 +46,6 @@ export default function CheckoutPage() {
       },
       orderNotes: form.notes,
       paymentMethod: form.paymentMethod,
-      taxPrice,
       shippingPrice,
       totalPrice,
     };
@@ -188,7 +186,7 @@ export default function CheckoutPage() {
                   className="flex items-center justify-between text-sm text-text/70"
                 >
                   <span>{item.name} x {item.quantity}</span>
-                  <span>{formatCurrency(item.price * item.quantity)}</span>
+                  <span>{formatCurrency(getEffectivePrice(item) * item.quantity)}</span>
                 </motion.div>
               ))}
             </AnimatePresence>

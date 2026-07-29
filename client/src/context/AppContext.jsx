@@ -53,6 +53,7 @@ import {
   clearAdminMessage,
   fetchBrands,
 } from '../store';
+import { formatCurrency, getEffectivePrice } from '../../utils/formatCurrency';
 
 function AppBootstrap() {
   const dispatch = useDispatch();
@@ -240,7 +241,7 @@ export function useApp() {
       toast,
       showToast,
       cartCount: cartState.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
-      cartSubtotal: cartState.items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0),
+      cartSubtotal: cartState.items.reduce((sum, item) => sum + getEffectivePrice(item) * Number(item.quantity || 0), 0),
       isWishlisted: (productId) => wishlistState.items.some((item) => item.id === productId || item._id === productId),
       isInCart: (productId) => cartState.items.some((item) => item.id === productId || item._id === productId),
       login: (payload) => dispatch(setCredentials(payload)),
