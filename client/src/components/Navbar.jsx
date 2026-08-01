@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, Menu, MessageCircle, UserRound, X } from 'lucide-react';
+import { Heart, Menu, MessageCircle, Search, UserRound, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import Logo from './Logo';
 import { buildWhatsAppLink } from '../utils/whatsapp';
@@ -56,43 +56,49 @@ export default function Navbar() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.25 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setOpen(true)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-text/70 transition hover:border-primary hover:text-text md:hidden"
+            whileTap={{ scale: 0.96 }}
+            className={`${iconAction} border-black/10 bg-white text-text/80`}
+            onClick={() => setOpen((value) => !value)}
             aria-label="Open menu"
           >
-            <Menu className="h-5 w-5" />
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </motion.button>
-          <Link to="/" className="flex items-center gap-2">
-            <Logo className="h-8 w-auto sm:h-10 lg:h-11" />
-          </Link>
+          <motion.nav
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="hidden items-center gap-5 xl:flex"
+          >
+            {navItems.map((item, index) => (
+              <motion.div
+                key={item.to}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: index * 0.05 }}
+              >
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) => (
+                    `group relative text-[12px] font-medium uppercase tracking-[0.26em] transition ${isActive ? 'text-primary' : 'text-text/70 hover:text-text'}`
+                  )}
+                >
+                  <span>{item.label}</span>
+                  <span className="absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-primary/70 transition-transform duration-300 group-hover:scale-x-100" />
+                </NavLink>
+              </motion.div>
+            ))}
+          </motion.nav>
         </div>
 
-        <motion.nav
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="hidden lg:flex items-center gap-8"
+        <Link
+          to="/"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          aria-label="Junaid Furniture home"
         >
-          {navItems.map((item, index) => (
-            <motion.div
-              key={item.to}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: index * 0.05 }}
-            >
-              <NavLink
-                to={item.to}
-                className={({ isActive }) => (
-                  `group relative text-[12px] font-medium uppercase tracking-[0.26em] transition ${isActive ? 'text-primary' : 'text-text/70 hover:text-text'}`
-                )}
-              >
-                <span>{item.label}</span>
-                <span className="absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-primary/70 transition-transform duration-300 group-hover:scale-x-100" />
-              </NavLink>
-            </motion.div>
-          ))}
-        </motion.nav>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex items-center justify-center">
+            <Logo />
+          </motion.div>
+        </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <motion.div
@@ -103,8 +109,32 @@ export default function Navbar() {
             whileTap={{ scale: 0.98 }}
           >
             <Link
+              to="/shop"
+              className={`${desktopTextAction} hidden border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text md:inline-flex`}
+            >
+              <Search className="h-4 w-4" />
+              <span>Search</span>
+            </Link>
+            <Link
+              to="/shop"
+              className={`${iconAction} border-black/10 bg-white text-text/75 md:hidden`}
+              aria-label="Search"
+            >
+              <Search className="h-4 w-4" />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.12 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden md:block"
+          >
+            <Link
               to="/wishlist"
-              className={`${desktopTextAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text hidden md:inline-flex`}
+              className={`${desktopTextAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text`}
             >
               <Heart className={`h-4 w-4 ${wishlist.length > 0 ? 'fill-current text-primary' : ''}`} />
               <span>Wishlist</span>
@@ -113,22 +143,6 @@ export default function Navbar() {
                   animate={wishlistAnimating ? { scale: [1, 1.35, 1] } : {}}
                   transition={{ duration: 0.4 }}
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white"
-                >
-                  {wishlist.length}
-                </motion.span>
-              ) : null}
-            </Link>
-            <Link
-              to="/wishlist"
-              className={`${iconAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text md:hidden`}
-              aria-label="Wishlist"
-            >
-              <Heart className={`h-4 w-4 ${wishlist.length > 0 ? 'fill-current text-primary' : ''}`} />
-              {wishlist.length > 0 ? (
-                <motion.span
-                  animate={wishlistAnimating ? { scale: [1, 1.35, 1] } : {}}
-                  transition={{ duration: 0.4 }}
-                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white"
                 >
                   {wishlist.length}
                 </motion.span>
