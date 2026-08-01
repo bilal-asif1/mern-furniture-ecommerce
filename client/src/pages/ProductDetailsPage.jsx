@@ -178,9 +178,9 @@ export default function ProductDetailsPage() {
           >
             <p className="text-sm font-semibold text-text">Why it stands out</p>
             <ul className="mt-3 space-y-2.5 text-sm leading-7 text-text/70 sm:mt-4">
-              <li>- Premium silhouette with a clean, editorial profile.</li>
-              <li>- Responsive, modern shopping flow across all devices.</li>
-              <li>- Designed for the polished brand feel of luxury furniture stores.</li>
+              <li>- Crafted with attention to detail using quality materials</li>
+              <li>- Built to last with durable construction and premium finishes</li>
+              <li>- A versatile piece designed to complement any interior space</li>
             </ul>
           </motion.div>
           <motion.div
