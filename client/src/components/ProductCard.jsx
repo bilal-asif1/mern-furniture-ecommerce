@@ -31,16 +31,16 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
       <div className="relative">
         {/* Badges */}
         {badges.length > 0 && (
-          <div className="absolute left-3 top-3 z-10 flex flex-col gap-1.5">
-            {badges.slice(0, 2).map((badge, badgeIndex) => (
+          <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-3rem)]">
+            {badges.slice(0, 3).map((badge, badgeIndex) => (
               <motion.div
                 key={badge.label}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 + 0.15 + badgeIndex * 0.05 }}
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 ${badge.color} text-[9px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_8px_20px_rgba(139,94,60,0.25)]`}
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${badge.color} text-[8px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_8px_20px_rgba(139,94,60,0.25)]`}
               >
-                {badge.icon && <badge.icon className="h-3 w-3" />}
+                {badge.icon && <badge.icon className="h-2.5 w-2.5" />}
                 {badge.label}
               </motion.div>
             ))}
