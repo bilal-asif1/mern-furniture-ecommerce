@@ -1,141 +1,193 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Heart, Menu, MessageCircle, Search, UserRound, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import Logo from './Logo';
+import { buildWhatsAppLink } from '../utils/whatsapp';
+
 const navItems = [
   { to: '/shop', label: 'Shop' },
-  { to: '/categories', label: 'Categories' },
+  { to: '/categories', label: 'Collections' },
   { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
-  { to: '/faq', label: 'FAQ' },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const { cartCount, wishlist, auth } = useApp();
+  const [scrolled, setScrolled] = useState(false);
+  const { wishlist, auth } = useApp();
 
-  const prevCartCountRef = useRef(cartCount);
   const prevWishlistRef = useRef(wishlist.length);
-  const [cartAnimating, setCartAnimating] = useState(false);
   const [wishlistAnimating, setWishlistAnimating] = useState(false);
-
-  useEffect(() => {
-    if (cartCount > prevCartCountRef.current) {
-      setCartAnimating(true);
-      setTimeout(() => setCartAnimating(false), 400);
-    }
-    prevCartCountRef.current = cartCount;
-  }, [cartCount]);
 
   useEffect(() => {
     if (wishlist.length > prevWishlistRef.current) {
       setWishlistAnimating(true);
-      setTimeout(() => setWishlistAnimating(false), 400);
+      const timer = window.setTimeout(() => setWishlistAnimating(false), 400);
+      return () => window.clearTimeout(timer);
     }
+
     prevWishlistRef.current = wishlist.length;
+    return undefined;
   }, [wishlist.length]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 12);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const signInLabel = auth?.user ? auth.user.name.split(' ')[0] : 'Sign In';
+  const whatsappLink = buildWhatsAppLink('Hi, I have a general inquiry about your furniture collection.');
+  const actionBase = 'inline-flex h-11 items-center justify-center rounded-full border text-sm font-semibold transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30';
+  const desktopTextAction = `${actionBase} gap-2 px-4 lg:px-5`;
+  const iconAction = `${actionBase} w-11`;
+
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 w-full border-b border-black/5 bg-white/85 backdrop-blur-md">
-      <div className="section-shell flex items-center justify-between py-4">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Link to="/" className="flex items-center">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Logo />
-            </motion.div>
-          </Link>
-        </motion.div>
-
-        <nav className="hidden items-center gap-7 lg:flex">
-          {navItems.map((item, index) => (
-            <motion.div
-              key={item.to}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <NavLink
-                to={item.to}
-                className={({ isActive }) =>
-                  `text-sm font-medium transition ${isActive ? 'text-primary' : 'text-text/70 hover:text-text'}`
-                }
-              >
-                {item.label}
-              </NavLink>
-            </motion.div>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-1 sm:gap-2">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+    <header className={`fixed left-0 right-0 top-0 z-50 w-full border-b border-[#eadfce]/80 bg-white/90 backdrop-blur-xl transition-shadow duration-300 ${scrolled ? 'shadow-[0_12px_36px_rgba(79,56,36,0.10)]' : 'shadow-none'}`}>
+      <div className="section-shell relative flex items-center justify-between py-4 sm:py-5 lg:py-5">
+        <div className="flex items-center gap-2 sm:gap-4 lg:gap-6">
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            whileTap={{ scale: 0.96 }}
+            className={`${iconAction} border-black/10 bg-white text-text/80`}
+            onClick={() => setOpen((value) => !value)}
+            aria-label="Open menu"
           >
-            <Link to="/wishlist" className="relative inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-black/10 bg-white px-2 text-xs font-semibold transition sm:h-11 sm:min-w-16 sm:px-4 sm:text-sm" aria-label="Wishlist" style={{ color: wishlist.length > 0 ? '#8b5e3c' : '', borderColor: wishlist.length > 0 ? '#8b5e3c' : '' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={wishlist.length > 0 ? '#8b5e3c' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:hidden"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <span className="hidden sm:inline" style={{ color: wishlist.length > 0 ? '#8b5e3c' : '' }}>Wishlist</span>
-              {wishlist.length > 0 && (
-                <motion.span 
-                  animate={wishlistAnimating ? { scale: [1, 1.4, 1] } : {}}
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </motion.button>
+          <motion.nav
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="hidden items-center gap-5 xl:flex"
+          >
+            {navItems.map((item, index) => (
+              <motion.div
+                key={item.to}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: index * 0.05 }}
+              >
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) => (
+                    `group relative text-[12px] font-medium uppercase tracking-[0.26em] transition ${isActive ? 'text-primary' : 'text-text/70 hover:text-text'}`
+                  )}
+                >
+                  <span>{item.label}</span>
+                  <span className="absolute -bottom-2 left-0 h-px w-full origin-left scale-x-0 bg-primary/70 transition-transform duration-300 group-hover:scale-x-100" />
+                </NavLink>
+              </motion.div>
+            ))}
+          </motion.nav>
+        </div>
+
+        <Link
+          to="/"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          aria-label="Junaid Furniture home"
+        >
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex items-center justify-center">
+            <Logo />
+          </motion.div>
+        </Link>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.08 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Link
+              to="/shop"
+              className={`${desktopTextAction} hidden border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text md:inline-flex`}
+            >
+              <Search className="h-4 w-4" />
+              <span>Search</span>
+            </Link>
+            <Link
+              to="/shop"
+              className={`${iconAction} border-black/10 bg-white text-text/75 md:hidden`}
+              aria-label="Search"
+            >
+              <Search className="h-4 w-4" />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.12 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden md:block"
+          >
+            <Link
+              to="/wishlist"
+              className={`${desktopTextAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text`}
+            >
+              <Heart className={`h-4 w-4 ${wishlist.length > 0 ? 'fill-current text-primary' : ''}`} />
+              <span>Wishlist</span>
+              {wishlist.length > 0 ? (
+                <motion.span
+                  animate={wishlistAnimating ? { scale: [1, 1.35, 1] } : {}}
                   transition={{ duration: 0.4 }}
-                  className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white sm:-top-0.5 sm:-right-0.5 sm:h-5 sm:w-5 sm:text-xs">
+                  className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white"
+                >
                   {wishlist.length}
                 </motion.span>
-              )}
+              ) : null}
             </Link>
           </motion.div>
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: 0.5 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.16 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Link to="/cart" className="relative inline-flex h-10 min-w-10 items-center justify-center rounded-full border px-2 text-xs font-semibold transition shadow-soft sm:h-11 sm:min-w-16 sm:px-4 sm:text-sm" aria-label="Cart" style={{ backgroundColor: cartCount > 0 ? '#8b5e3c' : 'white', borderColor: cartCount > 0 ? '#8b5e3c' : 'rgba(0,0,0,0.1)', color: cartCount > 0 ? 'white' : 'rgba(44,44,44,0.7)' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:hidden"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-              <span className="hidden sm:inline">Cart</span>
-              {cartCount > 0 && (
-                <motion.span
-                  animate={cartAnimating ? { scale: [1, 1.4, 1] } : {}}
-                  transition={{ duration: 0.4 }}
-                  className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-bold text-primary sm:-top-0.5 sm:-right-0.5 sm:h-5 sm:w-5 sm:text-xs">
-                  {cartCount}
-                </motion.span>
-              )}
-            </Link>
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noreferrer"
+              className={`${desktopTextAction} border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text`}
+              aria-label="WhatsApp Us"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden md:inline">WhatsApp Us</span>
+            </a>
           </motion.div>
+
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: 0.6 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.2 }}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden md:block"
           >
-            <Link to={auth?.user ? '/dashboard' : '/login'} className="hidden rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text sm:inline-flex hover:border-primary hover:text-primary">
-              {auth?.user ? auth.user.name.split(' ')[0] : 'Sign in'}
+            <Link
+              to={auth?.user ? '/dashboard' : '/login'}
+              className={`${desktopTextAction} border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-primary`}
+            >
+              <UserRound className="h-4 w-4" />
+              <span>{signInLabel}</span>
             </Link>
           </motion.div>
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.7 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-black/10 bg-white px-2 text-xs font-semibold text-text lg:hidden sm:h-11 sm:min-w-20 sm:px-3 sm:text-sm"
-            onClick={() => setOpen((value) => !value)}
-            aria-label="Toggle navigation"
-          >
-            Menu
-          </motion.button>
         </div>
       </div>
+
       <AnimatePresence>
         {open ? (
           <motion.div
@@ -143,7 +195,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="border-t border-black/5 bg-white lg:hidden"
+            className="border-t border-black/5 bg-white/95 backdrop-blur-xl lg:hidden"
           >
             <div className="section-shell flex flex-col gap-4 py-5">
               {navItems.map((item, index) => (
@@ -153,20 +205,42 @@ export default function Navbar() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.2, delay: index * 0.05 }}
                 >
-                  <NavLink to={item.to} onClick={() => setOpen(false)} className="text-sm font-semibold text-text/70">
+                  <NavLink
+                    to={item.to}
+                    onClick={() => setOpen(false)}
+                    className="text-sm font-medium uppercase tracking-[0.22em] text-text/70 transition hover:text-primary"
+                  >
                     {item.label}
                   </NavLink>
                 </motion.div>
               ))}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2, delay: 0.3 }}
+
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Link
+                  to="/wishlist"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text/75"
+                >
+                  Wishlist
+                </Link>
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setOpen(false)}
+                  className="rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text/75"
+                >
+                  WhatsApp
+                </a>
+              </div>
+
+              <Link
+                to={auth?.user ? '/dashboard' : '/login'}
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white"
               >
-                <NavLink to="/dashboard" onClick={() => setOpen(false)} className="text-sm font-semibold text-text/70">
-                  Dashboard
-                </NavLink>
-              </motion.div>
+                {signInLabel}
+              </Link>
             </div>
           </motion.div>
         ) : null}

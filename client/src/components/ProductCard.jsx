@@ -1,132 +1,129 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Button from './Button';
 import RatingStars from './RatingStars';
 import { useApp } from '../context/AppContext';
-import { calculateDiscountPercentage } from '../utils/formatCurrency';
+import { buildProductWhatsAppLink } from '../utils/whatsapp';
+import { Heart, MessageCircle, Star, Sparkles } from 'lucide-react';
 
 export default function ProductCard({ product, compact = false, index = 0 }) {
-  const { addToCart, toggleWishlist, wishlist } = useApp();
+  const { toggleWishlist, wishlist } = useApp();
   const wishlisted = wishlist.some((item) => item.id === product.id);
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
-  
-  const originalPrice = Number(product.price) || 0;
-  const discountPrice = Number(product.discountPrice) || 0;
-  const discountPercentage = calculateDiscountPercentage(originalPrice, discountPrice);
-  const hasDiscount = discountPrice > 0 && discountPrice < originalPrice;
+  const productLink = typeof window !== 'undefined'
+    ? `${window.location.origin}/product/${product.slug}`
+    : `/product/${product.slug}`;
+  const whatsappLink = buildProductWhatsAppLink(product.name, productLink);
+
+  // Get badges from product data
+  const badges = [];
+  if (product.featured) badges.push({ label: 'Featured', icon: Star, color: 'bg-[#8b5e3c]' });
+  if (product.bestSeller) badges.push({ label: 'Best Seller', icon: Sparkles, color: 'bg-[#c58d57]' });
+  if (product.newArrival) badges.push({ label: 'New Arrival', icon: null, color: 'bg-[#a67c52]' });
 
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -8 }}
-      className="group overflow-hidden rounded-3xl bg-white shadow-card"
+      whileHover={{ y: compact ? -6 : -10 }}
+      className={`group overflow-hidden rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 shadow-none transition duration-300 hover:border-[#e1d0bd] hover:shadow-[0_16px_35px_rgba(84,59,39,0.1)] ${compact ? 'max-w-none' : ''}`}
     >
-      <Link to={`/product/${product.slug}`} className="block overflow-hidden relative">
-          {hasDiscount && (
-            <div className="absolute top-3 left-3 z-10 rounded-full bg-primary px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
-              -{discountPercentage}% OFF
-            </div>
-          )}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.4 }}
-          >
-            <img
+      <div className="relative">
+        {/* Badges */}
+        {badges.length > 0 && (
+          <div className="absolute left-3 top-3 z-10 flex flex-col gap-1.5">
+            {badges.slice(0, 2).map((badge, badgeIndex) => (
+              <motion.div
+                key={badge.label}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 + 0.15 + badgeIndex * 0.05 }}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 ${badge.color} text-[9px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_8px_20px_rgba(139,94,60,0.25)]`}
+              >
+                {badge.icon && <badge.icon className="h-3 w-3" />}
+                {badge.label}
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: index * 0.1 + 0.25 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => toggleWishlist(product)}
+          className={`absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border bg-white/95 text-text/70 shadow-[0_10px_24px_rgba(84,59,39,0.1)] transition hover:border-primary hover:text-primary ${wishlisted ? 'border-primary bg-primary text-white' : 'border-black/10'}`}
+          aria-label="Toggle wishlist"
+        >
+          <Heart className={`h-4 w-4 ${wishlisted ? 'fill-current' : ''}`} />
+        </motion.button>
+        <Link to={`/product/${product.slug}`} className="block overflow-hidden">
+          <div className={`overflow-hidden bg-[#fbf7f2] ${compact ? 'aspect-[4/3]' : 'aspect-[4/5]'}`}>
+            <motion.img
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
               src={image}
               alt={product.name}
-              className={`w-full object-cover ${compact ? 'h-56' : 'h-72'}`}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover object-center"
               onError={(event) => {
                 event.currentTarget.onerror = null;
                 event.currentTarget.src = '/product-placeholder.svg';
               }}
             />
-          </motion.div>
+          </div>
         </Link>
-      <div className="space-y-3 p-4 sm:space-y-4 sm:p-5">
-        <div className="flex items-start justify-between gap-2 sm:gap-3">
-          <div className="min-w-0 flex-1">
-            <motion.p
+      </div>
+
+      <div className={`space-y-3 ${compact ? 'p-3 sm:space-y-3 sm:p-4' : 'p-4 sm:space-y-4 sm:p-5'}`}>
+        <div className="min-w-0">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: index * 0.1 + 0.2 }}
+            className={`font-bold uppercase tracking-[0.15em] text-primary ${compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs sm:tracking-[0.2em]'}`}
+          >
+            {product.categoryName || product.category?.name || 'Furniture'}
+          </motion.p>
+          <Link to={`/product/${product.slug}`}>
+            <motion.h3
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: index * 0.1 + 0.2 }}
-              className="text-[10px] font-bold uppercase tracking-[0.15em] text-primary sm:text-xs sm:tracking-[0.2em]"
+              transition={{ delay: index * 0.1 + 0.3 }}
+              className={`mt-1.5 truncate font-semibold text-text ${compact ? 'text-[0.95rem] leading-tight sm:mt-1 sm:text-[1.05rem]' : 'text-base sm:mt-2 sm:text-lg'}`}
             >
-              {product.badge}
-            </motion.p>
-            <Link to={`/product/${product.slug}`}>
-              <motion.h3
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: index * 0.1 + 0.3 }}
-                className="mt-1.5 truncate text-base font-semibold text-text sm:mt-2 sm:text-lg"
-              >
-                {product.name}
-              </motion.h3>
-            </Link>
-          </div>
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1 + 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => toggleWishlist(product)}
-            className={`inline-flex h-9 min-w-14 shrink-0 items-center justify-center rounded-full border px-2.5 text-[10px] font-semibold transition sm:h-10 sm:min-w-16 sm:px-3 sm:text-xs ${wishlisted ? 'border-primary bg-primary text-white' : 'border-black/10 bg-white text-text/70 hover:border-primary'}`}
-            aria-label="Toggle wishlist"
-          >
-            Save
-          </motion.button>
+              {product.name}
+            </motion.h3>
+          </Link>
         </div>
-        <motion.p
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <RatingStars value={product.rating} size={compact ? 'text-xs' : 'text-sm'} />
+            <p className={`mt-0.5 text-text/50 ${compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:mt-1 sm:text-xs'}`}>{product.reviews} reviews</p>
+          </div>
+          {!compact && product.description ? (
+            <p className="line-clamp-2 text-right text-xs leading-5 text-text/65 sm:text-sm sm:leading-6">
+              {product.description}
+            </p>
+          ) : null}
+        </div>
+
+        <motion.a
+          href={whatsappLink}
+          target="_blank"
+          rel="noreferrer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: index * 0.1 + 0.5 }}
-          className="line-clamp-2 text-xs leading-5 text-text/65 sm:text-sm sm:leading-6"
+          className={`inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#734d31] ${compact ? 'px-3 py-2 text-[11px] sm:text-xs' : 'px-4 py-3 text-xs sm:text-sm'}`}
         >
-          {product.description}
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.6 }}
-          className="flex items-center justify-between gap-2"
-        >
-          <div className="min-w-0">
-            <RatingStars value={product.rating} />
-            <p className="mt-0.5 text-[10px] text-text/50 sm:mt-1 sm:text-xs">{product.reviews} reviews</p>
-          </div>
-          <div className="shrink-0 text-right">
-            {hasDiscount ? (
-              <>
-                <p className="text-xs text-text/50 line-through sm:text-sm">PKR {originalPrice.toLocaleString()}</p>
-                <p className="text-base font-bold text-text sm:text-xl">PKR {discountPrice.toLocaleString()}</p>
-              </>
-            ) : (
-              <p className="text-base font-bold text-text sm:text-xl">PKR {originalPrice.toLocaleString()}</p>
-            )}
-          </div>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.7 }}
-          className="flex gap-2 sm:gap-3"
-        >
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1"
-          >
-            <Button className="w-full text-xs sm:text-sm" onClick={() => addToCart(product)}>
-              Add to Cart
-            </Button>
-          </motion.div>
-          <Link to={`/product/${product.slug}`} className="inline-flex shrink-0">
-            <Button variant="ghost" className="text-xs sm:text-sm">View</Button>
-          </Link>
-        </motion.div>
+          <MessageCircle className="h-4 w-4" />
+          WhatsApp to Order
+        </motion.a>
       </div>
     </motion.article>
   );
