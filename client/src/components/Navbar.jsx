@@ -115,13 +115,6 @@ export default function Navbar() {
               <Search className="h-4 w-4" />
               <span>Search</span>
             </Link>
-            <Link
-              to="/shop"
-              className={`${iconAction} border-black/10 bg-white text-text/75 md:hidden`}
-              aria-label="Search"
-            >
-              <Search className="h-4 w-4" />
-            </Link>
           </motion.div>
 
           <motion.div
@@ -130,11 +123,10 @@ export default function Navbar() {
             transition={{ duration: 0.25, delay: 0.12 }}
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.98 }}
-            className="hidden md:block"
           >
             <Link
               to="/wishlist"
-              className={`${desktopTextAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text`}
+              className={`${desktopTextAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text hidden md:inline-flex`}
             >
               <Heart className={`h-4 w-4 ${wishlist.length > 0 ? 'fill-current text-primary' : ''}`} />
               <span>Wishlist</span>
@@ -143,6 +135,22 @@ export default function Navbar() {
                   animate={wishlistAnimating ? { scale: [1, 1.35, 1] } : {}}
                   transition={{ duration: 0.4 }}
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white"
+                >
+                  {wishlist.length}
+                </motion.span>
+              ) : null}
+            </Link>
+            <Link
+              to="/wishlist"
+              className={`${iconAction} relative border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text md:hidden`}
+              aria-label="Wishlist"
+            >
+              <Heart className={`h-4 w-4 ${wishlist.length > 0 ? 'fill-current text-primary' : ''}`} />
+              {wishlist.length > 0 ? (
+                <motion.span
+                  animate={wishlistAnimating ? { scale: [1, 1.35, 1] } : {}}
+                  transition={{ duration: 0.4 }}
+                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white"
                 >
                   {wishlist.length}
                 </motion.span>
