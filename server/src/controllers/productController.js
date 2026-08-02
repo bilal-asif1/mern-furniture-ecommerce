@@ -139,7 +139,8 @@ const getProducts = asyncHandler(async (req, res) => {
     .populate('category', 'name slug')
     .sort(sortBy)
     .limit(limit)
-    .skip(limit * (page - 1));
+    .skip(limit * (page - 1))
+    .lean();
 
   const serializedProducts = await Promise.all(products.map(serializeProduct));
   res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });
@@ -153,7 +154,8 @@ const getProductBySlug = asyncHandler(async (req, res) => {
       { productStatus: 'active' },
       { productStatus: { $exists: false } },
     ],
-  }).populate('category', 'name slug');
+  }).populate('category', 'name slug')
+   .lean();
   if (!product) {
     res.status(404);
     throw new Error('Product not found');
@@ -301,7 +303,8 @@ const getAdminProducts = asyncHandler(async (req, res) => {
     .populate('category', 'name slug')
     .sort({ updatedAt: -1 })
     .limit(limit)
-    .skip(limit * (page - 1));
+    .skip(limit * (page - 1))
+    .lean();
 
   const serializedProducts = await Promise.all(products.map(serializeProduct));
   res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });

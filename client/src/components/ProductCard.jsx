@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import RatingStars from './RatingStars';
@@ -5,7 +6,7 @@ import { useApp } from '../context/AppContext';
 import { buildProductWhatsAppLink } from '../utils/whatsapp';
 import { Heart, MessageCircle, Star, Sparkles } from 'lucide-react';
 
-export default function ProductCard({ product, compact = false, index = 0 }) {
+function ProductCard({ product, compact = false, index = 0 }) {
   const { toggleWishlist, wishlist } = useApp();
   const wishlisted = wishlist.some((item) => item.id === product.id);
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
@@ -24,23 +25,23 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
     <motion.article
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
       whileHover={{ y: compact ? -6 : -10 }}
       className={`group overflow-hidden rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 shadow-none transition duration-300 hover:border-[#e1d0bd] hover:shadow-[0_16px_35px_rgba(84,59,39,0.1)] ${compact ? 'max-w-none' : ''}`}
     >
       <div className="relative">
         {/* Badges */}
         {badges.length > 0 && (
-          <div className="absolute left-3 top-3 z-10 flex flex-col gap-1.5">
-            {badges.slice(0, 2).map((badge, badgeIndex) => (
+          <div className="absolute left-3 top-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-3rem)]">
+            {badges.slice(0, 3).map((badge, badgeIndex) => (
               <motion.div
                 key={badge.label}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 + 0.15 + badgeIndex * 0.05 }}
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 ${badge.color} text-[9px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_8px_20px_rgba(139,94,60,0.25)]`}
+                transition={{ delay: Math.min(index * 0.05 + 0.1 + badgeIndex * 0.03, 0.6) }}
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${badge.color} text-[8px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_8px_20px_rgba(139,94,60,0.25)]`}
               >
-                {badge.icon && <badge.icon className="h-3 w-3" />}
+                {badge.icon && <badge.icon className="h-2.5 w-2.5" />}
                 {badge.label}
               </motion.div>
             ))}
@@ -51,7 +52,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
           type="button"
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: index * 0.1 + 0.25 }}
+          transition={{ delay: Math.min(index * 0.05 + 0.15, 0.7) }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => toggleWishlist(product)}
@@ -64,11 +65,13 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
           <div className={`overflow-hidden bg-[#fbf7f2] ${compact ? 'aspect-[4/3]' : 'aspect-[4/5]'}`}>
             <motion.img
               whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
               src={image}
               alt={product.name}
               loading="lazy"
               decoding="async"
+              width={400}
+              height={500}
               className="h-full w-full object-cover object-center"
               onError={(event) => {
                 event.currentTarget.onerror = null;
@@ -84,7 +87,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.1 + 0.2 }}
+            transition={{ delay: Math.min(index * 0.05 + 0.15, 0.7) }}
             className={`font-bold uppercase tracking-[0.15em] text-primary ${compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs sm:tracking-[0.2em]'}`}
           >
             {product.categoryName || product.category?.name || 'Furniture'}
@@ -93,7 +96,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
             <motion.h3
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: index * 0.1 + 0.3 }}
+              transition={{ delay: Math.min(index * 0.05 + 0.2, 0.75) }}
               className={`mt-1.5 truncate font-semibold text-text ${compact ? 'text-[0.95rem] leading-tight sm:mt-1 sm:text-[1.05rem]' : 'text-base sm:mt-2 sm:text-lg'}`}
             >
               {product.name}
@@ -118,7 +121,7 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
           rel="noreferrer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: index * 0.1 + 0.5 }}
+          transition={{ delay: Math.min(index * 0.05 + 0.3, 0.8) }}
           className={`inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#734d31] ${compact ? 'px-3 py-2 text-[11px] sm:text-xs' : 'px-4 py-3 text-xs sm:text-sm'}`}
         >
           <MessageCircle className="h-4 w-4" />
@@ -128,3 +131,17 @@ export default function ProductCard({ product, compact = false, index = 0 }) {
     </motion.article>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export default memo(ProductCard, (prevProps, nextProps) => {
+  return (
+    prevProps.product.id === nextProps.product.id &&
+    prevProps.product.name === nextProps.product.name &&
+    prevProps.product.price === nextProps.product.price &&
+    prevProps.product.featured === nextProps.product.featured &&
+    prevProps.product.bestSeller === nextProps.product.bestSeller &&
+    prevProps.product.newArrival === nextProps.product.newArrival &&
+    prevProps.compact === nextProps.compact &&
+    prevProps.index === nextProps.index
+  );
+});

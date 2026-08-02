@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
@@ -132,7 +132,7 @@ export default function ShopPage() {
     return sorted;
   }, [products, activeFilter, sortBy]);
 
-  const syncParams = (next = {}) => {
+  const syncParams = useCallback((next = {}) => {
     const params = new URLSearchParams();
     const merged = {
       category: categorySlug,
@@ -146,19 +146,19 @@ export default function ShopPage() {
     });
 
     setSearchParams(params);
-  };
+  }, [categorySlug, page, setSearchParams]);
 
-  const handleSelectCategory = (category) => {
+  const handleSelectCategory = useCallback((category) => {
     setCategorySlug(category.slug);
     setPage(1);
     syncParams({ category: category.slug, page: 1 });
-  };
+  }, [syncParams]);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setCategorySlug('');
     setPage(1);
     setSearchParams({});
-  };
+  }, [setSearchParams]);
 
   const filterOptions = [
     { value: 'all', label: 'All products' },
@@ -191,7 +191,7 @@ export default function ShopPage() {
     rail.setPointerCapture?.(event.pointerId);
   };
 
-  const handlePointerMove = (event) => {
+  const handlePointerMove = useCallback((event) => {
     const state = dragStateRef.current;
     const rail = railRef.current;
     if (!state.isDown || !rail) return;
@@ -203,7 +203,7 @@ export default function ShopPage() {
 
     rail.scrollLeft = state.scrollLeft - deltaX;
     event.preventDefault();
-  };
+  }, []);
 
   const endDrag = () => {
     const state = dragStateRef.current;
@@ -265,6 +265,7 @@ export default function ShopPage() {
               style={{
                 WebkitOverflowScrolling: 'touch',
                 touchAction: 'pan-x',
+                willChange: 'transform',
               }}
               className="scrollbar-hide flex w-full flex-nowrap items-start gap-6 overflow-x-auto overflow-y-hidden pb-2 pr-1 [scroll-behavior:smooth] [scroll-snap-type:x_mandatory] [scrollbar-width:none] cursor-grab active:cursor-grabbing sm:gap-7 sm:pr-2 lg:gap-8 lg:pb-3 lg:pt-1"
             >

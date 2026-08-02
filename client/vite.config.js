@@ -15,6 +15,7 @@ export default defineConfig({
     esbuildOptions: {
       preserveSymlinks: true,
     },
+    include: ['react', 'react-dom', 'react-redux', '@reduxjs/toolkit'],
   },
   server: {
     port: 5173,
@@ -22,9 +23,24 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
       input: 'index.html',
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
+          'ui-vendor': ['framer-motion', 'lucide-react'],
+          'charts-vendor': ['recharts'],
+          'utils-vendor': ['axios'],
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
     },
+    chunkSizeWarningLimit: 1000,
+    cssCodeSplit: true,
   },
 });
