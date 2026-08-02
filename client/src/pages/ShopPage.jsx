@@ -241,7 +241,7 @@ export default function ShopPage() {
 
   return (
     <>
-      <section className="section-shell pb-8 pt-8 sm:pb-10 sm:pt-10 lg:pt-12">
+      <section className="section-shell pt-8 sm:pt-10 lg:pt-12">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-16 xl:gap-20">
           <div className="flex shrink-0 flex-col items-center text-center lg:w-[200px] lg:items-start lg:text-left xl:w-[220px]">
             <p className="font-display text-[2rem] font-medium uppercase leading-[0.82] tracking-[0.12em] text-primary sm:text-[2.35rem] lg:text-[2.75rem]">
@@ -354,8 +354,8 @@ export default function ShopPage() {
         </div>
       </section>
 
-      <section className="section-shell pt-8 sm:pt-10">
-        <div className="mt-6 rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 px-4 py-4 shadow-[0_12px_30px_rgba(86,58,36,0.05)] sm:px-5">
+      <section className="section-shell pt-6 sm:pt-8">
+        <div className="rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 px-4 py-4 shadow-[0_12px_30px_rgba(86,58,36,0.05)] sm:px-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <div ref={filterMenuRef} className="relative">
