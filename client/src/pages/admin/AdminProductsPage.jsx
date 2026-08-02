@@ -24,7 +24,6 @@ const emptyForm = {
   shortDescription: '',
   material: '',
   color: '',
-  dimensions: { width: '', height: '', depth: '' },
   weight: '',
   warranty: '',
   price: '',
@@ -35,8 +34,6 @@ const emptyForm = {
   bestSeller: false,
   newArrival: false,
   productStatus: 'active',
-  tags: '',
-  badges: '',
   images: [],
   thumbnailImage: '',
   removedImages: [],
@@ -59,11 +56,6 @@ const buildProductPayload = (form, { categoryFallback = '', brandFallback = 'Jun
     shortDescription: form.shortDescription.trim(),
     material: form.material.trim(),
     color: form.color.trim(),
-    dimensions: {
-      width: form.dimensions.width,
-      height: form.dimensions.height,
-      depth: form.dimensions.depth,
-    },
     weight: form.weight,
     warranty: form.warranty.trim(),
     price: form.price,
@@ -74,8 +66,6 @@ const buildProductPayload = (form, { categoryFallback = '', brandFallback = 'Jun
     bestSeller: form.bestSeller,
     newArrival: form.newArrival,
     productStatus: form.productStatus,
-    tags: form.tags,
-    badges: form.badges,
     thumbnailImage,
     images: imageValues,
     removedImages: form.removedImages,
@@ -237,7 +227,6 @@ export default function AdminProductsPage() {
       return updated;
     });
   };
-  const setDimension = (key, value) => setForm((current) => ({ ...current, dimensions: { ...current.dimensions, [key]: value } }));
 
   const submit = async (event) => {
     event.preventDefault();
@@ -272,11 +261,6 @@ export default function AdminProductsPage() {
       shortDescription: product.shortDescription || '',
       material: product.material || '',
       color: product.color || '',
-      dimensions: {
-        width: product.dimensions?.width ?? '',
-        height: product.dimensions?.height ?? '',
-        depth: product.dimensions?.depth ?? '',
-      },
       weight: product.weight ?? '',
       warranty: product.warranty || '',
       price: product.price ?? '',
@@ -287,8 +271,6 @@ export default function AdminProductsPage() {
       bestSeller: Boolean(product.bestSeller),
       newArrival: Boolean(product.newArrival),
       productStatus: product.productStatus || 'active',
-      tags: toCommaString(product.tags || []),
-      badges: toCommaString(product.badges || []),
       images: (product.images || []).map((item) => blankImage(item)),
       thumbnailImage: product.thumbnailImage || product.images?.[0] || '',
       removedImages: [],
@@ -414,21 +396,6 @@ export default function AdminProductsPage() {
               <Field label="Color"><TextInput value={form.color} onChange={(event) => setField('color', event.target.value)} /></Field>
               <Field label="Weight"><TextInput type="number" value={form.weight} onChange={(event) => setField('weight', event.target.value)} /></Field>
               <Field label="Warranty"><TextInput value={form.warranty} onChange={(event) => setField('warranty', event.target.value)} /></Field>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <Field label="Width"><TextInput type="number" value={form.dimensions.width} onChange={(event) => setDimension('width', event.target.value)} /></Field>
-              <Field label="Height"><TextInput type="number" value={form.dimensions.height} onChange={(event) => setDimension('height', event.target.value)} /></Field>
-              <Field label="Depth"><TextInput type="number" value={form.dimensions.depth} onChange={(event) => setDimension('depth', event.target.value)} /></Field>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Field label="Tags" hint="Comma separated keywords">
-                <TextInput value={form.tags} onChange={(event) => setField('tags', event.target.value)} />
-              </Field>
-              <Field label="Badges" hint="Comma separated labels">
-                <TextInput value={form.badges} onChange={(event) => setField('badges', event.target.value)} />
-              </Field>
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
