@@ -114,7 +114,6 @@ export default function ShopPage() {
       if (activeFilter === 'featured') return Boolean(product.featured || product.badge === 'Featured');
       if (activeFilter === 'best-seller') return Boolean(product.bestSeller);
       if (activeFilter === 'new-arrival') return Boolean(product.newArrival);
-      if (activeFilter === 'in-stock') return Number(product.stock || 0) > 0;
       return true;
     });
 
@@ -165,7 +164,6 @@ export default function ShopPage() {
     { value: 'featured', label: 'Featured' },
     { value: 'best-seller', label: 'Best Sellers' },
     { value: 'new-arrival', label: 'New Arrivals' },
-    { value: 'in-stock', label: 'In stock' },
   ];
 
   const sortOptions = [
