@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
@@ -45,7 +45,48 @@ function ShopRedirect() {
   return <Navigate to={{ pathname: '/', search: location.search }} replace />;
 }
 
+// Page title mapping
+const PAGE_TITLES = {
+  '/': 'Junaid Furniture',
+  '/about': 'About | Junaid Furniture',
+  '/categories': 'Categories | Junaid Furniture',
+  '/wishlist': 'Wishlist | Junaid Furniture',
+  '/cart': 'Cart | Junaid Furniture',
+  '/checkout': 'Checkout | Junaid Furniture',
+  '/track-order': 'Order Tracking | Junaid Furniture',
+  '/contact': 'Contact | Junaid Furniture',
+  '/faq': 'FAQ | Junaid Furniture',
+  '/dashboard': 'Dashboard | Junaid Furniture',
+  '/login': 'Login | Junaid Furniture',
+  '/register': 'Register | Junaid Furniture',
+  '/admin': 'Admin Dashboard | Junaid Furniture',
+  '/admin/products': 'Products | Admin | Junaid Furniture',
+  '/admin/brands': 'Brands | Admin | Junaid Furniture',
+  '/admin/orders': 'Orders | Admin | Junaid Furniture',
+  '/admin/categories': 'Categories | Admin | Junaid Furniture',
+  '/admin/inventory': 'Inventory | Admin | Junaid Furniture',
+  '/admin/reports': 'Reports | Admin | Junaid Furniture',
+  '/admin/profile': 'Profile | Admin | Junaid Furniture',
+};
+
 export default function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Get the base path for title lookup
+    const path = location.pathname;
+    
+    // Handle product details page with dynamic slug
+    if (path.startsWith('/product/')) {
+      document.title = 'Product | Junaid Furniture';
+      return;
+    }
+
+    // Use mapped title or default
+    const title = PAGE_TITLES[path] || 'Junaid Furniture';
+    document.title = title;
+  }, [location.pathname]);
+
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
