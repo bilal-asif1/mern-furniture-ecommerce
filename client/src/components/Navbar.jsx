@@ -206,33 +206,6 @@ export default function Navbar() {
                   </NavLink>
                 </motion.div>
               ))}
-
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <Link
-                  to="/wishlist"
-                  onClick={() => setOpen(false)}
-                  className="rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text/75"
-                >
-                  Wishlist
-                </Link>
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => setOpen(false)}
-                  className="rounded-2xl border border-black/10 px-4 py-3 text-sm font-semibold text-text/75"
-                >
-                  WhatsApp
-                </a>
-              </div>
-
-              <Link
-                to={auth?.user ? '/dashboard' : '/login'}
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white"
-              >
-                {signInLabel}
-              </Link>
             </div>
           </motion.div>
         ) : null}
