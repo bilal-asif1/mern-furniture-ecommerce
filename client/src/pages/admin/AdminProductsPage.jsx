@@ -21,7 +21,6 @@ const emptyForm = {
   brand: 'Junaid Furniture',
   sku: '',
   description: '',
-  shortDescription: '',
   material: '',
   color: '',
   weight: '',
@@ -53,7 +52,6 @@ const buildProductPayload = (form, { categoryFallback = '', brandFallback = 'Jun
     brand: form.brand.trim() || brandFallback,
     sku: form.sku.trim(),
     description: form.description.trim(),
-    shortDescription: form.shortDescription.trim(),
     material: form.material.trim(),
     color: form.color.trim(),
     weight: form.weight,
@@ -258,7 +256,6 @@ export default function AdminProductsPage() {
       brand: product.brand || 'Junaid Furniture',
       sku: product.sku || '',
       description: product.description || '',
-      shortDescription: product.shortDescription || '',
       material: product.material || '',
       color: product.color || '',
       weight: product.weight ?? '',
@@ -379,7 +376,6 @@ export default function AdminProductsPage() {
                 </SelectField>
               </Field>
             </div>
-            <Field label="Short Description"><TextArea rows={2} value={form.shortDescription} onChange={(event) => setField('shortDescription', event.target.value)} /></Field>
             <Field label="Description"><TextArea rows={3} value={form.description} onChange={(event) => setField('description', event.target.value)} /></Field>
 
             <div className="grid gap-6 md:grid-cols-2">
