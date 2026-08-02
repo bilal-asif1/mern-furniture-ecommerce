@@ -57,7 +57,7 @@ export default function Navbar() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.25 }}
             whileTap={{ scale: 0.96 }}
-            className={`${iconAction} border-black/10 bg-white text-text/80`}
+            className={`${iconAction} border-black/10 bg-white text-text/80 md:hidden`}
             onClick={() => setOpen((value) => !value)}
             aria-label="Open menu"
           >
@@ -101,22 +101,6 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 0.08 }}
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Link
-              to="/shop"
-              className={`${desktopTextAction} hidden border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text md:inline-flex`}
-            >
-              <Search className="h-4 w-4" />
-              <span>Search</span>
-            </Link>
-          </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
