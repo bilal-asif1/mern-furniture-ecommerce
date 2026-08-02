@@ -180,16 +180,19 @@ export default function ShopPage() {
     const rail = railRef.current;
     if (!rail) return;
 
+    // Don't start drag if clicking on a button or its children
+    // This allows the button's onClick to fire normally
+    if (event.target.closest('button')) {
+      return;
+    }
+
     dragStateRef.current = {
       isDown: true,
-      pointerId: event.pointerId,
       startX: event.clientX,
       scrollLeft: rail.scrollLeft,
       suppressClick: false,
       startTime: Date.now(),
     };
-
-    rail.setPointerCapture?.(event.pointerId);
   };
 
   const handlePointerMove = useCallback((event) => {
@@ -207,24 +210,17 @@ export default function ShopPage() {
     }
 
     rail.scrollLeft = state.scrollLeft - deltaX;
-    event.preventDefault();
   }, []);
 
-  const endDrag = () => {
+  const handlePointerUp = useCallback(() => {
     const state = dragStateRef.current;
-    const rail = railRef.current;
-
-    if (rail && state.pointerId != null) {
-      rail.releasePointerCapture?.(state.pointerId);
-    }
-
     if (!state.isDown) return;
 
     state.isDown = false;
     window.setTimeout(() => {
       state.suppressClick = false;
     }, 0);
-  };
+  }, []);
 
   const scrollRail = (direction) => {
     const rail = railRef.current;
@@ -235,19 +231,6 @@ export default function ShopPage() {
   };
 
   const handleCategoryClick = (category, event) => {
-    const state = dragStateRef.current;
-    const clickDuration = state.startTime ? Date.now() - state.startTime : 0;
-    
-    // Allow click if it was very quick (< 200ms) - this distinguishes clicks from drags
-    // Only suppress if it was a longer interaction with movement
-    if (state.suppressClick && clickDuration > 200) {
-      event.preventDefault();
-      return;
-    }
-
-    // Reset suppress click after handling
-    state.suppressClick = false;
-
     if (!category) {
       clearFilters();
       return;
@@ -272,9 +255,9 @@ export default function ShopPage() {
               ref={railRef}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
-              onPointerUp={endDrag}
-              onPointerCancel={endDrag}
-              onPointerLeave={endDrag}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onPointerLeave={handlePointerUp}
               style={{
                 WebkitOverflowScrolling: 'touch',
                 touchAction: 'pan-x',
