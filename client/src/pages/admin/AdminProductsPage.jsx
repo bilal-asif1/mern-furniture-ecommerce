@@ -394,17 +394,17 @@ export default function AdminProductsPage() {
               <Field label="Warranty"><TextInput value={form.warranty} onChange={(event) => setField('warranty', event.target.value)} /></Field>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
-              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap">
-                <input type="checkbox" checked={form.featured} onChange={(event) => setField('featured', event.target.checked)} />
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+              <label className="flex items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-4 text-sm font-medium text-text transition hover:border-primary/30 hover:bg-[#fcfaf7] cursor-pointer">
+                <input type="checkbox" checked={form.featured} onChange={(event) => setField('featured', event.target.checked)} className="h-5 w-5 rounded border-black/20 text-primary focus:ring-primary focus:ring-offset-0" />
                 Featured
               </label>
-              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap">
-                <input type="checkbox" checked={form.bestSeller} onChange={(event) => setField('bestSeller', event.target.checked)} />
+              <label className="flex items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-4 text-sm font-medium text-text transition hover:border-primary/30 hover:bg-[#fcfaf7] cursor-pointer">
+                <input type="checkbox" checked={form.bestSeller} onChange={(event) => setField('bestSeller', event.target.checked)} className="h-5 w-5 rounded border-black/20 text-primary focus:ring-primary focus:ring-offset-0" />
                 Best Seller
               </label>
-              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap">
-                <input type="checkbox" checked={form.newArrival} onChange={(event) => setField('newArrival', event.target.checked)} />
+              <label className="flex items-center justify-center gap-3 rounded-2xl border border-black/10 bg-white px-5 py-4 text-sm font-medium text-text transition hover:border-primary/30 hover:bg-[#fcfaf7] cursor-pointer">
+                <input type="checkbox" checked={form.newArrival} onChange={(event) => setField('newArrival', event.target.checked)} className="h-5 w-5 rounded border-black/20 text-primary focus:ring-primary focus:ring-offset-0" />
                 New Arrival
               </label>
             </div>
