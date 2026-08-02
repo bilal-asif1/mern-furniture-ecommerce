@@ -465,22 +465,22 @@ export default function AdminProductsPage() {
                         event.currentTarget.src = '/product-placeholder.svg';
                       }}
                     />
-                    <div className="flex items-center gap-1.5 border-t border-black/5 p-2">
-                      <label className="flex-1 cursor-pointer min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 border-t border-black/5 p-2 overflow-hidden">
+                      <label className="flex-1 min-w-[60px] cursor-pointer">
                         <input
                           type="file"
                           accept="image/*"
                           className="hidden"
                           onChange={(event) => replaceImage(index, event.target.files?.[0])}
                         />
-                        <div className="flex items-center justify-center rounded-full bg-[#f7efe3] px-2 py-1.5 text-[11px] font-medium text-primary transition hover:bg-[#eadfce]">
+                        <div className="flex items-center justify-center rounded-lg bg-[#f7efe3] px-3 py-2 text-xs font-medium text-primary transition hover:bg-[#eadfce]">
                           Replace
                         </div>
                       </label>
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="flex-1 flex items-center justify-center rounded-full bg-red-50 px-2 py-1.5 text-[11px] font-medium text-red-700 transition hover:bg-red-100 min-w-0"
+                        className="flex-1 min-w-[60px] flex items-center justify-center rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-100"
                       >
                         Delete
                       </button>
