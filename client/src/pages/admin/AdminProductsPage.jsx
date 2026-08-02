@@ -432,15 +432,15 @@ export default function AdminProductsPage() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
-              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap min-w-[120px]">
+              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap">
                 <input type="checkbox" checked={form.featured} onChange={(event) => setField('featured', event.target.checked)} />
                 Featured
               </label>
-              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap min-w-[120px]">
+              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap">
                 <input type="checkbox" checked={form.bestSeller} onChange={(event) => setField('bestSeller', event.target.checked)} />
                 Best Seller
               </label>
-              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap min-w-[120px]">
+              <label className="inline-flex items-center gap-2 rounded-xl border border-black/10 px-4 py-2 text-sm font-medium text-text whitespace-nowrap">
                 <input type="checkbox" checked={form.newArrival} onChange={(event) => setField('newArrival', event.target.checked)} />
                 New Arrival
               </label>
