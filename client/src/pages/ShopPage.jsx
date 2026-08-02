@@ -186,6 +186,7 @@ export default function ShopPage() {
       startX: event.clientX,
       scrollLeft: rail.scrollLeft,
       suppressClick: false,
+      startTime: Date.now(),
     };
 
     rail.setPointerCapture?.(event.pointerId);
@@ -197,7 +198,11 @@ export default function ShopPage() {
     if (!state.isDown || !rail) return;
 
     const deltaX = event.clientX - state.startX;
-    if (Math.abs(deltaX) > 6) {
+    const deltaTime = Date.now() - state.startTime;
+    
+    // Only suppress click if there's significant movement AND it's been held long enough
+    // This distinguishes between click jitter and intentional dragging
+    if (Math.abs(deltaX) > 15 && deltaTime > 150) {
       state.suppressClick = true;
     }
 
@@ -230,10 +235,18 @@ export default function ShopPage() {
   };
 
   const handleCategoryClick = (category, event) => {
-    if (dragStateRef.current.suppressClick) {
+    const state = dragStateRef.current;
+    const clickDuration = state.startTime ? Date.now() - state.startTime : 0;
+    
+    // Allow click if it was very quick (< 200ms) - this distinguishes clicks from drags
+    // Only suppress if it was a longer interaction with movement
+    if (state.suppressClick && clickDuration > 200) {
       event.preventDefault();
       return;
     }
+
+    // Reset suppress click after handling
+    state.suppressClick = false;
 
     if (!category) {
       clearFilters();
