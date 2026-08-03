@@ -1,32 +1,29 @@
 import PageHero from '../components/PageHero';
 import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
-import CategoryCard from '../components/CategoryCard';
 import ProductCard from '../components/ProductCard';
 import { useApp } from '../context/AppContext';
 import categoriesHero from '../assets/images/categories/categories-hero.jpg';
 
+
 export default function CategoriesPage() {
-  const { categories, products } = useApp();
+  const { products } = useApp();
 
   return (
     <>
       <PageHero
         kicker="Categories"
-        title="Browse collections by room and lifestyle."
-        description="Elegant category navigation helps customers move quickly through living room, bedroom, dining, and office selections."
+        title="Browse luxury furniture by curated category."
+        description="A richer, more visual discovery experience for dressing, bed sets, sofa sets, dining sets, and more."
         image={categoriesHero}
       />
+
       <PageSection>
-        <SectionTitle eyebrow="Collections" title="Category Showcase" />
+        <SectionTitle eyebrow="Featured by Category" title="Popular Pieces" description="A few current products styled to match the premium category experience." />
         <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {categories.map((category) => <CategoryCard key={category.id} category={category} />)}
-        </div>
-      </PageSection>
-      <PageSection>
-        <SectionTitle eyebrow="Featured by Category" title="Popular Pieces" />
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {products.slice(0, 4).map((product) => <ProductCard key={product.id} product={product} compact />)}
+          {products.slice(0, 4).map((product, index) => (
+            <ProductCard key={product.id} product={product} compact index={index} />
+          ))}
         </div>
       </PageSection>
     </>
