@@ -239,7 +239,7 @@ export default function ShopPage() {
 
   return (
     <>
-      <section className="section-shell pt-8 sm:pt-10 lg:pt-12 pb-0 mb-0">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pt-12 pb-0 mb-0">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-16 xl:gap-20">
           <div className="flex shrink-0 flex-col items-center text-center lg:w-[200px] lg:items-start lg:text-left xl:w-[220px]">
             <p className="font-display text-[2rem] font-medium uppercase leading-[0.82] tracking-[0.12em] text-primary sm:text-[2.35rem] lg:text-[2.75rem]">
@@ -324,7 +324,7 @@ export default function ShopPage() {
                 );
               })}
             </div>
-            <div className="mt-2 flex items-center gap-3 lg:gap-4">
+            <div className="mt-3 flex items-center gap-3 lg:gap-4">
               <button
                 type="button"
                 onClick={() => scrollRail(-1)}
