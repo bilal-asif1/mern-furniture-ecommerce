@@ -20,7 +20,7 @@ export default function CategoriesPage() {
 
       <PageSection>
         <SectionTitle eyebrow="Featured by Category" title="Popular Pieces" description="A few current products styled to match the premium category experience." />
-        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-2 xl:grid-cols-4">
           {products.slice(0, 4).map((product, index) => (
             <ProductCard key={product.id} product={product} compact index={index} />
           ))}
