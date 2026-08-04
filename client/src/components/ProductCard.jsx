@@ -8,7 +8,8 @@ import { Heart, MessageCircle, Star, Sparkles } from 'lucide-react';
 
 function ProductCard({ product, compact = false, index = 0 }) {
   const { toggleWishlist, wishlist } = useApp();
-  const wishlisted = wishlist.some((item) => item.id === product.id);
+  const productId = product.id || product._id;
+  const wishlisted = wishlist.some((item) => (item.id === productId || item._id === productId));
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
   const productLink = typeof window !== 'undefined'
     ? `${window.location.origin}/product/${product.slug}`
@@ -56,10 +57,13 @@ function ProductCard({ product, compact = false, index = 0 }) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => toggleWishlist(product)}
-          className={`absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border bg-white/95 text-text/70 shadow-[0_10px_24px_rgba(84,59,39,0.1)] transition hover:border-primary hover:text-primary ${wishlisted ? 'border-primary bg-primary text-white' : 'border-black/10'}`}
+          className={`absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border bg-white/95 shadow-[0_10px_24px_rgba(84,59,39,0.1)] transition hover:border-primary ${wishlisted ? 'border-primary bg-primary' : 'border-black/10'}`}
           aria-label="Toggle wishlist"
         >
-          <Heart className={`h-4 w-4 ${wishlisted ? 'fill-current' : ''}`} />
+          <Heart 
+            className={`h-4 w-4 ${wishlisted ? 'fill-primary text-primary' : 'text-text'}`}
+            fill={wishlisted ? 'currentColor' : 'none'}
+          />
         </motion.button>
         <Link to={`/product/${product.slug}`} className="block overflow-hidden">
           <div className={`overflow-hidden bg-[#fbf7f2] ${compact ? 'aspect-[4/3]' : 'aspect-[4/5]'}`}>
@@ -132,16 +136,4 @@ function ProductCard({ product, compact = false, index = 0 }) {
   );
 }
 
-// Memoize component to prevent unnecessary re-renders
-export default memo(ProductCard, (prevProps, nextProps) => {
-  return (
-    prevProps.product.id === nextProps.product.id &&
-    prevProps.product.name === nextProps.product.name &&
-    prevProps.product.price === nextProps.product.price &&
-    prevProps.product.featured === nextProps.product.featured &&
-    prevProps.product.bestSeller === nextProps.product.bestSeller &&
-    prevProps.product.newArrival === nextProps.product.newArrival &&
-    prevProps.compact === nextProps.compact &&
-    prevProps.index === nextProps.index
-  );
-});
+export default ProductCard;

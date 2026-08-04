@@ -173,19 +173,6 @@ export default function ProductDetailsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className="mt-6 rounded-3xl border border-black/5 bg-[#eadfd2] p-5 sm:mt-8 sm:p-6"
-          >
-            <p className="text-sm font-semibold text-text">Why it stands out</p>
-            <ul className="mt-3 space-y-2.5 text-sm leading-7 text-text/70 sm:mt-4">
-              <li>- Crafted with attention to detail using quality materials</li>
-              <li>- Built to last with durable construction and premium finishes</li>
-              <li>- A versatile piece designed to complement any interior space</li>
-            </ul>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
             className="mt-5 flex gap-3 sm:mt-6"
           >
