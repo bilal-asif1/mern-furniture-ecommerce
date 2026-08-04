@@ -242,7 +242,7 @@ export default function ShopPage() {
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pt-12 pb-0 mb-0">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-16 xl:gap-20">
           <div className="flex shrink-0 flex-col items-center text-center lg:w-[200px] lg:items-start lg:text-left xl:w-[220px]">
-            <p className="font-display text-[2rem] font-medium uppercase leading-[0.82] tracking-[0.12em] text-primary sm:text-[2.35rem] lg:text-[2.75rem]">
+            <p className="mt-4 font-display text-[2rem] font-medium uppercase leading-[0.82] tracking-[0.12em] text-primary sm:mt-0 sm:text-[2.35rem] lg:text-[2.75rem]">
               <span className="block">Shop</span>
               <span className="block">Furniture</span>
             </p>
