@@ -1,0 +1,15 @@
+<svg width="800" height="800" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="800" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6EBDD"/>
+      <stop offset="1" stop-color="#E4D1BC"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="800" rx="400" fill="url(#paint0_linear)"/>
+  <circle cx="400" cy="320" r="130" fill="#FFF9F2" opacity="0.95"/>
+  <path d="M255 505C255 455.294 295.294 415 345 415H455C504.706 415 545 455.294 545 505V555H255V505Z" fill="#8B5E3C" opacity="0.18"/>
+  <path d="M300 470H500C522.091 470 540 487.909 540 510V555H260V510C260 487.909 277.909 470 300 470Z" fill="#8B5E3C" opacity="0.26"/>
+  <path d="M304 553H336V620H304V553Z" fill="#8B5E3C" opacity="0.24"/>
+  <path d="M464 553H496V620H464V553Z" fill="#8B5E3C" opacity="0.24"/>
+  <text x="400" y="720" text-anchor="middle" font-family="Georgia, serif" font-size="40" fill="#5E4330">Junaid Furniture</text>
+</svg>

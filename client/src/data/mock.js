@@ -107,21 +107,27 @@ export const products = [
 export const testimonials = [
   {
     id: 't1',
-    name: 'Ayesha Khan',
+    name: 'Ayesha K.',
     role: 'Interior Designer',
-    quote: 'The craftsmanship feels genuinely premium, and the UI makes the shopping journey effortless.',
+    city: 'Faisalabad',
+    initials: 'AK',
+    quote: 'I ordered a dining set for my new apartment and the quality is outstanding. The wood finish looks even better in person than in the photos.',
   },
   {
     id: 't2',
-    name: 'Omar Ali',
+    name: 'Omar A.',
     role: 'Homeowner',
-    quote: 'Elegant, fast, and beautifully organized. It feels like shopping from a luxury furniture brand.',
+    city: 'Faisalabad',
+    initials: 'OA',
+    quote: 'Very smooth ordering experience from start to finish. The sofa arrived on time and was exactly as described - great value for the price.',
   },
   {
     id: 't3',
-    name: 'Sara Ahmed',
-    role: 'Studio Founder',
-    quote: 'The design language is polished and the admin dashboard looks ready for real operations.',
+    name: 'Ahmad R.',
+    role: 'Homeowner',
+    city: 'Faisalabad',
+    initials: 'AR',
+    quote: 'Fast delivery and the furniture quality exceeded my expectations. Customer support was also very responsive when I had questions about my order.',
   },
 ];
 

@@ -238,6 +238,12 @@ export default function AdminCategoriesPage() {
                       src={previewImage}
                       alt={previewAlt}
                       className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        if (e.target.src !== PLACEHOLDER_IMAGE) {
+                          e.target.src = PLACEHOLDER_IMAGE;
+                        }
+                      }}
                     />
                   </div>
                   <div className="min-w-0 flex-1">

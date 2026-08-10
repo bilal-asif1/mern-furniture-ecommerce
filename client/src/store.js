@@ -43,6 +43,7 @@ const normalizeCategory = (category = {}) => ({
   slug: category.slug || '',
   description: category.description || '',
   image: category.image || '',
+  status: category.status || 'active',
 });
 
 const normalizeBrand = (brand = {}) => ({

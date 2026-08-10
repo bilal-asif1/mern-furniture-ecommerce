@@ -12,6 +12,11 @@
   --color-muted: #6f665f;
 }
 
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
 html {
   scroll-behavior: smooth;
   background:
@@ -51,7 +56,7 @@ body {
 }
 
 .section-shell {
-  @apply mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8;
+  @apply mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8;
 }
 
 .prose-tight p {
@@ -59,7 +64,11 @@ body {
 }
 
 .page-ribbon {
-  @apply inline-flex items-center gap-2 rounded-full border border-[#e2d4c5] bg-white/75 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-text/70 shadow-sm;
+  @apply inline-flex items-center gap-2 rounded-full border border-[#e2d4c5] bg-white/75 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-text/70 shadow-sm;
+}
+
+.luxury-glow {
+  box-shadow: 0 20px 60px rgba(86, 58, 36, 0.12);
 }
 
 .luxury-grid {
@@ -76,4 +85,47 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+}
+
+.pdf-report-page {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  break-after: page;
+  page-break-after: always;
+}
+
+.pdf-report-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pdf-report-section {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.pdf-report-break-before {
+  break-before: page;
+  page-break-before: always;
+}
+
+.pdf-report-break-after {
+  break-after: page;
+  page-break-after: always;
 }

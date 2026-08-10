@@ -22,8 +22,8 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="grid lg:grid-cols-[180px_1fr]">
-        <aside className={`fixed inset-y-0 left-0 z-40 w-[180px] transform border-r border-black/5 bg-[#efe7df] transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <div className="grid lg:grid-cols-[180px_1fr] print:block">
+        <aside className={`fixed inset-y-0 left-0 z-40 w-[180px] transform border-r border-black/5 bg-[#efe7df] transition-transform duration-300 lg:static lg:translate-x-0 print:hidden ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
           <div className="flex h-full flex-col">
             <div className="flex items-start justify-between gap-2 p-2.5">
               <div>
@@ -57,15 +57,15 @@ export default function AdminLayout() {
             </div>
           </div>
         </aside>
-        {mobileOpen ? <button type="button" aria-label="Close sidebar backdrop" className="fixed inset-0 z-30 bg-black/35 lg:hidden" onClick={() => setMobileOpen(false)} /> : null}
+        {mobileOpen ? <button type="button" aria-label="Close sidebar backdrop" className="fixed inset-0 z-30 bg-black/35 lg:hidden print:hidden" onClick={() => setMobileOpen(false)} /> : null}
         <main className="min-h-screen lg:col-start-2 w-full overflow-x-hidden">
-          <div className="sticky top-0 z-50 flex items-center justify-between border-b border-black/5 bg-white/85 backdrop-blur-md px-4 py-4 lg:hidden">
+          <div className="sticky top-0 z-50 flex items-center justify-between border-b border-black/5 bg-white/85 backdrop-blur-md px-4 py-4 lg:hidden print:hidden">
             <button type="button" className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-text" onClick={() => setMobileOpen(true)}>
               Menu
             </button>
             <p className="text-sm font-semibold text-text/60">Admin Dashboard</p>
           </div>
-          <div className="pt-[64px] lg:pt-0">
+          <div className="pt-[64px] lg:pt-0 print:pt-0">
             <Outlet />
           </div>
         </main>
