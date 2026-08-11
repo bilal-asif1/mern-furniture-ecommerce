@@ -166,30 +166,80 @@ export function useApp() {
   const fetchRevenueAnalyticsCb = useCallback(() => dispatch(fetchRevenueAnalytics()), [dispatch]);
   const fetchAdminOrdersCb = useCallback(() => dispatch(fetchAdminOrders()), [dispatch]);
 
+  const cartCount = useMemo(() => 
+    cartState.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0), 
+    [cartState.items]
+  );
+
+  const cartSubtotal = useMemo(() => 
+    cartState.items.reduce((sum, item) => sum + getEffectivePrice(item) * Number(item.quantity || 0), 0), 
+    [cartState.items]
+  );
+
+  const isWishlisted = useCallback((productId) => 
+    wishlistState.items.some((item) => item.id === productId || item._id === productId), 
+    [wishlistState.items]
+  );
+
+  const isInCart = useCallback((productId) => 
+    cartState.items.some((item) => item.id === productId || item._id === productId), 
+    [cartState.items]
+  );
+
+  const handleCartSync = useCallback(() => {
+    if (authState.token) {
+      dispatch(syncCartToServer());
+    }
+  }, [authState.token, dispatch]);
+
+  const handleWishlistSync = useCallback((productId) => {
+    if (authState.token && productId) {
+      dispatch(syncWishlistToggle(productId));
+    }
+  }, [authState.token, dispatch]);
+
+  const addToCart = useCallback((product, quantity = 1) => {
+    dispatch(addItem({ product, quantity }));
+    handleCartSync();
+  }, [dispatch, handleCartSync]);
+
+  const updateCartQty = useCallback(({ id, quantity }) => {
+    dispatch(updateQty({ id, quantity }));
+    handleCartSync();
+  }, [dispatch, handleCartSync]);
+
+  const removeFromCart = useCallback((id) => {
+    dispatch(removeItem(id));
+    handleCartSync();
+  }, [dispatch, handleCartSync]);
+
+  const clearCart = useCallback(() => {
+    dispatch(clearCartAction());
+    handleCartSync();
+  }, [dispatch, handleCartSync]);
+
+  const toggleWishlist = useCallback((product) => {
+    dispatch(toggleItem(product));
+    if (authState.token) {
+      handleWishlistSync(product.id || product._id);
+    }
+  }, [dispatch, authState.token, handleWishlistSync]);
+
+  const clearWishlist = useCallback(() => {
+    dispatch(clearWishlistAction());
+    if (authState.token) dispatch(clearWishlistServer());
+  }, [dispatch, authState.token]);
+
   return useMemo(() => {
-    const token = authState.token;
     const auth = {
       user: authState.user,
-      token,
+      token: authState.token,
       status: authState.status,
     };
 
-    const handleCartSync = () => {
-      if (token) {
-        dispatch(syncCartToServer());
-      }
-    };
-
-    const handleWishlistSync = (productId) => {
-      if (token && productId) {
-        dispatch(syncWishlistToggle(productId));
-      }
-    };
-
-
     return {
       auth,
-      token,
+      token: authState.token,
       user: authState.user,
       authLoading: authState.loading,
       authError: authState.error,
@@ -240,10 +290,10 @@ export function useApp() {
       adminSuccess: adminState.success,
       toast,
       showToast,
-      cartCount: cartState.items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
-      cartSubtotal: cartState.items.reduce((sum, item) => sum + getEffectivePrice(item) * Number(item.quantity || 0), 0),
-      isWishlisted: (productId) => wishlistState.items.some((item) => item.id === productId || item._id === productId),
-      isInCart: (productId) => cartState.items.some((item) => item.id === productId || item._id === productId),
+      cartCount,
+      cartSubtotal,
+      isWishlisted,
+      isInCart,
       login: (payload) => dispatch(setCredentials(payload)),
       loginUser: (payload) => dispatch(loginUser(payload)),
       registerUser: (payload) => dispatch(registerUser(payload)),
@@ -264,35 +314,14 @@ export function useApp() {
       createCategory: (payload) => dispatch(createCategory(payload)),
       updateCategory: (id, payload) => dispatch(updateCategory({ id, payload })),
       deleteCategory: (id) => dispatch(deleteCategory(id)),
-      addToCart: (product, quantity = 1) => {
-        dispatch(addItem({ product, quantity }));
-        handleCartSync();
-      },
-      updateCartQty: ({ id, quantity }) => {
-        dispatch(updateQty({ id, quantity }));
-        handleCartSync();
-      },
-      removeFromCart: (id) => {
-        dispatch(removeItem(id));
-        handleCartSync();
-      },
-      clearCart: () => {
-        dispatch(clearCartAction());
-        handleCartSync();
-      },
+      addToCart,
+      updateCartQty,
+      removeFromCart,
+      clearCart,
       setCartItems: (items) => dispatch(setCartItems(items)),
-      toggleWishlist: (product) => {
-        dispatch(toggleItem(product));
-        // Only sync with backend if user is logged in
-        if (token) {
-          handleWishlistSync(product.id || product._id);
-        }
-      },
+      toggleWishlist,
       setWishlistItems: (items) => dispatch(setWishlistItems(items)),
-      clearWishlist: () => {
-        dispatch(clearWishlistAction());
-        if (token) dispatch(clearWishlistServer());
-      },
+      clearWishlist,
       fetchMyOrders: () => dispatch(fetchMyOrders()),
       fetchOrderById: (id) => dispatch(fetchOrderById(id)),
       createOrder: (payload) => dispatch(createOrder(payload)),
@@ -362,6 +391,30 @@ export function useApp() {
     adminState.success,
     toast,
     showToast,
+    cartCount,
+    cartSubtotal,
+    isWishlisted,
+    isInCart,
+    addToCart,
+    updateCartQty,
+    removeFromCart,
+    clearCart,
+    toggleWishlist,
+    clearWishlist,
     dispatch,
+    fetchCategoriesCb,
+    fetchBrandsCb,
+    fetchProductsCb,
+    fetchAdminProductsCb,
+    fetchProductBySlugCb,
+    createProductCb,
+    updateProductCb,
+    deleteProductCb,
+    permanentlyDeleteProductCb,
+    restoreProductCb,
+    toggleProductStatusCb,
+    fetchAdminSummaryCb,
+    fetchRevenueAnalyticsCb,
+    fetchAdminOrdersCb,
   ]);
 }

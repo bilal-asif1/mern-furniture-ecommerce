@@ -136,4 +136,4 @@ function ProductCard({ product, compact = false, index = 0 }) {
   );
 }
 
-export default ProductCard;
+export default memo(ProductCard);

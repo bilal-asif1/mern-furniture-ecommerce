@@ -454,9 +454,18 @@ export default function ShopPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="rounded-[1.75rem] border border-[#eadfce]/70 bg-white/90 px-6 py-8 text-sm text-text/60 shadow-[0_16px_40px_rgba(86,58,36,0.06)]"
+            className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 xl:gap-5 2xl:gap-6"
           >
-            Loading products...
+            {[...Array(8)].map((_, index) => (
+              <div key={index} className="overflow-hidden rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85">
+                <div className="aspect-[4/5] bg-[#fbf7f2] animate-pulse" />
+                <div className="p-4 space-y-3">
+                  <div className="h-3 bg-[#eadfce]/50 rounded animate-pulse w-1/3" />
+                  <div className="h-4 bg-[#eadfce]/50 rounded animate-pulse w-3/4" />
+                  <div className="h-3 bg-[#eadfce]/50 rounded animate-pulse w-1/2" />
+                </div>
+              </div>
+            ))}
           </motion.div>
         ) : null}
 

@@ -24,6 +24,10 @@ export default function ProductDetailsPage() {
     if (slug) fetchProductBySlug(slug);
   }, [slug, fetchProductBySlug]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
+
   if (catalogDetailLoading && !product) {
     return (
       <PageSection className="py-16">
