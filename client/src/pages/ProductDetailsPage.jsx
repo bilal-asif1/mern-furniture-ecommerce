@@ -28,7 +28,12 @@ export default function ProductDetailsPage() {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  if (catalogDetailLoading && !product) {
+  // Only render if product exists and matches current slug
+  // This prevents showing stale product data during navigation
+  const isProductMatch = product && product.slug === slug;
+  const shouldShowLoading = catalogDetailLoading || !isProductMatch;
+
+  if (shouldShowLoading) {
     return (
       <PageSection className="py-16">
         <div className="rounded-[2rem] bg-white p-6 shadow-card">Loading product...</div>
