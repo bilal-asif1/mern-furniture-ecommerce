@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, Menu, MessageCircle, Search, UserRound, X } from 'lucide-react';
+import { Heart, Menu, MessageCircle, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import Logo from './Logo';
 import { buildWhatsAppLink } from '../utils/whatsapp';
@@ -16,7 +16,7 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { wishlist, auth } = useApp();
+  const { wishlist } = useApp();
 
   const prevWishlistRef = useRef(wishlist.length);
   const [wishlistAnimating, setWishlistAnimating] = useState(false);
@@ -42,7 +42,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const signInLabel = auth?.user ? auth.user.name.split(' ')[0] : 'Sign In';
   const whatsappLink = buildWhatsAppLink('Hi, I have a general inquiry about your furniture collection.');
   const actionBase = 'inline-flex h-11 items-center justify-center rounded-full border text-sm font-semibold transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30';
   const desktopTextAction = `${actionBase} gap-2 px-4 lg:px-5`;
@@ -161,22 +160,6 @@ export default function Navbar() {
             </a>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 0.2 }}
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.98 }}
-            className="hidden md:block"
-          >
-            <Link
-              to={auth?.user ? '/dashboard' : '/login'}
-              className={`${desktopTextAction} border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-primary`}
-            >
-              <UserRound className="h-4 w-4" />
-              <span>{signInLabel}</span>
-            </Link>
-          </motion.div>
         </div>
       </div>
 

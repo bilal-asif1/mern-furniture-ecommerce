@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
-import { contactLinks, premiumCategories } from '../data/siteContent';
+import { contactLinks } from '../data/siteContent';
 import { MapPin, MessageCircle, Phone } from 'lucide-react';
 
 function FacebookMark() {
@@ -24,7 +24,7 @@ function InstagramMark() {
 export default function Footer() {
   return (
     <footer className="mt-8 border-t border-[#e9ddcf] bg-[linear-gradient(180deg,#f3eadf_0%,#e8dccd_100%)]">
-      <div className="section-shell grid gap-6 py-8 sm:py-9 lg:grid-cols-[1.15fr_0.7fr_0.8fr_0.9fr] lg:gap-8 lg:py-10">
+      <div className="section-shell grid gap-6 py-8 sm:py-9 lg:grid-cols-[1.15fr_0.7fr_0.9fr] lg:gap-8 lg:py-10">
         <div className="max-w-sm">
           <Logo />
           <p className="mt-3 max-w-md text-sm leading-6 text-text/70">
@@ -48,17 +48,6 @@ export default function Footer() {
             <Link to="/about" className="transition hover:text-text">About Us</Link>
             <Link to="/contact" className="transition hover:text-text">Contact</Link>
             <Link to="/faq" className="transition hover:text-text">FAQ</Link>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-primary/80">Categories</p>
-          <div className="mt-3 grid gap-2.5 text-sm text-text/70">
-            {premiumCategories.slice(0, 6).map((category) => (
-              <Link key={category.slug} to={`/shop?category=${category.slug}`} className="transition hover:text-text">
-                {category.name}
-              </Link>
-            ))}
           </div>
         </div>
 
