@@ -21,6 +21,7 @@ export default function ShopPage() {
   const railRef = useRef(null);
   const categoryRefs = useRef(new Map());
   const filterMenuRef = useRef(null);
+  const productSectionRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -107,6 +108,12 @@ export default function ShopPage() {
       rail.removeEventListener('wheel', onNativeWheel);
     };
   }, [categories]);
+
+  useEffect(() => {
+    if (productSectionRef.current) {
+      productSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [page]);
 
   const totalPages = Math.max(1, catalogPages || 1);
   const visibleProducts = useMemo(() => {
@@ -352,7 +359,7 @@ export default function ShopPage() {
         </div>
       </section>
 
-      <section className="section-shell pt-2 sm:pt-3 lg:pt-4">
+      <section ref={productSectionRef} className="section-shell pt-2 sm:pt-3 lg:pt-4">
         <div className="rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 px-4 py-4 shadow-[0_12px_30px_rgba(86,58,36,0.05)] sm:px-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
