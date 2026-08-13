@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node scripts/with-subst.mjs vite",
     "build": "node scripts/with-subst.mjs vite build",
-    "preview": "node scripts/with-subst.mjs vite preview"
+    "preview": "node scripts/with-subst.mjs vite preview",
+    "generate-sitemap": "node scripts/generate-sitemap.mjs"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
