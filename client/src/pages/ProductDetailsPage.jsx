@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import PageSection from '../components/PageSection';
 import RatingStars from '../components/RatingStars';
 import EmptyState from '../components/EmptyState';
+import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { buildProductWhatsAppLink } from '../utils/whatsapp';
 import { MessageCircle, Star, Sparkles } from 'lucide-react';
@@ -67,8 +68,39 @@ export default function ProductDetailsPage() {
   if (product.bestSeller) badges.push({ label: 'Best Seller', icon: Sparkles, color: 'bg-[#c58d57]' });
   if (product.newArrival) badges.push({ label: 'New Arrival', icon: null, color: 'bg-[#a67c52]' });
 
+  const seoTitle = `${product.name} | Junaid Furniture`;
+  const seoDescription = product.description 
+    ? `${product.description.substring(0, 160)}${product.description.length > 160 ? '...' : ''}`
+    : `Shop ${product.name} at Junaid Furniture. Quality furniture in Pakistan.`;
+
   return (
-    <PageSection className="py-8 sm:py-10">
+    <>
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`https://junaidfurniture.netlify.app/product/${product.slug}`}
+        ogType="product"
+        ogImage={image}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.name,
+          description: product.description,
+          image: image,
+          brand: {
+            '@type': 'Brand',
+            name: 'Junaid Furniture'
+          },
+          category: product.categoryName || product.category?.name || 'Furniture',
+          offers: {
+            '@type': 'Offer',
+            availability: 'https://schema.org/InStock',
+            priceCurrency: 'PKR',
+            url: `https://junaidfurniture.netlify.app/product/${product.slug}`
+          }
+        }}
+      />
+      <PageSection className="py-8 sm:py-10">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start xl:gap-12">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
@@ -190,5 +222,6 @@ export default function ProductDetailsPage() {
         </motion.div>
       </div>
     </PageSection>
+    </>
   );
 }

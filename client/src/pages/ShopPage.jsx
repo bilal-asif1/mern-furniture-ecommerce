@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
+import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 
 const PER_PAGE = 12;
@@ -246,6 +247,23 @@ export default function ShopPage() {
 
   return (
     <>
+      <SEO
+        title="Junaid Furniture | Quality Furniture in Pakistan"
+        description="Discover premium bedroom furniture, bed sets, office chairs, dining furniture, and more at Junaid Furniture. Shop elegant, high-quality furniture pieces for your home in Pakistan."
+        canonical="https://junaidfurniture.netlify.app/"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'Junaid Furniture',
+          url: 'https://junaidfurniture.netlify.app/',
+          description: 'Quality Furniture in Pakistan - Bedroom furniture, bed sets, office chairs, dining furniture',
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: 'https://junaidfurniture.netlify.app/?search={search_term_string}',
+            'query-input': 'required name=search_term_string'
+          }
+        }}
+      />
       <section className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-6 sm:pt-10 lg:px-8 lg:pt-12 pb-0 mb-0">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-16 xl:gap-20">
           <div className="flex shrink-0 flex-col items-center text-center lg:w-[200px] lg:items-start lg:text-left xl:w-[220px]">

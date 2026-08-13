@@ -1,0 +1,14 @@
+# Allow all crawlers to access the site
+User-agent: *
+Allow: /
+
+# Disallow admin and authentication pages
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /cart
+Disallow: /checkout
+
+# Sitemap location
+Sitemap: https://junaidfurniture.netlify.app/sitemap.xml

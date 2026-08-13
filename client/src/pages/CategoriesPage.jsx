@@ -2,6 +2,7 @@ import PageHero from '../components/PageHero';
 import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
 import ProductCard from '../components/ProductCard';
+import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import categoriesHero from '../assets/images/categories/categories-hero.jpg';
 
@@ -11,6 +12,11 @@ export default function CategoriesPage() {
 
   return (
     <>
+      <SEO
+        title="Categories | Junaid Furniture"
+        description="Browse luxury furniture by curated category at Junaid Furniture. Discover dressing tables, bed sets, sofa sets, dining sets, and more premium furniture in Pakistan."
+        canonical="https://junaidfurniture.netlify.app/categories"
+      />
       <PageHero
         kicker="Categories"
         title="Browse luxury furniture by curated category."
