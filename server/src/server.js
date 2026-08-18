@@ -23,16 +23,19 @@ process.env.PORT ||= '5000';
 
 const PORT = process.env.PORT || 5000;
 
-const [{ default: connectDB }, { default: app }, { default: seedUsers }, { default: seedData }, { default: backfillDemoRatings }] = await Promise.all([
+const [{ default: connectDB }, { default: app }, { default: seedUsers }, { default: seedData }, { default: backfillDemoRatings }, { default: createIndexes }] = await Promise.all([
   import('./config/db.js'),
   import('./app.js'),
   import('./utils/seedUsers.js'),
   import('./utils/seedData.js'),
   import('./utils/backfillDemoRatings.js'),
+  import('./config/indexes.js'),
 ]);
 
 const connected = await connectDB();
 if (connected) {
+  // Create database indexes for query optimization
+  await createIndexes();
   await seedUsers();
   await seedData();
   // Backfill demo ratings for existing products (runs only if needed)

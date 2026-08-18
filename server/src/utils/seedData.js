@@ -234,25 +234,9 @@ const seedData = async () => {
         });
         console.log(`Seeded product: ${created.name}`);
       }
-    } else {
-      const existingProducts = await Product.find({});
-      console.log('Normalizing existing product images...');
-      for (const product of existingProducts) {
-        const nextMedia = await repairStoredProductMedia(product);
-        const currentImages = Array.isArray(product.images) ? product.images : [];
-        const imagesChanged =
-          nextMedia.thumbnailImage !== (product.thumbnailImage || '') ||
-          nextMedia.images.length !== currentImages.length ||
-          nextMedia.images.some((image, index) => image !== currentImages[index]);
-
-        if (!imagesChanged) {
-          continue;
-        }
-
-        await Product.findByIdAndUpdate(product._id, nextMedia, { new: true });
-        console.log(`Normalized product media: ${product.name}`);
-      }
     }
+    // Skip image normalization on existing products - only run if explicitly needed
+    // This was causing unnecessary Cloudinary API calls on every server restart
   } catch (error) {
     console.error('Error seeding data:', error);
   }

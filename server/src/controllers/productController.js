@@ -77,16 +77,25 @@ const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
   return filter;
 };
 
-const serializeProduct = async (product) => {
+const serializeProduct = async (product, reviewStatsMap = new Map()) => {
   if (!product) return product;
 
   const json = typeof product.toObject === 'function' ? product.toObject() : product;
   
-  // Check if product has real reviews and calculate rating if so
-  const reviewStats = await calculateRatingFromReviews(json._id);
-  if (reviewStats.reviewCount > 0) {
-    json.rating = reviewStats.rating;
-    json.reviewCount = reviewStats.reviewCount;
+  // Use cached review stats if available (for batch operations)
+  if (reviewStatsMap.has(json._id.toString())) {
+    const stats = reviewStatsMap.get(json._id.toString());
+    if (stats.reviewCount > 0) {
+      json.rating = stats.rating;
+      json.reviewCount = stats.reviewCount;
+    }
+  } else {
+    // Fallback to individual query for single product operations
+    const reviewStats = await calculateRatingFromReviews(json._id);
+    if (reviewStats.reviewCount > 0) {
+      json.rating = reviewStats.rating;
+      json.reviewCount = reviewStats.reviewCount;
+    }
   }
 
   return {
@@ -142,7 +151,31 @@ const getProducts = asyncHandler(async (req, res) => {
     .skip(limit * (page - 1))
     .lean();
 
-  const serializedProducts = await Promise.all(products.map(serializeProduct));
+  // Batch fetch review stats to avoid N+1 queries
+  const productIds = products.map(p => p._id);
+  const reviewStatsMap = new Map();
+  
+  if (productIds.length > 0) {
+    const reviews = await Review.find({ product: { $in: productIds } });
+    reviews.forEach(review => {
+      const productId = review.product.toString();
+      if (!reviewStatsMap.has(productId)) {
+        reviewStatsMap.set(productId, { rating: 0, reviewCount: 0, totalRating: 0 });
+      }
+      const stats = reviewStatsMap.get(productId);
+      stats.totalRating += review.rating;
+      stats.reviewCount += 1;
+    });
+    
+    // Calculate averages
+    reviewStatsMap.forEach((stats, productId) => {
+      stats.rating = Number((stats.totalRating / stats.reviewCount).toFixed(1));
+    });
+  }
+
+  const serializedProducts = await Promise.all(
+    products.map(product => serializeProduct(product, reviewStatsMap))
+  );
   res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });
 });
 
@@ -306,7 +339,31 @@ const getAdminProducts = asyncHandler(async (req, res) => {
     .skip(limit * (page - 1))
     .lean();
 
-  const serializedProducts = await Promise.all(products.map(serializeProduct));
+  // Batch fetch review stats to avoid N+1 queries
+  const productIds = products.map(p => p._id);
+  const reviewStatsMap = new Map();
+  
+  if (productIds.length > 0) {
+    const reviews = await Review.find({ product: { $in: productIds } });
+    reviews.forEach(review => {
+      const productId = review.product.toString();
+      if (!reviewStatsMap.has(productId)) {
+        reviewStatsMap.set(productId, { rating: 0, reviewCount: 0, totalRating: 0 });
+      }
+      const stats = reviewStatsMap.get(productId);
+      stats.totalRating += review.rating;
+      stats.reviewCount += 1;
+    });
+    
+    // Calculate averages
+    reviewStatsMap.forEach((stats, productId) => {
+      stats.rating = Number((stats.totalRating / stats.reviewCount).toFixed(1));
+    });
+  }
+
+  const serializedProducts = await Promise.all(
+    products.map(product => serializeProduct(product, reviewStatsMap))
+  );
   res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });
 });
 
