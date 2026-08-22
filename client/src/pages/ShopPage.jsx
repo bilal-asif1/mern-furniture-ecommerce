@@ -44,8 +44,12 @@ export default function ShopPage() {
     if (activeCategory?.id) {
       params.categoryId = activeCategory.id;
     }
-    fetchProducts(params);
-  }, [fetchProducts, activeCategory, page]);
+    // Only fetch if products are not already loaded or params have changed
+    // This prevents duplicate API calls since AppContext already fetches initial products
+    if (products.length === 0 || activeCategory || page !== 1) {
+      fetchProducts(params);
+    }
+  }, [fetchProducts, activeCategory, page, products.length]);
 
   useEffect(() => {
     const key = categorySlug || 'all';

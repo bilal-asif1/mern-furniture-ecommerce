@@ -220,17 +220,38 @@ export const fetchBrands = createAsyncThunk('catalog/fetchBrands', async (_, thu
 });
 
 export const fetchProducts = createAsyncThunk('catalog/fetchProducts', async (params = {}, thunkAPI) => {
-  try {
-    const { data } = await apiClient.get('/products', { params });
-    return {
-      products: Array.isArray(data.products) ? data.products.map(normalizeProduct) : [],
-      page: data.page || 1,
-      pages: data.pages || 1,
-      count: data.count || 0,
-    };
-  } catch (error) {
-    return thunkAPI.rejectWithValue(unwrapApiError(error));
+  const maxRetries = 2;
+  let lastError;
+  
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const { data } = await apiClient.get('/products', { params });
+      return {
+        products: Array.isArray(data.products) ? data.products.map(normalizeProduct) : [],
+        page: data.page || 1,
+        pages: data.pages || 1,
+        count: data.count || 0,
+      };
+    } catch (error) {
+      lastError = error;
+      
+      // Only retry on network errors or 5xx server errors
+      const isNetworkError = !error.response;
+      const isServerError = error.response?.status >= 500;
+      
+      if (attempt < maxRetries && (isNetworkError || isServerError)) {
+        // Exponential backoff: 1s, 2s
+        const delay = Math.pow(2, attempt) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      
+      // Don't retry on 4xx errors or after max retries
+      break;
+    }
   }
+  
+  return thunkAPI.rejectWithValue(unwrapApiError(lastError));
 });
 
 export const fetchAdminProducts = createAsyncThunk('catalog/fetchAdminProducts', async (params = {}, thunkAPI) => {
