@@ -4,12 +4,14 @@
 
 :root {
   color-scheme: light;
-  --color-cream: #f7f1ea;
-  --color-sand: #eadfce;
-  --color-wood: #8b5e3c;
-  --color-wood-dark: #684429;
-  --color-charcoal: #1f1a17;
-  --color-muted: #6f665f;
+  --color-cream: #f7f1e9;
+  --color-linen: #fcf9f5;
+  --color-sand: #e6d7c7;
+  --color-wood: #7d5435;
+  --color-wood-dark: #5f3f29;
+  --color-charcoal: #231f1b;
+  --color-muted: #6f645a;
+  --page-overlay: rgba(125, 84, 53, 0.08);
 }
 
 @page {
@@ -20,17 +22,18 @@
 html {
   scroll-behavior: smooth;
   background:
-    radial-gradient(circle at top left, rgba(139, 94, 60, 0.12), transparent 35%),
-    linear-gradient(180deg, #faf7f3 0%, #f6f0e7 100%);
+    radial-gradient(circle at top left, rgba(125, 84, 53, 0.11), transparent 34%),
+    radial-gradient(circle at top right, rgba(170, 122, 85, 0.08), transparent 26%),
+    linear-gradient(180deg, #fbf7f2 0%, #f3eadf 100%);
   overflow-x: hidden;
 }
 
 body {
   font-family: Inter, system-ui, sans-serif;
   background:
-    radial-gradient(circle at top right, rgba(139, 94, 60, 0.08), transparent 28%),
-    linear-gradient(180deg, #faf7f4 0%, #f5efe6 100%);
-  color: #2c2c2c;
+    radial-gradient(circle at top right, rgba(125, 84, 53, 0.08), transparent 28%),
+    linear-gradient(180deg, #fbf8f4 0%, #f4ede4 100%);
+  color: #231f1b;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -43,12 +46,12 @@ body {
   font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
-.luxury-surface {
-  @apply border border-white/75 bg-white/85 shadow-card backdrop-blur-md;
+.premium-surface {
+  @apply border border-white/70 bg-white/80 shadow-card backdrop-blur-md;
 }
 
-.luxury-panel {
-  @apply rounded-[2rem] border border-white/70 bg-white/80 shadow-card;
+.premium-panel {
+  @apply rounded-[1.75rem] border border-[#e9ddcf] bg-white/90 shadow-card;
 }
 
 .glass-panel {
@@ -56,7 +59,7 @@ body {
 }
 
 .section-shell {
-  @apply mx-auto w-full max-w-[1400px] px-4 py-10 sm:px-6 lg:px-8;
+  @apply mx-auto w-full max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8;
 }
 
 .prose-tight p {
@@ -64,17 +67,33 @@ body {
 }
 
 .page-ribbon {
-  @apply inline-flex items-center gap-2 rounded-full border border-[#e2d4c5] bg-white/75 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.24em] text-text/70 shadow-sm;
+  @apply inline-flex items-center gap-2 rounded-full border border-[#e3d5c6] bg-white/80 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.28em] text-text/70 shadow-sm;
 }
 
 .luxury-glow {
   box-shadow: 0 20px 60px rgba(86, 58, 36, 0.12);
 }
 
+.editorial-frame {
+  @apply rounded-[2rem] border border-white/70 bg-white/90 shadow-editorial;
+}
+
+.editorial-divider {
+  @apply h-px w-full bg-gradient-to-r from-transparent via-[#dfcfbd] to-transparent;
+}
+
+.field-shell {
+  @apply w-full rounded-[1.15rem] border border-[#e2d3c2] bg-white/90 px-4 py-3 text-sm text-text outline-none transition placeholder:text-text/35 focus:border-primary focus:ring-2 focus:ring-primary/10;
+}
+
+.field-shell-sm {
+  @apply w-full rounded-[1rem] border border-[#e2d3c2] bg-white/90 px-3.5 py-2.5 text-sm text-text outline-none transition placeholder:text-text/35 focus:border-primary focus:ring-2 focus:ring-primary/10;
+}
+
 .luxury-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.45) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.45) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.38) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.38) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 

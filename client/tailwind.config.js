@@ -4,15 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#8B5E3C',
-        secondary: '#D9C2A7',
-        background: '#F8F5F2',
-        accent: '#B08968',
-        text: '#2C2C2C',
+        primary: '#7D5435',
+        secondary: '#DCC9B2',
+        accent: '#AA7A55',
+        background: '#F7F1E9',
+        surface: '#FCF9F5',
+        line: '#E6D7C7',
+        text: '#231F1B',
+        muted: '#6F645A',
       },
       boxShadow: {
-        soft: '0 18px 50px rgba(44, 44, 44, 0.08)',
-        card: '0 10px 30px rgba(44, 44, 44, 0.07)',
+        soft: '0 20px 50px rgba(35, 31, 27, 0.08)',
+        card: '0 12px 36px rgba(35, 31, 27, 0.07)',
+        editorial: '0 24px 70px rgba(35, 31, 27, 0.12)',
       },
       fontFamily: {
         display: ['Cormorant Garamond', 'serif'],
@@ -20,7 +24,7 @@ export default {
       },
       backgroundImage: {
         'hero-gradient':
-          'radial-gradient(circle at top left, rgba(139, 94, 60, 0.18), transparent 35%), linear-gradient(180deg, #fff8f2 0%, #f8f5f2 100%)',
+          'radial-gradient(circle at top left, rgba(125, 84, 53, 0.16), transparent 34%), radial-gradient(circle at top right, rgba(170, 122, 85, 0.14), transparent 30%), linear-gradient(180deg, #fbf7f2 0%, #f4ece2 100%)',
       },
       keyframes: {
         fadeUp: {

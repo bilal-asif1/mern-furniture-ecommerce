@@ -23,14 +23,14 @@ function InstagramMark() {
 
 export default function Footer() {
   return (
-    <footer className="mt-8 border-t border-[#e9ddcf] bg-[linear-gradient(180deg,#f3eadf_0%,#e8dccd_100%)]">
-      <div className="section-shell grid gap-6 py-8 sm:py-9 lg:grid-cols-[1.15fr_0.7fr_0.9fr] lg:gap-8 lg:py-10">
-        <div className="max-w-sm">
+    <footer className="mt-10 border-t border-[#e7dacb] bg-[linear-gradient(180deg,#f4ede4_0%,#eadfce_100%)]">
+      <div className="section-shell grid gap-8 py-10 sm:py-12 lg:grid-cols-[1.2fr_0.7fr_0.9fr] lg:gap-10 lg:py-14">
+        <div className="max-w-md">
           <Logo />
-          <p className="mt-3 max-w-md text-sm leading-6 text-text/70">
-            A luxury furniture destination designed with warm neutrals, premium spacing, and a calm shopping flow inspired by refined retail experiences.
+          <p className="mt-4 max-w-md text-sm leading-7 text-text/70 sm:text-base">
+            A premium furniture destination shaped by warm neutrals, generous spacing, and a calm shopping flow that keeps the catalog and the craftsmanship front and center.
           </p>
-          <div className="mt-5 flex flex-wrap gap-2.5">
+          <div className="mt-6 flex flex-wrap gap-2.5">
             <a href={contactLinks.whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white">
               <MessageCircle className="h-4 w-4" />
               WhatsApp
@@ -43,8 +43,11 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-primary/80">About</p>
-          <div className="mt-3 flex flex-col gap-2.5 text-sm text-text/70">
+          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-primary/80">Explore</p>
+          <div className="mt-4 flex flex-col gap-2.5 text-sm text-text/70">
+            <Link to="/" className="transition hover:text-text">Home</Link>
+            <Link to="/shop" className="transition hover:text-text">Shop</Link>
+            <Link to="/categories" className="transition hover:text-text">Collections</Link>
             <Link to="/about" className="transition hover:text-text">About Us</Link>
             <Link to="/contact" className="transition hover:text-text">Contact</Link>
             <Link to="/faq" className="transition hover:text-text">FAQ</Link>
@@ -52,8 +55,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.26em] text-primary/80">Contact</p>
-          <div className="mt-3 space-y-2.5 text-sm text-text/70">
+          <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-primary/80">Contact</p>
+          <div className="mt-4 space-y-2.5 text-sm text-text/70">
             <a href="tel:+923063400146" className="flex items-center gap-2 transition hover:text-text">
               <Phone className="h-4 w-4" />
               +92 306 3400146
