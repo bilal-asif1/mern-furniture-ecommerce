@@ -36,6 +36,7 @@ export default function HomePage() {
     () => categories.find((item) => item.slug === categorySlug) || null,
     [categories, categorySlug],
   );
+  const activeCategoryQuery = searchParams.get('category') || categorySlug;
 
   useEffect(() => {
     const params = { limit: 100, page: 1 };
@@ -205,11 +206,15 @@ export default function HomePage() {
     rail.scrollBy({ left: amount, behavior: 'smooth' });
   };
 
+  const clearCategoryFilter = useCallback(() => {
+    setCategorySlug('');
+    setExploreCategoryFilter('all');
+    setSearchParams({});
+  }, [setSearchParams]);
+
   const handleCategoryClick = (category, event) => {
     if (!category) {
-      setCategorySlug('');
-      setExploreCategoryFilter('all');
-      setSearchParams({});
+      clearCategoryFilter();
       return;
     }
 
@@ -402,9 +407,20 @@ export default function HomePage() {
       <section className="section-shell py-8 sm:py-10 lg:py-12">
         <div className="rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 px-4 py-6 shadow-[0_12px_30px_rgba(86,58,36,0.05)] sm:px-5 sm:py-8 lg:px-6 lg:py-10">
           <div className="mb-6 flex flex-col items-center gap-3 text-center sm:mb-8 lg:flex-row lg:justify-between lg:text-left">
-            <h2 className="font-display text-[1.25rem] font-light normal-case leading-normal tracking-[0.05em] text-text sm:text-[1.5rem] lg:text-[1.75rem]">
-              Explore What Everyone's Loving
-            </h2>
+            <div className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center lg:justify-start lg:text-left">
+              <h2 className="font-display text-[1.25rem] font-light normal-case leading-normal tracking-[0.05em] text-text sm:text-[1.5rem] lg:text-[1.75rem]">
+                Explore What Everyone&apos;s Loving
+              </h2>
+              {activeCategoryQuery ? (
+                <button
+                  type="button"
+                  onClick={clearCategoryFilter}
+                  className="inline-flex items-center gap-1 rounded-full border border-[#eadfce] bg-[#fbf7f2] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-text/70 transition hover:border-[#caa782] hover:text-text sm:text-[11px]"
+                >
+                  Clear Filter
+                </button>
+              ) : null}
+            </div>
             <Link
               to="/shop"
               className="font-display text-xs font-light normal-case tracking-[0.05em] text-primary/70 hover:text-primary transition flex items-center gap-1"
