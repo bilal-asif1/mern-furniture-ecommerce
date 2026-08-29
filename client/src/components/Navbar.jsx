@@ -88,14 +88,14 @@ function SearchResultRow({ product, onSelect }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a27a52]">
+            <p className="truncate text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-600">
               {category}
             </p>
             <h3 className="mt-1 truncate text-sm font-semibold text-[#2c2118] sm:text-[15px]">
               {product.name}
             </h3>
           </div>
-          <span className="mt-0.5 inline-flex h-8 shrink-0 items-center rounded-full border border-[#eadfce] bg-[#fbf7f2] px-2.5 text-[11px] font-semibold text-[#5b4635]">
+          <span className="mt-0.5 inline-flex h-8 shrink-0 items-center rounded-full border border-white/30 bg-black/50 px-2.5 text-[11px] font-semibold text-white shadow-sm">
             {rating ? `${rating}/5` : 'New'}
           </span>
         </div>
