@@ -158,7 +158,7 @@ export default function ProductDetailsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-[11px] font-bold uppercase tracking-[0.32em] text-primary sm:text-xs"
+            className="text-[11px] font-bold uppercase tracking-[0.32em] text-text/70 sm:text-xs"
           >
             {product.categoryName || product.category?.name || 'Furniture'}
           </motion.p>

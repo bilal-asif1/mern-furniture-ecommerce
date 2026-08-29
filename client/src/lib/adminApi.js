@@ -56,12 +56,6 @@ export const cartApi = {
   sync: (token, items) => apiClient.put('/cart', { items }, withAuth(token)).then((response) => response.data),
 };
 
-export const wishlistApi = {
-  get: (token) => apiClient.get('/wishlist', withAuth(token)).then((response) => response.data),
-  toggle: (token, productId) => apiClient.post('/wishlist/toggle', { productId }, withAuth(token)).then((response) => response.data),
-  clear: (token) => apiClient.delete('/wishlist/clear', withAuth(token)).then((response) => response.data),
-};
-
 export const orderApi = {
   list: (token) => apiClient.get('/orders', withAuth(token)).then((response) => response.data),
   mine: (token) => apiClient.get('/orders/mine', withAuth(token)).then((response) => response.data),

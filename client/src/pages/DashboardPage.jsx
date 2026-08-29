@@ -7,7 +7,7 @@ import { useApp } from '../context/AppContext';
 import { formatCurrency } from '../utils/formatCurrency';
 
 export default function DashboardPage() {
-  const { auth, wishlist, cart, orders, fetchMyOrders, ordersLoading } = useApp();
+  const { auth, cart, orders, fetchMyOrders, ordersLoading } = useApp();
 
   useEffect(() => {
     fetchMyOrders();
@@ -15,7 +15,7 @@ export default function DashboardPage() {
 
   return (
     <PageSection className="py-10">
-      <SectionTitle eyebrow="Dashboard" title={`Welcome back, ${auth.user?.name?.split(' ')[0] || 'Customer'}`} description="View your account summary, orders, wishlist, and quick actions." />
+      <SectionTitle eyebrow="Dashboard" title={`Welcome back, ${auth.user?.name?.split(' ')[0] || 'Customer'}`} description="View your account summary, orders, and quick actions." />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -24,9 +24,8 @@ export default function DashboardPage() {
       >
         {[
           ['Cart Items', cart.length],
-          ['Wishlist Items', wishlist.length],
           ['Past Orders', orders.length],
-          ['Saved Products', wishlist.length],
+          ['Pending Orders', orders.filter((order) => order.status === 'pending').length],
         ].map(([label, value], index) => (
           <motion.div
             key={label}
@@ -93,9 +92,6 @@ export default function DashboardPage() {
           <div className="mt-6 flex flex-col gap-3">
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button to="/shop" className="w-full">Shop More Furniture</Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button to="/wishlist" variant="ghost" className="w-full">Open Wishlist</Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button to="/track-order" variant="ghost" className="w-full">Track an Order</Button>

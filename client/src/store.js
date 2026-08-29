@@ -23,7 +23,6 @@ const storage = {
 
 const authStorageKey = 'jf-auth';
 const cartStorageKey = 'jf-cart';
-const wishlistStorageKey = 'jf-wishlist';
 
 const getId = (value) => value?._id || value?.id || value || '';
 
@@ -143,8 +142,6 @@ const normalizeCartItems = (items = []) =>
     };
   });
 
-const normalizeWishlistItems = (items = []) => items.map((item) => normalizeProduct(item.product || item));
-
 const normalizeOrder = (order = {}) => ({
   ...order,
   id: getId(order),
@@ -161,7 +158,6 @@ const normalizeOrder = (order = {}) => ({
 
 const authInitial = storage.read(authStorageKey, null);
 const cartInitial = storage.read(cartStorageKey, []);
-const wishlistInitial = storage.read(wishlistStorageKey, []);
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, thunkAPI) => {
   try {
@@ -426,36 +422,6 @@ export const syncCartToServer = createAsyncThunk('cart/syncCartToServer', async 
     }));
     const { data } = await apiClient.put('/cart', { items }, withAuth(token));
     return normalizeCartItems(data?.items || []);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(unwrapApiError(error));
-  }
-});
-
-export const loadWishlistFromServer = createAsyncThunk('wishlist/loadWishlistFromServer', async (_, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.token;
-    const { data } = await apiClient.get('/wishlist', withAuth(token));
-    return normalizeWishlistItems(data?.products || []);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(unwrapApiError(error));
-  }
-});
-
-export const syncWishlistToggle = createAsyncThunk('wishlist/syncWishlistToggle', async (productId, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.token;
-    const { data } = await apiClient.post('/wishlist/toggle', { productId }, withAuth(token));
-    return normalizeWishlistItems(data?.products || []);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(unwrapApiError(error));
-  }
-});
-
-export const clearWishlistServer = createAsyncThunk('wishlist/clearWishlistServer', async (_, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.token;
-    await apiClient.delete('/wishlist/clear', withAuth(token));
-    return [];
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
@@ -942,69 +908,6 @@ const cartSlice = createSlice({
   },
 });
 
-const wishlistSlice = createSlice({
-  name: 'wishlist',
-  initialState: {
-    items: Array.isArray(wishlistInitial) ? wishlistInitial : [],
-    loading: false,
-    error: '',
-    success: '',
-  },
-  reducers: {
-    toggleItem(state, action) {
-      const product = normalizeProduct(action.payload.product || action.payload);
-      const exists = state.items.some((item) => item.id === product.id);
-      state.items = exists ? state.items.filter((item) => item.id !== product.id) : [...state.items, product];
-      state.success = exists ? 'Removed from wishlist' : 'Added to wishlist';
-      // Persist to localStorage for guest users
-      storage.write(wishlistStorageKey, state.items);
-    },
-    setWishlistItems(state, action) {
-      state.items = action.payload;
-    },
-    clearWishlist(state) {
-      state.items = [];
-      state.success = 'Wishlist cleared';
-      // Clear localStorage for guest users
-      storage.remove(wishlistStorageKey);
-    },
-    clearWishlistMessage(state) {
-      state.error = '';
-      state.success = '';
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loadWishlistFromServer.pending, (state) => {
-        state.loading = true;
-        state.error = '';
-      })
-      .addCase(loadWishlistFromServer.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = action.payload;
-      })
-      .addCase(loadWishlistFromServer.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Unable to load wishlist';
-      })
-      .addCase(syncWishlistToggle.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(syncWishlistToggle.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = action.payload;
-      })
-      .addCase(syncWishlistToggle.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || 'Unable to sync wishlist';
-      })
-      .addCase(clearWishlistServer.fulfilled, (state) => {
-        state.loading = false;
-        state.items = [];
-      });
-  },
-});
-
 const ordersSlice = createSlice({
   name: 'orders',
   initialState: {
@@ -1165,7 +1068,6 @@ const adminSlice = createSlice({
 export const { setCredentials, logout, clearAuthMessage } = authSlice.actions;
 export const { clearCatalogMessage } = catalogSlice.actions;
 export const { addItem, updateQty, removeItem, clearCart, setCartItems, clearCartMessage } = cartSlice.actions;
-export const { toggleItem, setWishlistItems, clearWishlist, clearWishlistMessage } = wishlistSlice.actions;
 export const { clearOrdersMessage } = ordersSlice.actions;
 export const { clearAdminMessage } = adminSlice.actions;
 
@@ -1174,7 +1076,6 @@ export const store = configureStore({
     auth: authSlice.reducer,
     catalog: catalogSlice.reducer,
     cart: cartSlice.reducer,
-    wishlist: wishlistSlice.reducer,
     orders: ordersSlice.reducer,
     admin: adminSlice.reducer,
   },
@@ -1185,7 +1086,6 @@ if (typeof window !== 'undefined') {
     const state = store.getState();
     storage.write(authStorageKey, state.auth.token ? { user: state.auth.user, token: state.auth.token } : null);
     storage.write(cartStorageKey, state.cart.items);
-    storage.write(wishlistStorageKey, state.wishlist.items);
   });
 }
 
@@ -1195,6 +1095,5 @@ export {
   normalizeBrand,
   normalizeProduct,
   normalizeCartItems,
-  normalizeWishlistItems,
   normalizeOrder,
 };

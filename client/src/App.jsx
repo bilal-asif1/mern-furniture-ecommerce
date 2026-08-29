@@ -12,7 +12,6 @@ const ShopPage = lazy(() => import('./pages/ShopPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
 const ProductDetailsPage = lazy(() => import('./pages/ProductDetailsPage'));
-const WishlistPage = lazy(() => import('./pages/WishlistPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage'));
@@ -50,7 +49,6 @@ const PAGE_TITLES = {
   '/shop': 'Shop | Junaid Furniture',
   '/about': 'About | Junaid Furniture',
   '/categories': 'Categories | Junaid Furniture',
-  '/wishlist': 'Wishlist | Junaid Furniture',
   '/cart': 'Cart | Junaid Furniture',
   '/checkout': 'Checkout | Junaid Furniture',
   '/track-order': 'Order Tracking | Junaid Furniture',
@@ -96,7 +94,6 @@ export default function App() {
           <Route path="shop" element={<ShopPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="product/:slug" element={<ProductDetailsPage />} />
-          <Route path="wishlist" element={<WishlistPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="track-order" element={<OrderTrackingPage />} />

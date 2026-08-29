@@ -6,8 +6,6 @@ import {
   updateQty,
   removeItem,
   clearCart as clearCartAction,
-  toggleItem,
-  clearWishlist as clearWishlistAction,
   loginUser,
   registerUser,
   fetchMe,
@@ -29,9 +27,6 @@ import {
   deleteCategory,
   loadCartFromServer,
   syncCartToServer,
-  loadWishlistFromServer,
-  syncWishlistToggle,
-  clearWishlistServer,
   createOrder,
   fetchMyOrders,
   fetchOrderById,
@@ -44,9 +39,7 @@ import {
   fetchAdminOrders,
   updateOrderStatus,
   setCartItems,
-  setWishlistItems,
   clearCartMessage,
-  clearWishlistMessage,
   clearAuthMessage,
   clearCatalogMessage,
   clearOrdersMessage,
@@ -113,7 +106,6 @@ function AppBootstrap({ onInitialCatalogReady }) {
         if (cancelled) return;
 
         dispatch(loadCartFromServer());
-        dispatch(loadWishlistFromServer());
 
         if (me?.role === 'admin') {
           dispatch(fetchMyOrders());
@@ -128,16 +120,6 @@ function AppBootstrap({ onInitialCatalogReady }) {
     return () => {
       cancelled = true;
     };
-  }, [dispatch, token]);
-
-  // Load wishlist from localStorage for guest users
-  useEffect(() => {
-    if (token) return;
-
-    const guestWishlist = JSON.parse(localStorage.getItem('jf-wishlist') || '[]');
-    if (guestWishlist.length > 0) {
-      dispatch(setWishlistItems(guestWishlist));
-    }
   }, [dispatch, token]);
 
   return null;
@@ -227,7 +209,6 @@ export function useApp() {
   const authState = useSelector((state) => state.auth);
   const catalog = useSelector((state) => state.catalog);
   const cartState = useSelector((state) => state.cart);
-  const wishlistState = useSelector((state) => state.wishlist);
   const ordersState = useSelector((state) => state.orders);
   const adminState = useSelector((state) => state.admin);
   const [toast, setToast] = useState({ message: '', type: 'success' });
@@ -282,11 +263,6 @@ export function useApp() {
     [cartState.items]
   );
 
-  const isWishlisted = useCallback((productId) => 
-    wishlistState.items.some((item) => item.id === productId || item._id === productId), 
-    [wishlistState.items]
-  );
-
   const isInCart = useCallback((productId) => 
     cartState.items.some((item) => item.id === productId || item._id === productId), 
     [cartState.items]
@@ -295,12 +271,6 @@ export function useApp() {
   const handleCartSync = useCallback(() => {
     if (authState.token) {
       dispatch(syncCartToServer());
-    }
-  }, [authState.token, dispatch]);
-
-  const handleWishlistSync = useCallback((productId) => {
-    if (authState.token && productId) {
-      dispatch(syncWishlistToggle(productId));
     }
   }, [authState.token, dispatch]);
 
@@ -323,18 +293,6 @@ export function useApp() {
     dispatch(clearCartAction());
     handleCartSync();
   }, [dispatch, handleCartSync]);
-
-  const toggleWishlist = useCallback((product) => {
-    dispatch(toggleItem(product));
-    if (authState.token) {
-      handleWishlistSync(product.id || product._id);
-    }
-  }, [dispatch, authState.token, handleWishlistSync]);
-
-  const clearWishlist = useCallback(() => {
-    dispatch(clearWishlistAction());
-    if (authState.token) dispatch(clearWishlistServer());
-  }, [dispatch, authState.token]);
 
   return useMemo(() => {
     const auth = {
@@ -373,10 +331,6 @@ export function useApp() {
       cartLoading: cartState.loading,
       cartError: cartState.error,
       cartSuccess: cartState.success,
-      wishlist: wishlistState.items,
-      wishlistLoading: wishlistState.loading,
-      wishlistError: wishlistState.error,
-      wishlistSuccess: wishlistState.success,
       orders: ordersState.mine,
       order: ordersState.selected,
       adminOrders: ordersState.admin,
@@ -398,7 +352,6 @@ export function useApp() {
       showToast,
       cartCount,
       cartSubtotal,
-      isWishlisted,
       isInCart,
       login: (payload) => dispatch(setCredentials(payload)),
       loginUser: (payload) => dispatch(loginUser(payload)),
@@ -425,9 +378,6 @@ export function useApp() {
       removeFromCart,
       clearCart,
       setCartItems: (items) => dispatch(setCartItems(items)),
-      toggleWishlist,
-      setWishlistItems: (items) => dispatch(setWishlistItems(items)),
-      clearWishlist,
       fetchMyOrders: () => dispatch(fetchMyOrders()),
       fetchOrderById: (id) => dispatch(fetchOrderById(id)),
       createOrder: (payload) => dispatch(createOrder(payload)),
@@ -440,7 +390,6 @@ export function useApp() {
       fetchAdminOrders: fetchAdminOrdersCb,
       updateOrderStatus: (id, payload) => dispatch(updateOrderStatus({ id, payload })),
       clearCartMessage: () => dispatch(clearCartMessage()),
-      clearWishlistMessage: () => dispatch(clearWishlistMessage()),
       clearCatalogMessage: () => dispatch(clearCatalogMessage()),
       clearOrdersMessage: () => dispatch(clearOrdersMessage()),
       clearAdminMessage: () => dispatch(clearAdminMessage()),
@@ -474,10 +423,6 @@ export function useApp() {
     cartState.loading,
     cartState.error,
     cartState.success,
-    wishlistState.items,
-    wishlistState.loading,
-    wishlistState.error,
-    wishlistState.success,
     ordersState.mine,
     ordersState.selected,
     ordersState.admin,
@@ -499,14 +444,11 @@ export function useApp() {
     showToast,
     cartCount,
     cartSubtotal,
-    isWishlisted,
     isInCart,
     addToCart,
     updateCartQty,
     removeFromCart,
     clearCart,
-    toggleWishlist,
-    clearWishlist,
     dispatch,
     fetchCategoriesCb,
     fetchBrandsCb,
