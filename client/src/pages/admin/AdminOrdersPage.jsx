@@ -66,7 +66,13 @@ function OrderDetailsModal({ order, onClose }) {
             <div key={index} className="flex items-center gap-4 border-b border-black/5 pb-4 last:border-0 last:pb-0">
               <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#f6efe8]">
                 {item.image ? (
-                  <img src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`} alt={item.name} className="h-full w-full object-cover" />
+                  <img
+                    src={item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`}
+                    alt={item.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-xs text-text/30">No Img</div>
                 )}
@@ -198,7 +204,13 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-white shadow-sm">
                           {order.orderItems[0].image ? (
-                            <img src={order.orderItems[0].image.startsWith('http') ? order.orderItems[0].image : `http://localhost:5000${order.orderItems[0].image}`} alt={order.orderItems[0].name} className="h-full w-full object-cover" />
+                            <img
+                              src={order.orderItems[0].image.startsWith('http') ? order.orderItems[0].image : `http://localhost:5000${order.orderItems[0].image}`}
+                              alt={order.orderItems[0].name}
+                              loading="lazy"
+                              decoding="async"
+                              className="h-full w-full object-cover"
+                            />
                           ) : (
                             <div className="flex h-full items-center justify-center text-[10px] text-text/30">No Img</div>
                           )}

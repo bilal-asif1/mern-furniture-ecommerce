@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -11,7 +11,7 @@ import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categorySlug, setCategorySlug] = useState(searchParams.get('category') || '');
-  const { categories, products, fetchProducts } = useApp();
+  const { categories, products } = useApp();
 
   const railRef = useRef(null);
   const categoryRefs = useRef(new Map());
@@ -32,21 +32,7 @@ export default function HomePage() {
     suppressClick: false,
   });
 
-  const activeCategory = useMemo(
-    () => categories.find((item) => item.slug === categorySlug) || null,
-    [categories, categorySlug],
-  );
   const activeCategoryQuery = searchParams.get('category') || categorySlug;
-
-  useEffect(() => {
-    const params = { limit: 100, page: 1 };
-    if (activeCategory?.id) {
-      params.categoryId = activeCategory.id;
-    }
-    if (products.length === 0 || activeCategory) {
-      fetchProducts(params);
-    }
-  }, [fetchProducts, activeCategory, products.length]);
 
   useEffect(() => {
     const key = categorySlug || 'all';
@@ -293,7 +279,7 @@ export default function HomePage() {
                 Shop Now
               </Link>
               <Link
-                to="/shop?category=bedroom"
+                to="/shop?category=bed-set"
                 className="hero-cta-secondary inline-flex min-h-12 flex-1 min-w-0 items-center justify-center rounded-none border border-white bg-transparent px-3 py-3 text-[9px] font-semibold uppercase tracking-[0.26em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 sm:flex-none sm:min-w-[11.5rem] sm:px-5 sm:text-[11px]"
               >
                 Explore Beds

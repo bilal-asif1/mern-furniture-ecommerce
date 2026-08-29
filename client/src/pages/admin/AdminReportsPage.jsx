@@ -566,7 +566,15 @@ function PremiumReportExportDocument({ analytics, pdfMeta, reportPeriod, totalPa
                       <td style={{ padding: '11px 14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ width: 34, height: 34, borderRadius: 10, background: '#f7efe3', border: '1px solid #eadfce', overflow: 'hidden', flexShrink: 0 }}>
-                            {product.image ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
+                            {product.image ? (
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                loading="lazy"
+                                decoding="async"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              />
+                            ) : null}
                           </div>
                           <div style={{ fontSize: 12, fontWeight: 600, color: '#1f1a17' }}>{product.name}</div>
                         </div>
@@ -1028,7 +1036,13 @@ export default function AdminReportsPage() {
                         <tr key={product.productId} className="border-b border-black/5">
                           <td className="py-3">
                             <div className="flex items-center gap-3">
-                              <img src={product.image} alt={product.name} className="h-10 w-10 rounded-lg object-cover" />
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                loading="lazy"
+                                decoding="async"
+                                className="h-10 w-10 rounded-lg object-cover"
+                              />
                               <span className="text-sm font-medium text-text">{product.name}</span>
                             </div>
                           </td>

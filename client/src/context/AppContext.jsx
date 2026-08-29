@@ -54,16 +54,52 @@ import {
   fetchBrands,
 } from '../store';
 import { getEffectivePrice } from '../utils/formatCurrency';
+import LoadingScreen from '../components/LoadingScreen';
 
-function AppBootstrap() {
+function AppBootstrap({ onInitialCatalogReady }) {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
+  const catalogLoading = useSelector((state) => state.catalog.listLoading || state.catalog.categoriesLoading || state.catalog.brandsLoading);
+  const initialBootStartedRef = useRef(false);
+  const initialBootSeenLoadingRef = useRef(false);
+  const initialBootCompleteRef = useRef(false);
 
   useEffect(() => {
-    dispatch(fetchCategories());
-    dispatch(fetchBrands());
-    dispatch(fetchProducts({ limit: 12 }));
-  }, [dispatch]);
+    if (initialBootStartedRef.current) return undefined;
+    initialBootStartedRef.current = true;
+
+    let cancelled = false;
+
+    (async () => {
+      await Promise.allSettled([
+        dispatch(fetchCategories()),
+        dispatch(fetchBrands()),
+        dispatch(fetchProducts({ limit: 100 })),
+      ]);
+
+      if (!cancelled) {
+        onInitialCatalogReady?.();
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch, onInitialCatalogReady]);
+
+  useEffect(() => {
+    if (initialBootCompleteRef.current) return;
+
+    if (catalogLoading) {
+      initialBootSeenLoadingRef.current = true;
+      return;
+    }
+
+    if (initialBootSeenLoadingRef.current) {
+      initialBootCompleteRef.current = true;
+      onInitialCatalogReady?.();
+    }
+  }, [catalogLoading, onInitialCatalogReady]);
 
   useEffect(() => {
     if (!token) return;
@@ -108,10 +144,80 @@ function AppBootstrap() {
 }
 
 export function AppProvider({ children }) {
+  const [bootVisible, setBootVisible] = useState(true);
+  const [bootProgress, setBootProgress] = useState(0);
+  const [bootMessage, setBootMessage] = useState('Waking up our servers...');
+  const bootStartRef = useRef(Date.now());
+  const bootProgressRef = useRef(0);
+  const bootMessageRef = useRef('Waking up our servers...');
+  const bootSeenLoadingRef = useRef(false);
+  const bootCompletedRef = useRef(false);
+  const bootHideTimerRef = useRef(null);
+  const bootExpectedMs = 35000;
+  const bootPatienceMs = 40000;
+  const bootMinVisibleMs = 900;
+
+  const completeInitialBoot = useCallback(() => {
+    if (!bootVisible || bootCompletedRef.current) return;
+    bootCompletedRef.current = true;
+
+    const elapsed = Date.now() - bootStartRef.current;
+    const remainingVisible = Math.max(250, bootMinVisibleMs - elapsed);
+
+    bootProgressRef.current = 100;
+    bootMessageRef.current = 'Ready.';
+    setBootProgress(100);
+    setBootMessage('Ready.');
+
+    if (bootHideTimerRef.current) {
+      window.clearTimeout(bootHideTimerRef.current);
+    }
+
+    bootHideTimerRef.current = window.setTimeout(() => {
+      setBootVisible(false);
+    }, remainingVisible);
+  }, [bootMinVisibleMs, bootVisible]);
+
+  useEffect(() => {
+    if (!bootVisible) return undefined;
+
+    const tick = () => {
+      const elapsed = Date.now() - bootStartRef.current;
+      const nextMessage = elapsed >= bootPatienceMs
+        ? 'Still loading, thanks for your patience...'
+        : 'Getting things ready for you...';
+
+      if (bootMessageRef.current !== nextMessage) {
+        bootMessageRef.current = nextMessage;
+        setBootMessage(nextMessage);
+      }
+
+      if (bootProgressRef.current < 100) {
+        const estimated = Math.min(98, Math.max(8, 8 + ((elapsed / bootExpectedMs) * 87)));
+        const nextProgress = Math.min(98, Math.max(bootProgressRef.current, estimated));
+        if (nextProgress !== bootProgressRef.current) {
+          bootProgressRef.current = nextProgress;
+          setBootProgress(nextProgress);
+        }
+      }
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 120);
+    return () => window.clearInterval(timer);
+  }, [bootVisible, bootExpectedMs, bootPatienceMs]);
+
+  useEffect(() => () => {
+    if (bootHideTimerRef.current) {
+      window.clearTimeout(bootHideTimerRef.current);
+    }
+  }, []);
+
   return (
     <Provider store={store}>
-      <AppBootstrap />
+      <AppBootstrap onInitialCatalogReady={completeInitialBoot} />
       {children}
+      <LoadingScreen visible={bootVisible} progress={bootProgress} message={bootMessage} />
     </Provider>
   );
 }

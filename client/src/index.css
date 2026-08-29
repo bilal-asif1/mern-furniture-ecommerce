@@ -87,6 +87,20 @@ body {
   display: none;
 }
 
+.home-hero .hero-eyebrow,
+.home-hero .hero-title,
+.home-hero .hero-description {
+  color: #ffffff;
+}
+
+.home-hero .hero-cta-primary {
+  color: #1f1a17;
+}
+
+.home-hero .hero-cta-secondary {
+  color: #ffffff;
+}
+
 @media print {
   html,
   body {

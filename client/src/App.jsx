@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage';
 
 // Lazy load pages for code splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
+const ShopPage = lazy(() => import('./pages/ShopPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const CategoriesPage = lazy(() => import('./pages/CategoriesPage'));
 const ProductDetailsPage = lazy(() => import('./pages/ProductDetailsPage'));
@@ -22,13 +23,11 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 
 // Admin pages
-const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
 const AdminProductsPage = lazy(() => import('./pages/admin/AdminProductsPage'));
 const AdminBrandsPage = lazy(() => import('./pages/admin/AdminBrandsPage'));
 const AdminOrdersPage = lazy(() => import('./pages/admin/AdminOrdersPage'));
 const AdminCategoriesPage = lazy(() => import('./pages/admin/AdminCategoriesPage'));
 const AdminInventoryPage = lazy(() => import('./pages/admin/AdminInventoryPage'));
-const AdminReportsPage = lazy(() => import('./pages/admin/AdminReportsPage'));
 const AdminProfilePage = lazy(() => import('./pages/admin/AdminProfilePage'));
 
 // Loading fallback for lazy-loaded components
@@ -48,6 +47,7 @@ function ShopRedirect() {
 // Page title mapping
 const PAGE_TITLES = {
   '/': 'Junaid Furniture',
+  '/shop': 'Shop | Junaid Furniture',
   '/about': 'About | Junaid Furniture',
   '/categories': 'Categories | Junaid Furniture',
   '/wishlist': 'Wishlist | Junaid Furniture',
@@ -59,13 +59,13 @@ const PAGE_TITLES = {
   '/dashboard': 'Dashboard | Junaid Furniture',
   '/login': 'Login | Junaid Furniture',
   '/register': 'Register | Junaid Furniture',
-  '/admin': 'Admin Dashboard | Junaid Furniture',
+  '/admin': 'Products | Admin | Junaid Furniture',
   '/admin/products': 'Products | Admin | Junaid Furniture',
   '/admin/brands': 'Brands | Admin | Junaid Furniture',
   '/admin/orders': 'Orders | Admin | Junaid Furniture',
   '/admin/categories': 'Categories | Admin | Junaid Furniture',
   '/admin/inventory': 'Inventory | Admin | Junaid Furniture',
-  '/admin/reports': 'Reports | Admin | Junaid Furniture',
+  '/admin/reports': 'Products | Admin | Junaid Furniture',
   '/admin/profile': 'Profile | Admin | Junaid Furniture',
 };
 
@@ -93,7 +93,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
-          <Route path="shop" element={<ShopRedirect />} />
+          <Route path="shop" element={<ShopPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="product/:slug" element={<ProductDetailsPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
@@ -115,13 +115,13 @@ export default function App() {
             </AdminRoute>
           )}
         >
-          <Route index element={<AdminDashboardPage />} />
+          <Route index element={<Navigate to="/admin/products" replace />} />
           <Route path="products" element={<AdminProductsPage />} />
           <Route path="brands" element={<AdminBrandsPage />} />
           <Route path="orders" element={<AdminOrdersPage />} />
           <Route path="categories" element={<AdminCategoriesPage />} />
           <Route path="inventory" element={<AdminInventoryPage />} />
-          <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="reports" element={<Navigate to="/admin/products" replace />} />
           <Route path="profile" element={<AdminProfilePage />} />
         </Route>
 

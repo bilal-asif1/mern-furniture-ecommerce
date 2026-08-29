@@ -85,8 +85,6 @@ export default function AdminProductsPage() {
     brands,
     brandsLoading,
     fetchAdminProducts,
-    fetchCategories,
-    fetchBrands,
     createProduct,
     updateProduct,
     deleteProduct,
@@ -108,9 +106,7 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     fetchAdminProducts({ limit: 200 });
-    fetchCategories();
-    fetchBrands();
-  }, [fetchAdminProducts, fetchCategories, fetchBrands]);
+  }, [fetchAdminProducts]);
 
   useEffect(() => {
     if (!form.category && categories[0]?.id) {
@@ -441,6 +437,8 @@ export default function AdminProductsPage() {
                   <img
                     src={effectiveThumbnail}
                     alt="Thumbnail preview"
+                    loading="lazy"
+                    decoding="async"
                     className="h-48 w-full object-cover"
                     onError={(event) => {
                       event.currentTarget.onerror = null;
@@ -459,6 +457,8 @@ export default function AdminProductsPage() {
                     <img
                       src={image.value}
                       alt={`Product ${index + 1}`}
+                      loading="lazy"
+                      decoding="async"
                       className="h-32 w-full object-cover"
                       onError={(event) => {
                         event.currentTarget.onerror = null;
@@ -524,6 +524,8 @@ export default function AdminProductsPage() {
                       <img
                         src={product.thumbnailImage || product.image || '/product-placeholder.svg'}
                         alt={product.name}
+                        loading="lazy"
+                        decoding="async"
                         className="h-12 w-12 shrink-0 rounded-xl object-cover"
                         onError={(event) => {
                           event.currentTarget.onerror = null;

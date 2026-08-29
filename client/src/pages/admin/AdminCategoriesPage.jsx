@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import AdminPageShell from '../../components/AdminPageShell';
 import Button from '../../components/Button';
 import { Field, SelectField, TextArea, TextInput } from '../../components/Field';
@@ -35,7 +35,6 @@ const readFileAsDataUrl = (file) =>
 export default function AdminCategoriesPage() {
   const {
     categories,
-    fetchCategories,
     createCategory,
     updateCategory,
     deleteCategory,
@@ -49,10 +48,6 @@ export default function AdminCategoriesPage() {
   const [formError, setFormError] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
   const previewImage = useMemo(
     () => (form.removeImage ? PLACEHOLDER_IMAGE : form.image || PLACEHOLDER_IMAGE),
@@ -237,6 +232,8 @@ export default function AdminCategoriesPage() {
                     <img
                       src={previewImage}
                       alt={previewAlt}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover"
                       onError={(e) => {
                         e.target.onerror = null;
@@ -326,6 +323,8 @@ export default function AdminCategoriesPage() {
                     <img
                       src={image}
                       alt={category.name}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       onError={(event) => {
                         event.currentTarget.onerror = null;

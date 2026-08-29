@@ -1,10 +1,12 @@
+import mlogo from '../assets/mlogo.png';
+
 export default function Logo({ className = '', containerClassName = '' }) {
   return (
     <div className={`inline-flex items-center ${containerClassName}`}>
       <img
-        src="/logo.png"
+        src={mlogo}
         alt="Junaid Furniture"
-        className={`h-12 w-auto object-contain sm:h-14 md:h-16 ${className}`}
+        className={`h-11 w-auto object-contain sm:h-12 md:h-14 ${className}`}
       />
     </div>
   );

@@ -24,6 +24,8 @@ export default function CategoryCard({ category, index = 0 }) {
             <img
               src={category.image || PLACEHOLDER_IMAGE}
               alt={category.name}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
               onError={(event) => {
                 event.currentTarget.onerror = null;

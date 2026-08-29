@@ -201,60 +201,80 @@ export const updateProfile = createAsyncThunk('auth/updateProfile', async (paylo
   }
 });
 
-export const fetchCategories = createAsyncThunk('catalog/fetchCategories', async (_, thunkAPI) => {
+export const fetchCategories = createAsyncThunk(
+  'catalog/fetchCategories',
+  async (_, thunkAPI) => {
   try {
     const { data } = await apiClient.get('/categories');
     return Array.isArray(data) ? data.map(normalizeCategory) : [];
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
-});
+  },
+  {
+    condition: (_, { getState }) => !getState().catalog.categoriesLoading,
+  },
+);
 
-export const fetchBrands = createAsyncThunk('catalog/fetchBrands', async (_, thunkAPI) => {
+export const fetchBrands = createAsyncThunk(
+  'catalog/fetchBrands',
+  async (_, thunkAPI) => {
   try {
     const { data } = await apiClient.get('/brands');
     return Array.isArray(data) ? data.map(normalizeBrand) : [];
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
-});
+  },
+  {
+    condition: (_, { getState }) => !getState().catalog.brandsLoading,
+  },
+);
 
-export const fetchProducts = createAsyncThunk('catalog/fetchProducts', async (params = {}, thunkAPI) => {
-  const maxRetries = 2;
-  let lastError;
+export const fetchProducts = createAsyncThunk(
+  'catalog/fetchProducts',
+  async (params = {}, thunkAPI) => {
+    const maxRetries = 2;
+    let lastError;
   
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      const { data } = await apiClient.get('/products', { params });
-      return {
-        products: Array.isArray(data.products) ? data.products.map(normalizeProduct) : [],
-        page: data.page || 1,
-        pages: data.pages || 1,
-        count: data.count || 0,
-      };
-    } catch (error) {
-      lastError = error;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const { data } = await apiClient.get('/products', { params });
+        return {
+          products: Array.isArray(data.products) ? data.products.map(normalizeProduct) : [],
+          page: data.page || 1,
+          pages: data.pages || 1,
+          count: data.count || 0,
+        };
+      } catch (error) {
+        lastError = error;
       
-      // Only retry on network errors or 5xx server errors
-      const isNetworkError = !error.response;
-      const isServerError = error.response?.status >= 500;
+        // Only retry on network errors or 5xx server errors
+        const isNetworkError = !error.response;
+        const isServerError = error.response?.status >= 500;
       
-      if (attempt < maxRetries && (isNetworkError || isServerError)) {
-        // Exponential backoff: 1s, 2s
-        const delay = Math.pow(2, attempt) * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
+        if (attempt < maxRetries && (isNetworkError || isServerError)) {
+          // Exponential backoff: 1s, 2s
+          const delay = Math.pow(2, attempt) * 1000;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+      
+        // Don't retry on 4xx errors or after max retries
+        break;
       }
-      
-      // Don't retry on 4xx errors or after max retries
-      break;
     }
-  }
   
-  return thunkAPI.rejectWithValue(unwrapApiError(lastError));
-});
+    return thunkAPI.rejectWithValue(unwrapApiError(lastError));
+  },
+  {
+    condition: (_, { getState }) => !getState().catalog.listLoading,
+  },
+);
 
-export const fetchAdminProducts = createAsyncThunk('catalog/fetchAdminProducts', async (params = {}, thunkAPI) => {
+export const fetchAdminProducts = createAsyncThunk(
+  'catalog/fetchAdminProducts',
+  async (params = {}, thunkAPI) => {
   try {
     const token = thunkAPI.getState().auth.token;
     const { data } = await apiClient.get('/admin/products', {
@@ -270,7 +290,11 @@ export const fetchAdminProducts = createAsyncThunk('catalog/fetchAdminProducts',
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
-});
+  },
+  {
+    condition: (_, { getState }) => !getState().catalog.adminListLoading,
+  },
+);
 
 export const fetchProductBySlug = createAsyncThunk('catalog/fetchProductBySlug', async (slug, thunkAPI) => {
   try {

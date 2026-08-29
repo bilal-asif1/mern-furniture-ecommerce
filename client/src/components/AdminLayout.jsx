@@ -5,14 +5,11 @@ import Button from './Button';
 import Logo from './Logo';
 
 const items = [
-  { to: '/admin', label: 'Overview' },
   { to: '/admin/products', label: 'Products' },
   { to: '/admin/brands', label: 'Brands' },
   { to: '/admin/categories', label: 'Categories' },
   { to: '/admin/orders', label: 'Orders' },
-
   { to: '/admin/inventory', label: 'Inventory' },
-  { to: '/admin/reports', label: 'Reports' },
   { to: '/admin/profile', label: 'Profile' },
 ];
 
