@@ -33,10 +33,6 @@ export default function LoadingScreen({
             className="relative flex w-full max-w-xl flex-col items-center rounded-[2rem] border border-[#eadfce]/80 bg-white/72 px-6 py-10 text-center shadow-[0_24px_80px_rgba(86,58,36,0.12)] backdrop-blur-xl sm:px-10 sm:py-12"
           >
             <Logo className="h-14 sm:h-16" />
-            <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.42em] text-[#8b5e3c]/80">
-              Junaid Furniture
-            </p>
-
             <div className="mt-10 w-full max-w-md">
               <div className="flex items-end justify-between gap-3 text-xs font-semibold uppercase tracking-[0.24em] text-[#8a7361]">
                 <span>Loading</span>
