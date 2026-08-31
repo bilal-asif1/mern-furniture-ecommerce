@@ -131,6 +131,7 @@ export default function Navbar() {
   useEffect(() => {
     setOpen(false);
     setSearchOpen(false);
+    setSearchQuery('');
   }, [location.pathname]);
 
   useEffect(() => {
@@ -187,6 +188,10 @@ export default function Navbar() {
   const actionBase = 'inline-flex h-11 items-center justify-center rounded-full border text-sm font-semibold transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30';
   const iconAction = `${actionBase} w-11 border-black/10 bg-white text-text/75 hover:border-primary/40 hover:text-text`;
   const searchResultsToShow = searchResults.slice(0, 8);
+  const handleSearchResultSelect = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  };
 
   return (
     <header className={`fixed left-0 right-0 top-0 z-50 w-full border-b border-[#eadfce]/80 bg-white/90 backdrop-blur-xl transition-shadow duration-300 ${scrolled ? 'shadow-[0_12px_36px_rgba(79,56,36,0.10)]' : 'shadow-none'}`}>
@@ -348,7 +353,7 @@ export default function Navbar() {
                           <SearchResultRow
                             key={product.id || product._id || product.slug}
                             product={product}
-                            onSelect={() => setSearchOpen(false)}
+                            onSelect={handleSearchResultSelect}
                           />
                         ))}
                       </div>
