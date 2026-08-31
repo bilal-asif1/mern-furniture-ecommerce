@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../components/Button';
@@ -8,7 +8,7 @@ import EmptyState from '../components/EmptyState';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { buildProductWhatsAppLink } from '../utils/whatsapp';
-import { CheckCircle2, MessageCircle, Star, Sparkles } from 'lucide-react';
+import { CheckCircle2, ChevronLeft, ChevronRight, Star, Sparkles } from 'lucide-react';
 
 export default function ProductDetailsPage() {
   const { slug } = useParams();
@@ -18,6 +18,36 @@ export default function ProductDetailsPage() {
     catalogDetailLoading,
     catalogError,
   } = useApp();
+  const mainGalleryRef = useRef(null);
+  const dragStateRef = useRef({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+  });
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const galleryImages = useMemo(() => {
+    const sources = [
+      product?.thumbnailImage,
+      product?.image,
+      ...(Array.isArray(product?.images) ? product.images : []),
+    ];
+
+    const uniqueImages = [];
+    const seen = new Set();
+
+    sources.forEach((source) => {
+      if (typeof source !== 'string') return;
+      const image = source.trim();
+      if (!image || seen.has(image)) return;
+      seen.add(image);
+      uniqueImages.push(image);
+    });
+
+    return uniqueImages.length ? uniqueImages : ['/product-placeholder.svg'];
+  }, [product]);
+
+  const hasMultipleImages = galleryImages.length > 1;
 
   useEffect(() => {
     if (slug) fetchProductBySlug(slug);
@@ -26,6 +56,92 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+    const mainRail = mainGalleryRef.current;
+    if (mainRail) {
+      mainRail.scrollTo({ left: 0, behavior: 'auto' });
+    }
+  }, [product?.id, slug]);
+
+  useEffect(() => {
+    if (!hasMultipleImages) {
+      setActiveImageIndex(0);
+      return undefined;
+    }
+
+    const mainRail = mainGalleryRef.current;
+    if (!mainRail) return undefined;
+
+    const updateScrollState = () => {
+      const { scrollLeft, clientWidth } = mainRail;
+      const nextIndex = Math.max(
+        0,
+        Math.min(Math.round(scrollLeft / Math.max(clientWidth, 1)), galleryImages.length - 1),
+      );
+
+      setActiveImageIndex((current) => (current === nextIndex ? current : nextIndex));
+    };
+
+    updateScrollState();
+    mainRail.addEventListener('scroll', updateScrollState, { passive: true });
+    window.addEventListener('resize', updateScrollState);
+
+    return () => {
+      mainRail.removeEventListener('scroll', updateScrollState);
+      window.removeEventListener('resize', updateScrollState);
+    };
+  }, [galleryImages.length, hasMultipleImages]);
+
+  const scrollGallery = useCallback((direction) => {
+    const mainRail = mainGalleryRef.current;
+    if (!mainRail || !hasMultipleImages) return;
+
+    const nextIndex = Math.max(
+      0,
+      Math.min(activeImageIndex + direction, galleryImages.length - 1),
+    );
+
+    mainRail.scrollTo({
+      left: nextIndex * mainRail.clientWidth,
+      behavior: 'smooth',
+    });
+    setActiveImageIndex(nextIndex);
+  }, [activeImageIndex, galleryImages.length, hasMultipleImages]);
+
+  const handleGalleryPointerDown = useCallback((event) => {
+    const mainRail = mainGalleryRef.current;
+    const state = dragStateRef.current;
+
+    if (!hasMultipleImages || !mainRail || event.button !== 0) return;
+    if (event.target instanceof Element && event.target.closest('button')) return;
+
+    state.isDown = true;
+    state.startX = event.pageX;
+    state.scrollLeft = mainRail.scrollLeft;
+
+    if (mainRail.setPointerCapture) {
+      mainRail.setPointerCapture(event.pointerId);
+    }
+  }, [hasMultipleImages]);
+
+  const handleGalleryPointerMove = useCallback((event) => {
+    const mainRail = mainGalleryRef.current;
+    const state = dragStateRef.current;
+
+    if (!state.isDown || !mainRail) return;
+
+    const delta = event.pageX - state.startX;
+    mainRail.scrollLeft = state.scrollLeft - delta;
+  }, []);
+
+  const handleGalleryPointerUp = useCallback(() => {
+    const state = dragStateRef.current;
+    if (!state.isDown) return;
+
+    state.isDown = false;
+  }, []);
 
   // Only render if product exists and matches current slug
   // This prevents showing stale product data during navigation
@@ -53,7 +169,7 @@ export default function ProductDetailsPage() {
     );
   }
 
-  const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
+  const image = galleryImages[activeImageIndex] || galleryImages[0] || '/product-placeholder.svg';
   const productLink = typeof window !== 'undefined'
     ? `${window.location.origin}/product/${product.slug}`
     : `/product/${product.slug}`;
@@ -111,19 +227,84 @@ export default function ProductDetailsPage() {
           className="lg:sticky lg:top-28"
         >
           <div className="overflow-hidden rounded-[2rem] border border-[#eadfce]/70 bg-[#fbf7f2] shadow-soft">
-            <motion.img
-              src={image}
-              alt={product.name}
-              initial={{ scale: 0.98 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              whileHover={{ scale: 1.02 }}
-              className="block h-[320px] w-full object-contain object-center p-4 sm:h-[420px] sm:p-6 lg:h-[520px] lg:p-8"
-              onError={(event) => {
-                event.currentTarget.onerror = null;
-                event.currentTarget.src = '/product-placeholder.svg';
-              }}
-            />
+            {hasMultipleImages ? (
+              <div className="relative">
+                <div
+                  ref={mainGalleryRef}
+                  className="flex overflow-x-auto scroll-smooth scrollbar-hide"
+                  style={{
+                    WebkitOverflowScrolling: 'touch',
+                    scrollSnapType: 'x mandatory',
+                  }}
+                  onPointerDown={handleGalleryPointerDown}
+                  onPointerMove={handleGalleryPointerMove}
+                  onPointerUp={handleGalleryPointerUp}
+                  onPointerCancel={handleGalleryPointerUp}
+                  onPointerLeave={handleGalleryPointerUp}
+                >
+                  {galleryImages.map((src, index) => (
+                    <div
+                      key={`${src}-${index}`}
+                      className="w-full flex-none snap-center"
+                      style={{ scrollSnapAlign: 'center' }}
+                    >
+                      <motion.img
+                        src={src}
+                        alt={`${product.name} ${index + 1}`}
+                        initial={{ scale: 0.98, opacity: 0.98 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.45 }}
+                        className="block h-[320px] w-full select-none object-contain object-center p-4 sm:h-[420px] sm:p-6 lg:h-[520px] lg:p-8"
+                        draggable="false"
+                        onError={(event) => {
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = '/product-placeholder.svg';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-4">
+                  <button
+                    type="button"
+                    onClick={() => scrollGallery(-1)}
+                    disabled={activeImageIndex === 0}
+                    className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#eadfce]/80 bg-white/90 text-text shadow-[0_10px_24px_rgba(86,58,36,0.15)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                    aria-label="Previous image"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollGallery(1)}
+                    disabled={activeImageIndex === galleryImages.length - 1}
+                    className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#eadfce]/80 bg-white/90 text-text shadow-[0_10px_24px_rgba(86,58,36,0.15)] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-35"
+                    aria-label="Next image"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="absolute bottom-4 right-4 rounded-full bg-text/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
+                  {activeImageIndex + 1} / {galleryImages.length}
+                </div>
+              </div>
+            ) : (
+              <motion.img
+                src={image}
+                alt={product.name}
+                initial={{ scale: 0.98 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                whileHover={{ scale: 1.02 }}
+                className="block h-[320px] w-full object-contain object-center p-4 sm:h-[420px] sm:p-6 lg:h-[520px] lg:p-8"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = '/product-placeholder.svg';
+                }}
+              />
+            )}
           </div>
         </motion.div>
         <motion.div
