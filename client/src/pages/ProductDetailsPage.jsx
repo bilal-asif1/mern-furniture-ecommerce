@@ -16,7 +16,6 @@ export default function ProductDetailsPage() {
   const navigate = useNavigate();
   const {
     product,
-    products,
     fetchProductBySlug,
     catalogDetailLoading,
     catalogError,
@@ -28,17 +27,12 @@ export default function ProductDetailsPage() {
     scrollLeft: 0,
   });
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const cachedProduct = useMemo(
-    () => products.find((item) => item?.slug === slug) || null,
-    [products, slug],
-  );
-  const displayProduct = product?.slug === slug ? product : cachedProduct;
 
   const galleryImages = useMemo(() => {
     const sources = [
-      displayProduct?.thumbnailImage,
-      displayProduct?.image,
-      ...(Array.isArray(displayProduct?.images) ? displayProduct.images : []),
+      product?.thumbnailImage,
+      product?.image,
+      ...(Array.isArray(product?.images) ? product.images : []),
     ];
 
     const uniqueImages = [];
@@ -53,15 +47,13 @@ export default function ProductDetailsPage() {
     });
 
     return uniqueImages.length ? uniqueImages : ['/product-placeholder.svg'];
-  }, [displayProduct]);
+  }, [product]);
 
   const hasMultipleImages = galleryImages.length > 1;
 
   useEffect(() => {
-    if (!slug) return;
-    if (displayProduct) return;
-    fetchProductBySlug(slug);
-  }, [slug, displayProduct, fetchProductBySlug]);
+    if (slug) fetchProductBySlug(slug);
+  }, [slug, fetchProductBySlug]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -73,7 +65,7 @@ export default function ProductDetailsPage() {
     if (mainRail) {
       mainRail.scrollTo({ left: 0, behavior: 'auto' });
     }
-  }, [displayProduct?.id, slug]);
+  }, [product?.id, slug]);
 
   useEffect(() => {
     if (!hasMultipleImages) {
@@ -164,8 +156,8 @@ export default function ProductDetailsPage() {
 
   // Only render if product exists and matches current slug
   // This prevents showing stale product data during navigation
-  const isProductMatch = Boolean(displayProduct);
-  const shouldShowLoading = catalogDetailLoading && !isProductMatch;
+  const isProductMatch = product && product.slug === slug;
+  const shouldShowLoading = catalogDetailLoading || !isProductMatch;
 
   if (shouldShowLoading) {
     return (
@@ -175,7 +167,7 @@ export default function ProductDetailsPage() {
     );
   }
 
-  if (!displayProduct) {
+  if (!product) {
     return (
       <PageSection className="py-16">
         <EmptyState
@@ -190,9 +182,9 @@ export default function ProductDetailsPage() {
 
   const image = galleryImages[activeImageIndex] || galleryImages[0] || '/product-placeholder.svg';
   const productLink = typeof window !== 'undefined'
-    ? `${window.location.origin}/product/${displayProduct.slug}`
-    : `/product/${displayProduct.slug}`;
-  const whatsappLink = buildProductWhatsAppLink(displayProduct.name, productLink);
+    ? `${window.location.origin}/product/${product.slug}`
+    : `/product/${product.slug}`;
+  const whatsappLink = buildProductWhatsAppLink(product.name, productLink);
   const trustIndicators = [
     'Handcrafted Quality',
     'White-Glove Delivery',
@@ -201,39 +193,39 @@ export default function ProductDetailsPage() {
 
   // Get badges from product data
   const badges = [];
-  if (displayProduct.featured) badges.push({ label: 'Featured', icon: Star, color: 'bg-black/50' });
-  if (displayProduct.bestSeller) badges.push({ label: 'Best Seller', icon: Sparkles, color: 'bg-black/50' });
-  if (displayProduct.newArrival) badges.push({ label: 'New Arrival', icon: null, color: 'bg-black/50' });
+  if (product.featured) badges.push({ label: 'Featured', icon: Star, color: 'bg-black/50' });
+  if (product.bestSeller) badges.push({ label: 'Best Seller', icon: Sparkles, color: 'bg-black/50' });
+  if (product.newArrival) badges.push({ label: 'New Arrival', icon: null, color: 'bg-black/50' });
 
-  const seoTitle = `${displayProduct.name} | Junaid Furniture`;
-  const seoDescription = displayProduct.description 
-    ? `${displayProduct.description.substring(0, 160)}${displayProduct.description.length > 160 ? '...' : ''}`
-    : `Shop ${displayProduct.name} at Junaid Furniture. Quality furniture in Pakistan.`;
+  const seoTitle = `${product.name} | Junaid Furniture`;
+  const seoDescription = product.description 
+    ? `${product.description.substring(0, 160)}${product.description.length > 160 ? '...' : ''}`
+    : `Shop ${product.name} at Junaid Furniture. Quality furniture in Pakistan.`;
 
   return (
     <>
       <SEO
         title={seoTitle}
         description={seoDescription}
-        canonical={`https://junaidfurniture.netlify.app/product/${displayProduct.slug}`}
+        canonical={`https://junaidfurniture.netlify.app/product/${product.slug}`}
         ogType="product"
         ogImage={image}
         schema={{
           '@context': 'https://schema.org',
           '@type': 'Product',
-          name: displayProduct.name,
-          description: displayProduct.description,
+          name: product.name,
+          description: product.description,
           image: image,
           brand: {
             '@type': 'Brand',
             name: 'Junaid Furniture'
           },
-          category: displayProduct.categoryName || displayProduct.category?.name || 'Furniture',
+          category: product.categoryName || product.category?.name || 'Furniture',
           offers: {
             '@type': 'Offer',
             availability: 'https://schema.org/InStock',
             priceCurrency: 'PKR',
-            url: `https://junaidfurniture.netlify.app/product/${displayProduct.slug}`
+            url: `https://junaidfurniture.netlify.app/product/${product.slug}`
           }
         }}
       />
@@ -267,9 +259,9 @@ export default function ProductDetailsPage() {
                       className="w-full flex-none snap-center"
                       style={{ scrollSnapAlign: 'center' }}
                     >
-                    <motion.img
-                      src={src}
-                      alt={`${displayProduct.name} ${index + 1}`}
+                      <motion.img
+                        src={src}
+                        alt={`${product.name} ${index + 1}`}
                         initial={{ scale: 0.98, opacity: 0.98 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.45 }}
@@ -360,7 +352,7 @@ export default function ProductDetailsPage() {
             transition={{ delay: 0.2 }}
             className="text-[11px] font-bold uppercase tracking-[0.32em] text-text/70 sm:text-xs"
           >
-            {displayProduct.categoryName || displayProduct.category?.name || 'Furniture'}
+            {product.categoryName || product.category?.name || 'Furniture'}
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
@@ -368,7 +360,7 @@ export default function ProductDetailsPage() {
             transition={{ delay: 0.3 }}
             className="mt-3 font-display text-3xl font-semibold leading-tight text-text sm:text-4xl lg:text-5xl"
           >
-            {displayProduct.name}
+            {product.name}
           </motion.h1>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -376,8 +368,8 @@ export default function ProductDetailsPage() {
             transition={{ delay: 0.4 }}
             className="mt-3 flex flex-wrap items-center gap-3 sm:mt-4"
           >
-            <RatingStars value={displayProduct.rating} />
-            <span className="text-sm text-text/50">{displayProduct.reviews} reviews</span>
+            <RatingStars value={product.rating} />
+            <span className="text-sm text-text/50">{product.reviews} reviews</span>
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -385,7 +377,7 @@ export default function ProductDetailsPage() {
             transition={{ delay: 0.5 }}
             className="mt-4 max-w-2xl text-sm leading-7 text-text/70 sm:text-base sm:leading-8"
           >
-            {displayProduct.description}
+            {product.description}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
