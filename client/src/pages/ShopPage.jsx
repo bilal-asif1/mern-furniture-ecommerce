@@ -305,7 +305,7 @@ export default function ShopPage() {
             <motion.div layout className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 xl:gap-5 2xl:gap-6">
               <AnimatePresence mode="popLayout">
                 {visibleProducts.map((product, index) => (
-                  <ProductCard key={product.id} product={product} compact index={index} />
+                  <ProductCard key={product.id} product={product} compact index={index} animateOnMount={false} />
                 ))}
               </AnimatePresence>
             </motion.div>

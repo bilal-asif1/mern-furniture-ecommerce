@@ -5,7 +5,7 @@ import { buildProductWhatsAppLink } from '../utils/whatsapp';
 import { saveListingPosition } from '../utils/listingPosition';
 import { Star, Sparkles } from 'lucide-react';
 
-function ProductCard({ product, compact = false, index = 0 }) {
+function ProductCard({ product, compact = false, index = 0, animateOnMount = true }) {
   const location = useLocation();
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
   const productLink = typeof window !== 'undefined'
@@ -42,9 +42,9 @@ function ProductCard({ product, compact = false, index = 0 }) {
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
+      initial={animateOnMount ? { opacity: 0, y: 30 } : false}
+      animate={animateOnMount ? { opacity: 1, y: 0 } : undefined}
+      transition={animateOnMount ? { duration: 0.3, delay: Math.min(index * 0.05, 0.5) } : undefined}
       whileHover={{ y: compact ? -4 : -6 }}
       data-product-slug={product.slug}
       className={`group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:border-gray-300 hover:shadow-md ${compact ? 'max-w-none' : ''}`}
@@ -56,9 +56,9 @@ function ProductCard({ product, compact = false, index = 0 }) {
             {badges.slice(0, 3).map((badge, badgeIndex) => (
               <motion.div
                 key={badge.label}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: Math.min(index * 0.05 + 0.1 + badgeIndex * 0.03, 0.6) }}
+                initial={animateOnMount ? { opacity: 0, x: -10 } : false}
+                animate={animateOnMount ? { opacity: 1, x: 0 } : undefined}
+                transition={animateOnMount ? { delay: Math.min(index * 0.05 + 0.1 + badgeIndex * 0.03, 0.6) } : undefined}
                 className={`inline-flex items-center gap-1 rounded-full border border-white/30 px-2 py-0.5 ${badge.color} text-[8px] font-semibold uppercase tracking-[0.2em] text-white shadow-sm`}
               >
                 {badge.icon && <badge.icon className="h-2.5 w-2.5" />}
@@ -96,9 +96,9 @@ function ProductCard({ product, compact = false, index = 0 }) {
       <div className={`space-y-3 ${compact ? 'p-4 sm:space-y-3 sm:p-5' : 'p-5 sm:space-y-4 sm:p-6'}`}>
         <div className="min-w-0">
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: Math.min(index * 0.05 + 0.15, 0.7) }}
+            initial={animateOnMount ? { opacity: 0 } : false}
+            animate={animateOnMount ? { opacity: 1 } : undefined}
+            transition={animateOnMount ? { delay: Math.min(index * 0.05 + 0.15, 0.7) } : undefined}
             className={`font-bold uppercase tracking-[0.15em] text-gray-600 ${compact ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs sm:tracking-[0.2em]'}`}
           >
             {product.categoryName || product.category?.name || 'Furniture'}
@@ -109,9 +109,9 @@ function ProductCard({ product, compact = false, index = 0 }) {
             onClick={handleProductClick}
           >
             <motion.h3
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: Math.min(index * 0.05 + 0.2, 0.75) }}
+              initial={animateOnMount ? { opacity: 0 } : false}
+              animate={animateOnMount ? { opacity: 1 } : undefined}
+              transition={animateOnMount ? { delay: Math.min(index * 0.05 + 0.2, 0.75) } : undefined}
               className={`mt-1.5 truncate font-semibold text-gray-900 ${compact ? 'text-[0.95rem] leading-tight sm:mt-1 sm:text-[1.05rem]' : 'text-base sm:mt-2 sm:text-lg'}`}
             >
               {product.name}
@@ -129,9 +129,9 @@ function ProductCard({ product, compact = false, index = 0 }) {
             href={whatsappLink}
             target="_blank"
             rel="noreferrer"
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: Math.min(index * 0.05 + 0.25, 0.8) }}
+            initial={animateOnMount ? { opacity: 0, scale: 0.85 } : false}
+            animate={animateOnMount ? { opacity: 1, scale: 1 } : undefined}
+            transition={animateOnMount ? { delay: Math.min(index * 0.05 + 0.25, 0.8) } : undefined}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition hover:bg-[#20bd5a] hover:shadow-md"
