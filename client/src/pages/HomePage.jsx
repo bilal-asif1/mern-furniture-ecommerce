@@ -74,17 +74,17 @@ export default function HomePage() {
   }, [location.key, location.pathname, products.length]);
 
   useEffect(() => {
-    if (!categorySlug) return undefined;
+    if (!categorySlug || hasRestoreState) return undefined;
 
     const categoryButton = categoryRefs.current.get(categorySlug);
     if (categoryButton) {
       categoryButton.scrollIntoView({
-        behavior: 'smooth',
+        behavior: 'auto',
         block: 'nearest',
         inline: 'center',
       });
     }
-  }, [categorySlug]);
+  }, [categorySlug, hasRestoreState]);
 
   useEffect(() => {
     const rail = railRef.current;
@@ -131,7 +131,7 @@ export default function HomePage() {
 
     const rail = featuredRailRef.current;
     if (rail) {
-      rail.scrollTo({ left: 0, behavior: 'smooth' });
+      rail.scrollTo({ left: 0, behavior: 'auto' });
     }
   }, [exploreCategoryFilter, hasRestoreState]);
 
@@ -235,7 +235,7 @@ export default function HomePage() {
   };
 
   const clearCategoryFilter = useCallback(() => {
-    setSearchParams({});
+    setSearchParams({}, { replace: true, preventScrollReset: true });
   }, [setSearchParams]);
 
   const handleCategoryClick = (category) => {
@@ -244,7 +244,7 @@ export default function HomePage() {
       return;
     }
 
-    setSearchParams({ category: category.slug });
+    setSearchParams({ category: category.slug }, { preventScrollReset: true });
   };
 
   return (

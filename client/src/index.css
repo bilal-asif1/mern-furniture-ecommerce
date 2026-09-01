@@ -18,7 +18,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   background:
     radial-gradient(circle at top left, rgba(139, 94, 60, 0.12), transparent 35%),
     linear-gradient(180deg, #faf7f3 0%, #f6f0e7 100%);

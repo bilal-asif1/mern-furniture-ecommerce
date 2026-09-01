@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
@@ -58,7 +58,7 @@ export default function ShopPage() {
     if (hasRestoreState) return undefined;
 
     if (productSectionRef.current) {
-      productSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      productSectionRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
   }, [page, hasRestoreState]);
 
@@ -143,7 +143,7 @@ export default function ShopPage() {
       params.set(key, String(value));
     });
 
-    setSearchParams(params);
+    setSearchParams(params, { preventScrollReset: true });
   }, [categorySlug, page, setSearchParams]);
 
   const handleSelectCategory = useCallback((category) => {
@@ -151,7 +151,7 @@ export default function ShopPage() {
   }, [syncParams]);
 
   const clearFilters = useCallback(() => {
-    setSearchParams({});
+    setSearchParams({}, { replace: true, preventScrollReset: true });
   }, [setSearchParams]);
 
   const filterOptions = [
