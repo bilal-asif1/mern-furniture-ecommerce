@@ -92,6 +92,9 @@ function TrustBadge({ label, Icon }) {
 }
 
 export default function Footer() {
+  const footerButtonClass =
+    'inline-flex h-10 w-fit self-start items-center justify-center gap-2 rounded-full px-3.5 text-[11px] font-bold whitespace-nowrap transition duration-300 sm:px-4 sm:text-xs';
+
   return (
     <footer
       id="site-footer"
@@ -189,7 +192,7 @@ export default function Footer() {
                   href={contactLinks.whatsapp}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#25d366] px-3.5 font-bold whitespace-nowrap text-white shadow-[0_10px_24px_rgba(37,211,102,0.22)] transition duration-300 hover:bg-[#20c55f] hover:shadow-[0_12px_28px_rgba(37,211,102,0.3)] sm:px-5"
+                  className={`${footerButtonClass} bg-[#25d366] text-white shadow-[0_10px_24px_rgba(37,211,102,0.22)] hover:bg-[#20c55f] hover:shadow-[0_12px_28px_rgba(37,211,102,0.3)]`}
                 >
                   <WhatsAppGlyph />
                   WhatsApp to Custom Order
@@ -217,7 +220,7 @@ export default function Footer() {
                   href={contactLinks.maps}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-[#d9b07c]/45 bg-white/5 px-3.5 font-bold whitespace-nowrap text-[#f6dfb8] shadow-[0_10px_24px_rgba(0,0,0,0.18)] transition duration-300 hover:border-[#d9b07c]/70 hover:bg-white/10 hover:text-white sm:px-5"
+                  className={`${footerButtonClass} border border-[#d9b07c]/45 bg-white/5 text-[#f6dfb8] shadow-[0_10px_24px_rgba(0,0,0,0.18)] hover:border-[#d9b07c]/70 hover:bg-white/10 hover:text-white`}
                 >
                   <MapPin className="h-5 w-5 shrink-0 text-[#d9b07c]" />
                   View on Google Maps
