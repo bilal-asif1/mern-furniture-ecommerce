@@ -184,16 +184,17 @@ export default function Footer() {
                 All inquiries — pricing, customization, and delivery — are handled directly over WhatsApp for the fastest response.
               </p>
 
-              <div className="mt-5 flex flex-col gap-3 text-sm text-[#f5eadb]/84">
+              <div className="mt-5 flex w-full max-w-sm flex-col gap-4 text-sm text-[#f5eadb]/84">
                 <a
                   href={contactLinks.whatsapp}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex h-11 w-fit self-start items-center justify-center gap-2 rounded-full bg-[#25d366] px-3.5 sm:px-5 font-bold whitespace-nowrap text-white shadow-[0_10px_24px_rgba(37,211,102,0.22)] transition duration-300 hover:bg-[#20c55f] hover:shadow-[0_12px_28px_rgba(37,211,102,0.3)]"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#25d366] px-3.5 font-bold whitespace-nowrap text-white shadow-[0_10px_24px_rgba(37,211,102,0.22)] transition duration-300 hover:bg-[#20c55f] hover:shadow-[0_12px_28px_rgba(37,211,102,0.3)] sm:px-5"
                 >
                   <WhatsAppGlyph />
                   WhatsApp to Custom Order
                 </a>
+
                 <a
                   href="tel:+923063400146"
                   className="inline-flex items-center gap-2 transition duration-300 hover:text-[#f6dfb8]"
@@ -201,6 +202,7 @@ export default function Footer() {
                   <Phone className="h-4 w-4 text-[#d9b07c]" />
                   +92 306 3400146
                 </a>
+
                 <a
                   href={contactLinks.maps}
                   target="_blank"
@@ -209,6 +211,16 @@ export default function Footer() {
                 >
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#d9b07c]" />
                   <span>14 Narwala Rd, Jinnah Colony, Faisalabad</span>
+                </a>
+
+                <a
+                  href={contactLinks.maps}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-[#d9b07c]/45 bg-white/5 px-3.5 font-bold whitespace-nowrap text-[#f6dfb8] shadow-[0_10px_24px_rgba(0,0,0,0.18)] transition duration-300 hover:border-[#d9b07c]/70 hover:bg-white/10 hover:text-white sm:px-5"
+                >
+                  <MapPin className="h-5 w-5 shrink-0 text-[#d9b07c]" />
+                  View on Google Maps
                 </a>
               </div>
 
