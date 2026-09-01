@@ -12,7 +12,6 @@ import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  const [categorySlug, setCategorySlug] = useState(searchParams.get('category') || '');
   const { categories, products } = useApp();
 
   const railRef = useRef(null);
@@ -26,7 +25,6 @@ export default function HomePage() {
   const [featuredCanScrollRight, setFeaturedCanScrollRight] = useState(false);
   const [bestSellersCanScrollLeft, setBestSellersCanScrollLeft] = useState(false);
   const [bestSellersCanScrollRight, setBestSellersCanScrollRight] = useState(false);
-  const [exploreCategoryFilter, setExploreCategoryFilter] = useState('all');
   const dragStateRef = useRef({
     isDown: false,
     pointerId: null,
@@ -35,7 +33,9 @@ export default function HomePage() {
     suppressClick: false,
   });
 
-  const activeCategoryQuery = searchParams.get('category') || categorySlug;
+  const categorySlug = searchParams.get('category') || '';
+  const activeCategoryQuery = categorySlug;
+  const exploreCategoryFilter = categorySlug || 'all';
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useLayoutEffect(() => {
@@ -74,8 +74,9 @@ export default function HomePage() {
   }, [location.key, location.pathname, products.length]);
 
   useEffect(() => {
-    const key = categorySlug || 'all';
-    const categoryButton = categoryRefs.current.get(key);
+    if (!categorySlug) return undefined;
+
+    const categoryButton = categoryRefs.current.get(categorySlug);
     if (categoryButton) {
       categoryButton.scrollIntoView({
         behavior: 'smooth',
@@ -126,7 +127,7 @@ export default function HomePage() {
   }, [products, exploreCategoryFilter]);
 
   useEffect(() => {
-    if (hasRestoreState) return undefined;
+    if (hasRestoreState || exploreCategoryFilter === 'all') return undefined;
 
     const rail = featuredRailRef.current;
     if (rail) {
@@ -234,19 +235,15 @@ export default function HomePage() {
   };
 
   const clearCategoryFilter = useCallback(() => {
-    setCategorySlug('');
-    setExploreCategoryFilter('all');
     setSearchParams({});
   }, [setSearchParams]);
 
-  const handleCategoryClick = (category, event) => {
+  const handleCategoryClick = (category) => {
     if (!category) {
       clearCategoryFilter();
       return;
     }
 
-    setCategorySlug(category.slug);
-    setExploreCategoryFilter(category.slug);
     setSearchParams({ category: category.slug });
   };
 
@@ -431,7 +428,7 @@ export default function HomePage() {
       </section>
 
       {/* Explore What Everyone's Loving Section */}
-      <section className="section-shell py-8 sm:py-10 lg:py-12">
+      <section className="section-shell py-8 sm:py-10 lg:py-12" style={{ overflowAnchor: 'none' }}>
         <div className="rounded-[1.5rem] border border-[#eadfce]/70 bg-white/85 px-4 py-6 shadow-[0_12px_30px_rgba(86,58,36,0.05)] sm:px-5 sm:py-8 lg:px-6 lg:py-10">
           <div className="mb-6 flex flex-col items-center gap-3 text-center sm:mb-8 lg:flex-row lg:justify-between lg:text-left">
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center lg:justify-start lg:text-left">
