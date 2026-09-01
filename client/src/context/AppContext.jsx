@@ -127,6 +127,7 @@ function AppBootstrap({ onInitialCatalogReady }) {
 
 export function AppProvider({ children }) {
   const [bootVisible, setBootVisible] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
   const [bootProgress, setBootProgress] = useState(0);
   const [bootMessage, setBootMessage] = useState('Waking up our servers...');
   const bootStartRef = useRef(Date.now());
@@ -157,6 +158,7 @@ export function AppProvider({ children }) {
 
     bootHideTimerRef.current = window.setTimeout(() => {
       setBootVisible(false);
+      setContentVisible(true);
     }, remainingVisible);
   }, [bootMinVisibleMs, bootVisible]);
 
@@ -198,7 +200,7 @@ export function AppProvider({ children }) {
   return (
     <Provider store={store}>
       <AppBootstrap onInitialCatalogReady={completeInitialBoot} />
-      {children}
+      {contentVisible ? children : null}
       <LoadingScreen visible={bootVisible} progress={bootProgress} message={bootMessage} />
     </Provider>
   );
