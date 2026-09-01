@@ -71,6 +71,12 @@ export default function App() {
   const location = useLocation();
 
   useEffect(() => {
+    // Warm the two most common catalog routes so back/forward navigation does not flash the loader.
+    void import('./pages/ShopPage');
+    void import('./pages/ProductDetailsPage');
+  }, []);
+
+  useEffect(() => {
     // Get the base path for title lookup
     const path = location.pathname;
     

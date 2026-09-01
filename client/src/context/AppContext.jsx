@@ -139,6 +139,17 @@ export function AppProvider({ children }) {
   const bootPatienceMs = 40000;
   const bootMinVisibleMs = 900;
 
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.history?.scrollRestoration) return undefined;
+
+    const previous = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    return () => {
+      window.history.scrollRestoration = previous;
+    };
+  }, []);
+
   const completeInitialBoot = useCallback(() => {
     if (!bootVisible || bootCompletedRef.current) return;
     bootCompletedRef.current = true;
