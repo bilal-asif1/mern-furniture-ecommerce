@@ -396,9 +396,7 @@ export default function HomePage() {
                   else categoryRefs.current.delete(category.slug);
                 }}
                 onClick={(event) => handleCategoryClick(category, event)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: index * 0.03 }}
+                initial={false}
                 whileHover={{ y: -4, scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 className={`group flex w-[100px] flex-none shrink-0 flex-col items-center snap-start text-center transition sm:w-[110px] lg:w-[116px] ${isActive ? 'text-primary' : 'text-text/75'}`}
@@ -409,7 +407,8 @@ export default function HomePage() {
                   <img
                     src={image}
                     alt={category.name}
-                    loading="lazy"
+                    loading="eager"
+                    fetchPriority="high"
                     decoding="async"
                     className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-110"
                     onError={(event) => {
