@@ -475,7 +475,7 @@ export default function HomePage() {
                     className="flex-none w-[85vw] sm:w-[280px] md:w-[290px] lg:w-[300px]"
                     style={{ scrollSnapAlign: 'start' }}
                   >
-                    <ProductCard product={product} compact index={index} />
+                    <ProductCard product={product} compact index={index} animateOnMount={false} />
                   </div>
                 ))}
             </div>
@@ -536,7 +536,7 @@ export default function HomePage() {
                     className="flex-none w-[85vw] sm:w-[280px] md:w-[290px] lg:w-[300px]"
                     style={{ scrollSnapAlign: 'start' }}
                   >
-                    <ProductCard product={product} compact index={index} />
+                    <ProductCard product={product} compact index={index} animateOnMount={false} />
                   </div>
                 ))}
             </div>
