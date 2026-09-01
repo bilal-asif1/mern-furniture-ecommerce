@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
@@ -31,6 +31,11 @@ export default function HomePage() {
     startX: 0,
     scrollLeft: 0,
     suppressClick: false,
+  });
+  const heroAnimationSeenKey = 'home-hero-animation-seen';
+  const [shouldAnimateHero] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.sessionStorage.getItem(heroAnimationSeenKey) !== '1';
   });
 
   const categorySlug = searchParams.get('category') || '';
@@ -238,6 +243,23 @@ export default function HomePage() {
     setSearchParams({}, { replace: true, preventScrollReset: true });
   }, [setSearchParams]);
 
+  useEffect(() => {
+    if (!shouldAnimateHero || typeof window === 'undefined') return undefined;
+
+    window.sessionStorage.setItem(heroAnimationSeenKey, '1');
+    return undefined;
+  }, [shouldAnimateHero]);
+
+  useEffect(() => {
+    const preloadImages = [heroImageMobile, heroImageDesktop];
+
+    preloadImages.forEach((src) => {
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = src;
+    });
+  }, []);
+
   const handleCategoryClick = (category) => {
     if (!category) {
       clearCategoryFilter();
@@ -275,6 +297,7 @@ export default function HomePage() {
               alt=""
               aria-hidden="true"
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               className="h-full w-full object-cover object-center"
             />
@@ -284,9 +307,9 @@ export default function HomePage() {
 
         <div className="section-shell relative z-10 flex min-h-[70svh] items-end pb-14 pt-24 sm:min-h-[75svh] sm:pb-16 sm:pt-28 lg:h-[80vh] lg:pb-20 lg:pt-32">
           <motion.div
-            initial={{ opacity: 0, y: 22 }}
+            initial={shouldAnimateHero ? { opacity: 0, y: 22 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
+            transition={shouldAnimateHero ? { duration: 0.7, ease: 'easeOut' } : { duration: 0 }}
             className="max-w-[42rem] pb-1 text-left hero-copy"
           >
             <p className="hero-eyebrow text-[10px] font-semibold uppercase tracking-[0.46em] text-white sm:text-[11px]" style={{ color: '#FFFFFF' }}>
