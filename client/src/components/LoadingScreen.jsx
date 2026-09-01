@@ -15,7 +15,7 @@ export default function LoadingScreen({
           role="status"
           aria-live="polite"
           aria-busy="true"
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.45, ease: 'easeOut' }}
@@ -25,11 +25,7 @@ export default function LoadingScreen({
           <div className="absolute left-[-8%] top-[12%] h-56 w-56 rounded-full bg-[#d8c0aa]/20 blur-3xl" />
           <div className="absolute bottom-[-10%] right-[-8%] h-72 w-72 rounded-full bg-[#8b5e3c]/10 blur-3xl" />
 
-          <motion.div
-            initial={{ opacity: 0, y: 18, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
+          <div
             className="relative flex w-full max-w-xl flex-col items-center rounded-[2rem] border border-[#eadfce]/80 bg-white/72 px-6 py-10 text-center shadow-[0_24px_80px_rgba(86,58,36,0.12)] backdrop-blur-xl sm:px-10 sm:py-12"
           >
             <Logo className="h-14 sm:h-16" />
@@ -48,21 +44,17 @@ export default function LoadingScreen({
                 />
               </div>
 
-              <motion.p
-                key={message}
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
+              <p
                 className="mt-4 text-sm leading-6 text-[#6f5a4b]"
               >
                 {message}
-              </motion.p>
+              </p>
             </div>
 
             <p className="mt-8 max-w-sm text-[11px] leading-5 text-[#9c8b7d]">
               We&apos;re warming up the catalog and preparing your furniture experience.
             </p>
-          </motion.div>
+          </div>
         </motion.div>
       ) : null}
     </AnimatePresence>
