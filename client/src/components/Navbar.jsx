@@ -303,7 +303,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-[2px]"
-            onMouseDown={(event) => {
+            onPointerDown={(event) => {
               if (event.target === event.currentTarget) {
                 setSearchOpen(false);
               }
@@ -315,7 +315,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -8, scale: 0.98 }}
                 transition={{ duration: 0.22 }}
-                className="flex w-full max-w-2xl flex-col overflow-hidden rounded-[1.75rem] border border-[#eadfce] bg-white shadow-[0_24px_80px_rgba(79,56,36,0.18)]"
+                className="relative z-[61] flex w-full max-w-2xl flex-col overflow-hidden rounded-[1.75rem] border border-[#eadfce] bg-white shadow-[0_24px_80px_rgba(79,56,36,0.18)]"
               >
                 <div className="flex items-center gap-3 border-b border-[#f0e6da] px-4 py-4 sm:px-5">
                   <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f7f1e8] text-[#a27a52]">
@@ -338,7 +338,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setSearchOpen(false)}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#eadfce] text-[#6e5b4d] transition hover:border-[#d9b07c]/60 hover:text-[#2c2118]"
+                    className="relative z-[62] inline-flex h-10 w-10 shrink-0 touch-manipulation items-center justify-center rounded-full border border-[#eadfce] text-[#6e5b4d] transition hover:border-[#d9b07c]/60 hover:text-[#2c2118]"
                     aria-label="Close search"
                   >
                     <X className="h-4 w-4" />

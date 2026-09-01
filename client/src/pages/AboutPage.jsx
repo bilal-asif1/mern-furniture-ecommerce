@@ -1,6 +1,7 @@
 import PageHero from '../components/PageHero';
 import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
+import aboutImage from '../assets/images/about/about.jpeg';
 
 function SparklesIcon() {
   return (
@@ -57,7 +58,7 @@ export default function AboutPage() {
         kicker="About Us"
         title="Crafting elevated interiors with a refined sense of comfort."
         description="Junaid Furniture brings together carefully selected materials, a warm design sensibility, and a shopping experience shaped around trust, ease, and attentive service."
-        image="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1400&q=80"
+        image={aboutImage}
       />
 
       <PageSection>

@@ -24,7 +24,7 @@ export const premiumCategories = [
   },
   {
     slug: 'sofa-set',
-    name: 'Sofa Set',
+    name: 'Sofa & Couches',
     backendCategory: 'Living Room',
     keyword: 'sofa',
     image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=900&q=80',
@@ -48,7 +48,7 @@ export const premiumCategories = [
   },
   {
     slug: 'chairs',
-    name: 'Chairs',
+    name: 'Chairs Bed Room',
     backendCategory: 'Dining',
     keyword: 'chair',
     image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=900&q=80',
@@ -80,7 +80,7 @@ export const premiumCategories = [
   },
   {
     slug: 'net-set',
-    name: 'Net Set',
+    name: 'Wardrobe',
     backendCategory: 'Office',
     keyword: 'set',
     image: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?auto=format&fit=crop&w=900&q=80',
@@ -127,6 +127,9 @@ export const premiumCategories = [
     description: 'Elegant serving pieces that complete the room.',
   },
 ];
+
+export const footerShopCategories = premiumCategories.slice(0, 5);
+export const footerCollectionCategories = premiumCategories.slice(5, 10);
 
 export const featuredLuxuryCards = [
   {

@@ -1,31 +1,19 @@
 import { Heart, Leaf, Gem, Sparkles, ShieldCheck, MapPin, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Logo from './Logo';
 import { contactLinks } from '../data/siteContent';
+
+const logo = new URL('../assets/images/shop/logo.PNG', import.meta.url).href;
 
 const trustBadges = [
   { label: 'Customer Satisfaction', Icon: Heart },
   { label: 'Sustainability', Icon: Leaf },
-  { label: 'Money Back Guarantee', Icon: ShieldCheck },
+  { label: 'Peace of Mind', Icon: ShieldCheck },
   { label: 'Value for Money', Icon: Gem },
   { label: 'Performance & Quality', Icon: Sparkles },
 ];
 
-const shopLinks = [
-  { label: 'Bed Set', to: '/shop?category=bed-set' },
-  { label: 'Dining Set', to: '/shop?category=dining-set' },
-  { label: 'Office Chairs', to: '/shop?category=office-chairs' },
-  { label: 'Coffee & Table', to: '/shop?category=coffee-table' },
-  { label: 'Bed Room', to: '/shop?category=bed-room' },
-];
-
-const collectionLinks = [
-  { label: 'Computer Table', to: '/shop?category=computer-table' },
-  { label: 'Iron Stand', to: '/shop?category=iron-stand' },
-  { label: 'Showcase', to: '/shop?category=showcase' },
-  { label: 'Sofa Set', to: '/shop?category=sofa-set' },
-  { label: 'Chairs', to: '/shop?category=chairs' },
-];
+const shopCategoryLabels = ['Dressing', 'Bed Set', 'Dining Set', 'Coffee & Table', 'Sofa & Couches'];
+const collectionCategoryLabels = ['Chairs Bed Room', 'L-Shape Sofa', 'Office Chairs', 'Computer Table', 'Wardrobe'];
 
 function SocialIconLink({ href, label, children }) {
   return (
@@ -132,9 +120,11 @@ export default function Footer() {
           </div>
 
           <div className="mt-10 border-t border-white/10 pt-10 flex flex-col items-center text-center">
-            <div className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-sm">
-              <Logo className="h-12 sm:h-14" />
-            </div>
+            <img
+              src={logo}
+              alt="Junaid Furniture Logo"
+              className="h-12 w-auto object-contain sm:h-14"
+            />
             <p className="font-display mt-5 max-w-2xl text-lg italic leading-relaxed text-[#f4e6d6] sm:text-xl lg:text-2xl">
               Timeless pieces, crafted for the way you live.
             </p>
@@ -157,13 +147,13 @@ export default function Footer() {
                 Shop
               </p>
               <div className="mt-4 flex flex-col gap-3 text-sm text-[#f5eadb]/80">
-                {shopLinks.map((item) => (
+                {shopCategoryLabels.map((label) => (
                   <Link
-                    key={item.label}
-                    to={item.to}
+                    key={label}
+                    to={`/shop?category=${encodeURIComponent(label)}`}
                     className="w-fit transition duration-300 hover:text-[#f6dfb8]"
                   >
-                    {item.label}
+                    {label}
                   </Link>
                 ))}
               </div>
@@ -174,13 +164,13 @@ export default function Footer() {
                 Collections
               </p>
               <div className="mt-4 flex flex-col gap-3 text-sm text-[#f5eadb]/80">
-                {collectionLinks.map((item) => (
+                {collectionCategoryLabels.map((label) => (
                   <Link
-                    key={item.label}
-                    to={item.to}
+                    key={label}
+                    to={`/shop?category=${encodeURIComponent(label)}`}
                     className="w-fit transition duration-300 hover:text-[#f6dfb8]"
                   >
-                    {item.label}
+                    {label}
                   </Link>
                 ))}
               </div>

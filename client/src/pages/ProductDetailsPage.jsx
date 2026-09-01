@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../components/Button';
 import PageSection from '../components/PageSection';
@@ -12,6 +12,8 @@ import { CheckCircle2, ChevronLeft, ChevronRight, Star, Sparkles } from 'lucide-
 
 export default function ProductDetailsPage() {
   const { slug } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     product,
     fetchProductBySlug,
@@ -142,6 +144,15 @@ export default function ProductDetailsPage() {
 
     state.isDown = false;
   }, []);
+
+  const handleContinueShopping = useCallback(() => {
+    if (location.state?.fromListing) {
+      navigate(-1);
+      return;
+    }
+
+    navigate('/shop');
+  }, [location.state, navigate]);
 
   // Only render if product exists and matches current slug
   // This prevents showing stale product data during navigation
@@ -415,7 +426,7 @@ export default function ProductDetailsPage() {
             transition={{ delay: 0.75 }}
             className="mt-5 flex"
           >
-            <Button to="/shop" variant="ghost" className="w-full sm:w-auto">
+            <Button onClick={handleContinueShopping} variant="ghost" className="w-full sm:w-auto">
               Continue Shopping
             </Button>
           </motion.div>

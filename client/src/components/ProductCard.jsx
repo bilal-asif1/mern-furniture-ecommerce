@@ -1,15 +1,38 @@
-import { memo } from 'react';
-import { Link } from 'react-router-dom';
+import { memo, useCallback } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { buildProductWhatsAppLink } from '../utils/whatsapp';
+import { saveListingPosition } from '../utils/listingPosition';
 import { Star, Sparkles } from 'lucide-react';
 
 function ProductCard({ product, compact = false, index = 0 }) {
+  const location = useLocation();
   const image = product.thumbnailImage || product.image || product.images?.[0] || '/product-placeholder.svg';
   const productLink = typeof window !== 'undefined'
     ? `${window.location.origin}/product/${product.slug}`
     : `/product/${product.slug}`;
   const whatsappLink = buildProductWhatsAppLink(product.name, productLink);
+  const productDetailState = {
+    fromListing: {
+      key: location.key,
+      pathname: location.pathname,
+      search: location.search,
+    },
+  };
+
+  const handleProductClick = useCallback((event) => {
+    const card = event.currentTarget.closest('[data-product-slug]');
+    const restoreContainer = event.currentTarget.closest('[data-scroll-restore-id]');
+
+    saveListingPosition(location.key, {
+      pathname: location.pathname,
+      productSlug: product.slug,
+      containerId: restoreContainer?.dataset.scrollRestoreId || '',
+      pageScrollY: window.scrollY,
+      cardTop: card?.getBoundingClientRect().top ?? null,
+      containerScrollLeft: restoreContainer ? restoreContainer.scrollLeft : null,
+    });
+  }, [location.key, location.pathname, product.slug]);
 
   // Get badges from product data
   const badges = [];
@@ -23,6 +46,7 @@ function ProductCard({ product, compact = false, index = 0 }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
       whileHover={{ y: compact ? -4 : -6 }}
+      data-product-slug={product.slug}
       className={`group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:border-gray-300 hover:shadow-md ${compact ? 'max-w-none' : ''}`}
     >
       <div className="relative">
@@ -43,7 +67,12 @@ function ProductCard({ product, compact = false, index = 0 }) {
             ))}
           </div>
         )}
-        <Link to={`/product/${product.slug}`} className="block overflow-hidden">
+        <Link
+          to={`/product/${product.slug}`}
+          state={productDetailState}
+          onClick={handleProductClick}
+          className="block overflow-hidden"
+        >
           <div className={`overflow-hidden bg-[#fbf7f2] ${compact ? 'aspect-[4/3]' : 'aspect-[4/5]'}`}>
             <motion.img
               whileHover={{ scale: 1.05 }}
@@ -74,7 +103,11 @@ function ProductCard({ product, compact = false, index = 0 }) {
           >
             {product.categoryName || product.category?.name || 'Furniture'}
           </motion.p>
-          <Link to={`/product/${product.slug}`}>
+          <Link
+            to={`/product/${product.slug}`}
+            state={productDetailState}
+            onClick={handleProductClick}
+          >
             <motion.h3
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

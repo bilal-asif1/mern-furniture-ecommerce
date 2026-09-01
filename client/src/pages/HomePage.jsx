@@ -1,15 +1,17 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
+import { readListingPosition } from '../utils/listingPosition';
 import heroImageMobile from '../assets/images/shop/shop-hero.jpeg';
 import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const [categorySlug, setCategorySlug] = useState(searchParams.get('category') || '');
   const { categories, products } = useApp();
 
@@ -17,6 +19,7 @@ export default function HomePage() {
   const categoryRefs = useRef(new Map());
   const featuredRailRef = useRef(null);
   const bestSellersRailRef = useRef(null);
+  const restoredPositionKeyRef = useRef('');
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [featuredCanScrollLeft, setFeaturedCanScrollLeft] = useState(false);
@@ -33,6 +36,42 @@ export default function HomePage() {
   });
 
   const activeCategoryQuery = searchParams.get('category') || categorySlug;
+  const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
+
+  useLayoutEffect(() => {
+    if (products.length === 0) return;
+    if (!location.key || restoredPositionKeyRef.current === location.key) return;
+
+    const restoreState = readListingPosition(location.key);
+    if (!restoreState || restoreState.pathname !== location.pathname) return;
+
+    const scope = restoreState.containerId
+      ? document.querySelector(`[data-scroll-restore-id="${restoreState.containerId}"]`)
+      : document;
+    const target = restoreState.productSlug && scope?.querySelector
+      ? scope.querySelector(`[data-product-slug="${restoreState.productSlug}"]`)
+      : null;
+
+    const raf = window.requestAnimationFrame(() => {
+      if (scope instanceof HTMLElement && typeof restoreState.containerScrollLeft === 'number') {
+        scope.scrollLeft = restoreState.containerScrollLeft;
+      }
+
+      if (target && typeof restoreState.cardTop === 'number') {
+        const nextTop = Math.max(
+          0,
+          window.scrollY + (target.getBoundingClientRect().top - restoreState.cardTop),
+        );
+        window.scrollTo({ top: nextTop, behavior: 'auto' });
+      } else if (typeof restoreState.pageScrollY === 'number') {
+        window.scrollTo({ top: restoreState.pageScrollY, behavior: 'auto' });
+      }
+
+      restoredPositionKeyRef.current = location.key;
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, [location.key, location.pathname, products.length]);
 
   useEffect(() => {
     const key = categorySlug || 'all';
@@ -87,11 +126,13 @@ export default function HomePage() {
   }, [products, exploreCategoryFilter]);
 
   useEffect(() => {
+    if (hasRestoreState) return undefined;
+
     const rail = featuredRailRef.current;
     if (rail) {
       rail.scrollTo({ left: 0, behavior: 'smooth' });
     }
-  }, [exploreCategoryFilter]);
+  }, [exploreCategoryFilter, hasRestoreState]);
 
   useEffect(() => {
     const rail = bestSellersRailRef.current;
@@ -419,6 +460,7 @@ export default function HomePage() {
           <div className="relative">
             <div
               ref={featuredRailRef}
+              data-scroll-restore-id="home-featured-rail"
               className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide sm:gap-5 sm:pb-8 lg:gap-6 lg:pb-10"
               style={{
                 WebkitOverflowScrolling: 'touch',
@@ -482,6 +524,7 @@ export default function HomePage() {
           <div className="relative">
             <div
               ref={bestSellersRailRef}
+              data-scroll-restore-id="home-best-sellers-rail"
               className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide sm:gap-5 sm:pb-8 lg:gap-6 lg:pb-10"
               style={{
                 WebkitOverflowScrolling: 'touch',

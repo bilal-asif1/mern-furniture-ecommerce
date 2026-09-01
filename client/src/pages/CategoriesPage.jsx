@@ -1,14 +1,47 @@
+import { useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import PageHero from '../components/PageHero';
 import PageSection from '../components/PageSection';
 import SectionTitle from '../components/SectionTitle';
 import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
+import { readListingPosition } from '../utils/listingPosition';
 import categoriesHero from '../assets/images/categories/categories-hero.jpg';
 
 
 export default function CategoriesPage() {
   const { products } = useApp();
+  const location = useLocation();
+  const restoredPositionKeyRef = useRef('');
+
+  useLayoutEffect(() => {
+    if (products.length === 0) return;
+    if (!location.key || restoredPositionKeyRef.current === location.key) return;
+
+    const restoreState = readListingPosition(location.key);
+    if (!restoreState || restoreState.pathname !== location.pathname) return;
+
+    const target = restoreState.productSlug
+      ? document.querySelector(`[data-product-slug="${restoreState.productSlug}"]`)
+      : null;
+
+    const raf = window.requestAnimationFrame(() => {
+      if (target && typeof restoreState.cardTop === 'number') {
+        const nextTop = Math.max(
+          0,
+          window.scrollY + (target.getBoundingClientRect().top - restoreState.cardTop),
+        );
+        window.scrollTo({ top: nextTop, behavior: 'auto' });
+      } else if (typeof restoreState.pageScrollY === 'number') {
+        window.scrollTo({ top: restoreState.pageScrollY, behavior: 'auto' });
+      }
+
+      restoredPositionKeyRef.current = location.key;
+    });
+
+    return () => window.cancelAnimationFrame(raf);
+  }, [location.key, location.pathname, products.length]);
 
   return (
     <>
