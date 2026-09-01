@@ -73,8 +73,8 @@ export default function HomePage() {
     return () => window.cancelAnimationFrame(raf);
   }, [location.key, location.pathname, products.length]);
 
-  useEffect(() => {
-    if (!categorySlug || hasRestoreState) return undefined;
+  useLayoutEffect(() => {
+    if (!categorySlug) return undefined;
 
     const categoryButton = categoryRefs.current.get(categorySlug);
     if (categoryButton) {
@@ -84,7 +84,7 @@ export default function HomePage() {
         inline: 'center',
       });
     }
-  }, [categorySlug, hasRestoreState]);
+  }, [categorySlug]);
 
   useEffect(() => {
     const rail = railRef.current;
