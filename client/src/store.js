@@ -263,9 +263,6 @@ export const fetchProducts = createAsyncThunk(
   
     return thunkAPI.rejectWithValue(unwrapApiError(lastError));
   },
-  {
-    condition: (_, { getState }) => !getState().catalog.listLoading,
-  },
 );
 
 export const fetchAdminProducts = createAsyncThunk(
@@ -286,9 +283,6 @@ export const fetchAdminProducts = createAsyncThunk(
   } catch (error) {
     return thunkAPI.rejectWithValue(unwrapApiError(error));
   }
-  },
-  {
-    condition: (_, { getState }) => !getState().catalog.adminListLoading,
   },
 );
 
@@ -643,7 +637,9 @@ const catalogSlice = createSlice({
     adminPages: 1,
     adminCount: 0,
     listLoading: false,
+    listRequestId: null,
     adminListLoading: false,
+    adminListRequestId: null,
     detailLoading: false,
     categoriesLoading: false,
     brandsLoading: false,
@@ -683,35 +679,45 @@ const catalogSlice = createSlice({
         state.brandsLoading = false;
         state.error = action.payload || 'Unable to load brands';
       })
-      .addCase(fetchProducts.pending, (state) => {
+      .addCase(fetchProducts.pending, (state, action) => {
         state.listLoading = true;
         state.error = '';
+        state.listRequestId = action.meta.requestId;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
+        if (state.listRequestId !== action.meta.requestId) return;
         state.listLoading = false;
         state.products = action.payload.products;
         state.page = action.payload.page;
         state.pages = action.payload.pages;
         state.count = action.payload.count;
+        state.listRequestId = null;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        if (state.listRequestId !== action.meta.requestId) return;
         state.listLoading = false;
         state.error = action.payload || 'Unable to load products';
+        state.listRequestId = null;
       })
-      .addCase(fetchAdminProducts.pending, (state) => {
+      .addCase(fetchAdminProducts.pending, (state, action) => {
         state.adminListLoading = true;
         state.error = '';
+        state.adminListRequestId = action.meta.requestId;
       })
       .addCase(fetchAdminProducts.fulfilled, (state, action) => {
+        if (state.adminListRequestId !== action.meta.requestId) return;
         state.adminListLoading = false;
         state.adminProducts = action.payload.products;
         state.adminPage = action.payload.page;
         state.adminPages = action.payload.pages;
         state.adminCount = action.payload.count;
+        state.adminListRequestId = null;
       })
       .addCase(fetchAdminProducts.rejected, (state, action) => {
+        if (state.adminListRequestId !== action.meta.requestId) return;
         state.adminListLoading = false;
         state.error = action.payload || 'Unable to load admin products';
+        state.adminListRequestId = null;
       })
       .addCase(fetchProductBySlug.pending, (state) => {
         state.detailLoading = true;

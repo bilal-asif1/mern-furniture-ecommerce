@@ -77,6 +77,11 @@ const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
   return filter;
 };
 
+const buildStableSort = (sort = {}) => ({
+  ...sort,
+  _id: -1,
+});
+
 const serializeProduct = async (product, reviewStatsMap = new Map()) => {
   if (!product) return product;
 
@@ -129,20 +134,20 @@ const getProducts = asyncHandler(async (req, res) => {
   const count = await Product.countDocuments(filter);
   const sortBy =
     req.query.sort === 'price_low'
-      ? { price: 1 }
+      ? buildStableSort({ price: 1 })
       : req.query.sort === 'price_asc'
-        ? { price: 1 }
+        ? buildStableSort({ price: 1 })
         : req.query.sort === 'price_desc'
-          ? { price: -1 }
+          ? buildStableSort({ price: -1 })
           : req.query.sort === 'stock_low'
-            ? { stock: 1 }
+            ? buildStableSort({ stock: 1 })
             : req.query.sort === 'stock_high'
-              ? { stock: -1 }
+              ? buildStableSort({ stock: -1 })
               : req.query.sort === 'oldest'
-                ? { createdAt: 1 }
+                ? buildStableSort({ createdAt: 1 })
                 : req.query.sort === 'rating'
-                  ? { rating: -1 }
-                  : { createdAt: -1 };
+                  ? buildStableSort({ rating: -1 })
+                  : buildStableSort({ createdAt: -1 });
 
   const products = await Product.find(filter)
     .populate('category', 'name slug')
@@ -334,7 +339,7 @@ const getAdminProducts = asyncHandler(async (req, res) => {
   const count = await Product.countDocuments(filter);
   const products = await Product.find(filter)
     .populate('category', 'name slug')
-    .sort({ updatedAt: -1 })
+    .sort(buildStableSort({ updatedAt: -1 }))
     .limit(limit)
     .skip(limit * (page - 1))
     .lean();
