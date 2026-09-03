@@ -10,13 +10,6 @@ import { readListingPosition } from '../utils/listingPosition';
 
 const PLACEHOLDER_IMAGE = '/category-placeholder.svg';
 
-const normalizeSlug = (value = '') =>
-  String(value)
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
@@ -30,7 +23,6 @@ export default function ShopPage() {
   const restoredPositionKeyRef = useRef('');
   const categorySlug = searchParams.get('category') || '';
   const page = Number(searchParams.get('page') || 1);
-  const normalizedCategoryQuery = normalizeSlug(categorySlug);
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useEffect(() => {
@@ -78,17 +70,7 @@ export default function ShopPage() {
 
   const totalPages = Math.max(1, catalogPages || 1);
   const visibleProducts = useMemo(() => {
-    const categoryFiltered = categorySlug
-      ? products.filter((product) => {
-          const productCategorySlug = normalizeSlug(
-            product.categorySlug || product.category?.slug || product.categoryName || product.category,
-          );
-          const productCategoryName = normalizeSlug(product.categoryName || product.category?.name);
-          return productCategorySlug === normalizedCategoryQuery || productCategoryName === normalizedCategoryQuery;
-        })
-      : products;
-
-    const filtered = categoryFiltered.filter((product) => {
+    const filtered = products.filter((product) => {
       if (activeFilter === 'featured') return Boolean(product.featured || product.badge === 'Featured');
       if (activeFilter === 'best-seller') return Boolean(product.bestSeller);
       if (activeFilter === 'new-arrival') return Boolean(product.newArrival);
@@ -107,7 +89,7 @@ export default function ShopPage() {
     }
 
     return sorted;
-  }, [products, activeFilter, sortBy, categorySlug, normalizedCategoryQuery]);
+  }, [products, activeFilter, sortBy]);
 
   useLayoutEffect(() => {
     if (catalogListLoading || visibleProducts.length === 0) return;

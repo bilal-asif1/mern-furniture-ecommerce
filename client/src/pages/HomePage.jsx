@@ -12,7 +12,7 @@ import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  const { categories, products } = useApp();
+  const { categories, products, fetchProducts } = useApp();
 
   const railRef = useRef(null);
   const categoryRefs = useRef(new Map());
@@ -42,6 +42,18 @@ export default function HomePage() {
   const activeCategoryQuery = categorySlug;
   const exploreCategoryFilter = categorySlug || 'all';
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
+
+  useEffect(() => {
+    if (!categorySlug) return undefined;
+
+    fetchProducts({
+      category: categorySlug,
+      limit: 100,
+      page: 1,
+    });
+
+    return undefined;
+  }, [categorySlug, fetchProducts]);
 
   useLayoutEffect(() => {
     if (products.length === 0) return;
