@@ -23,7 +23,7 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState('featured');
   const [activeFilter, setActiveFilter] = useState('all');
   const [filterOpen, setFilterOpen] = useState(false);
-  const { categories, products, catalogListLoading, catalogError, catalogPages, catalogCount, fetchProducts } = useApp();
+  const { products, catalogListLoading, catalogError, catalogPages, catalogCount, fetchProducts } = useApp();
 
   const filterMenuRef = useRef(null);
   const productSectionRef = useRef(null);
@@ -32,17 +32,6 @@ export default function ShopPage() {
   const page = Number(searchParams.get('page') || 1);
   const normalizedCategoryQuery = normalizeSlug(categorySlug);
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
-  const selectedCategoryId = useMemo(() => {
-    if (!categorySlug) return '';
-
-    const match = categories.find((category) => {
-      const categorySlugMatch = normalizeSlug(category.slug || '');
-      const categoryNameMatch = normalizeSlug(category.name || '');
-      return categorySlugMatch === normalizedCategoryQuery || categoryNameMatch === normalizedCategoryQuery;
-    });
-
-    return match?.id || match?._id || '';
-  }, [categories, categorySlug, normalizedCategoryQuery]);
 
   useEffect(() => {
     const handleDocumentClick = (event) => {
@@ -74,20 +63,18 @@ export default function ShopPage() {
   }, [page, hasRestoreState]);
 
   useEffect(() => {
-    if (categorySlug && !selectedCategoryId) return undefined;
-
     const params = {
       limit: 100,
       page,
     };
 
-    if (selectedCategoryId) {
-      params.categoryId = selectedCategoryId;
+    if (categorySlug) {
+      params.category = categorySlug;
     }
 
     fetchProducts(params);
     return undefined;
-  }, [categorySlug, fetchProducts, page, selectedCategoryId]);
+  }, [categorySlug, fetchProducts, page]);
 
   const totalPages = Math.max(1, catalogPages || 1);
   const visibleProducts = useMemo(() => {

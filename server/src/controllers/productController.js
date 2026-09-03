@@ -1,11 +1,27 @@
 import asyncHandler from 'express-async-handler';
+import mongoose from 'mongoose';
 import Product from '../models/Product.js';
+import Category from '../models/Category.js';
 import Review from '../models/Review.js';
 import slugify from '../utils/slugify.js';
 import { deleteImageValue, normalizeProductPayload, extractCloudinaryPublicId } from '../utils/productMedia.js';
 import configureCloudinary from '../config/cloudinary.js';
 
-const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
+const resolveCategoryId = async (value) => {
+  if (!value) return '';
+  if (mongoose.Types.ObjectId.isValid(value)) return value;
+
+  const category = await Category.findOne({
+    $or: [
+      { slug: value },
+      { name: value },
+    ],
+  }).select('_id');
+
+  return category?._id || '';
+};
+
+const buildProductFilter = async (query = {}, { includeDeleted = false } = {}) => {
   const filter = {};
 
   if (query.keyword) {
@@ -17,8 +33,9 @@ const buildProductFilter = (query = {}, { includeDeleted = false } = {}) => {
     ];
   }
 
-  if (query.categoryId) {
-    filter.category = query.categoryId;
+  const categoryId = await resolveCategoryId(query.categoryId || query.category || query.categorySlug);
+  if (categoryId) {
+    filter.category = categoryId;
   }
 
   if (query.featured === 'true') {
@@ -129,7 +146,7 @@ const getProducts = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
   const includeDeleted = req.query.includeDeleted === 'true';
-  const filter = buildProductFilter(req.query, { includeDeleted });
+  const filter = await buildProductFilter(req.query, { includeDeleted });
 
   const count = await Product.countDocuments(filter);
   const sortBy =
@@ -334,7 +351,7 @@ const toggleProductStatus = asyncHandler(async (req, res) => {
 const getAdminProducts = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 100;
-  const filter = buildProductFilter(req.query, { includeDeleted: true });
+  const filter = await buildProductFilter(req.query, { includeDeleted: true });
 
   const count = await Product.countDocuments(filter);
   const products = await Product.find(filter)
