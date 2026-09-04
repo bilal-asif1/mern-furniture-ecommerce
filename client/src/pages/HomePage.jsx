@@ -6,14 +6,14 @@ import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { readListingPosition } from '../utils/listingPosition';
-import { productMatchesShopCategory, resolveShopCategoryQuery } from '../utils/shopCategories';
+import { productMatchesPremiumCategory, resolvePremiumCategory } from '../utils/shopCategories';
 import heroImageMobile from '../assets/images/shop/shop-hero.jpeg';
 import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 
 export default function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  const { categories, products, fetchProducts } = useApp();
+  const { categories, products } = useApp();
 
   const railRef = useRef(null);
   const categoryRefs = useRef(new Map());
@@ -41,20 +41,9 @@ export default function HomePage() {
 
   const categorySlug = searchParams.get('category') || '';
   const activeCategoryQuery = categorySlug;
-  const resolvedCategory = useMemo(() => resolveShopCategoryQuery(categorySlug), [categorySlug]);
-  const exploreCategoryFilter = resolvedCategory.query || 'all';
+  const resolvedCategory = useMemo(() => resolvePremiumCategory(categorySlug), [categorySlug]);
+  const exploreCategoryFilter = resolvedCategory?.slug || 'all';
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
-
-  useEffect(() => {
-    if (!categorySlug) return undefined;
-
-    fetchProducts({
-      category: resolvedCategory.query,
-      all: true,
-    });
-
-    return undefined;
-  }, [categorySlug, fetchProducts, resolvedCategory.query]);
 
   useLayoutEffect(() => {
     if (products.length === 0) return;
@@ -500,7 +489,7 @@ export default function HomePage() {
               }}
             >
               {products
-                .filter((product) => productMatchesShopCategory(product, exploreCategoryFilter))
+                .filter((product) => productMatchesPremiumCategory(product, exploreCategoryFilter))
                 .map((product, index) => (
                   <div
                     key={product.id}
