@@ -232,10 +232,13 @@ export const fetchProducts = createAsyncThunk(
   async (params = {}, thunkAPI) => {
     const maxRetries = 2;
     let lastError;
+    const requestParams = params?.all && params.limit == null
+      ? { ...params, limit: 5000 }
+      : params;
   
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
-        const { data } = await apiClient.get('/products', { params });
+        const { data } = await apiClient.get('/products', { params: requestParams });
         return {
           products: Array.isArray(data.products) ? data.products.map(normalizeProduct) : [],
           page: data.page || 1,
