@@ -3,7 +3,6 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import Button from '../components/Button';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { readListingPosition } from '../utils/listingPosition';
@@ -16,13 +15,12 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState('featured');
   const [activeFilter, setActiveFilter] = useState('all');
   const [filterOpen, setFilterOpen] = useState(false);
-  const { products, catalogListLoading, catalogError, catalogPages, catalogCount, fetchProducts } = useApp();
+  const { products, catalogListLoading, catalogError, catalogCount, fetchProducts } = useApp();
 
   const filterMenuRef = useRef(null);
   const productSectionRef = useRef(null);
   const restoredPositionKeyRef = useRef('');
   const categorySlug = searchParams.get('category') || '';
-  const page = Number(searchParams.get('page') || 1);
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useEffect(() => {
@@ -52,23 +50,16 @@ export default function ShopPage() {
     if (productSectionRef.current) {
       productSectionRef.current.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
-  }, [page, hasRestoreState]);
+  }, [categorySlug, hasRestoreState]);
 
   useEffect(() => {
-    const params = {
-      limit: 100,
-      page,
-    };
-
-    if (categorySlug) {
-      params.category = categorySlug;
-    }
-
-    fetchProducts(params);
+    fetchProducts({
+      all: true,
+      ...(categorySlug ? { category: categorySlug } : {}),
+    });
     return undefined;
-  }, [categorySlug, fetchProducts, page]);
+  }, [categorySlug, fetchProducts]);
 
-  const totalPages = Math.max(1, catalogPages || 1);
   const visibleProducts = useMemo(() => {
     const filtered = products.filter((product) => {
       if (activeFilter === 'featured') return Boolean(product.featured || product.badge === 'Featured');
@@ -125,26 +116,6 @@ export default function ShopPage() {
 
     return () => window.cancelAnimationFrame(raf);
   }, [catalogListLoading, location.key, location.pathname, visibleProducts.length]);
-
-  const syncParams = useCallback((next = {}) => {
-    const params = new URLSearchParams();
-    const merged = {
-      category: categorySlug,
-      page,
-      ...next,
-    };
-
-    Object.entries(merged).forEach(([key, value]) => {
-      if (!value || value === 1) return;
-      params.set(key, String(value));
-    });
-
-    setSearchParams(params, { preventScrollReset: true });
-  }, [categorySlug, page, setSearchParams]);
-
-  const handleSelectCategory = useCallback((category) => {
-    syncParams({ category: category.slug, page: 1 });
-  }, [syncParams]);
 
   const clearFilters = useCallback(() => {
     setSearchParams({}, { replace: true, preventScrollReset: true });
@@ -234,7 +205,7 @@ export default function ShopPage() {
               </div>
 
               <p className="text-sm text-text/60">
-                Showing {visibleProducts.length} products
+                Showing {catalogCount} products
               </p>
             </div>
 
@@ -308,30 +279,8 @@ export default function ShopPage() {
 
             <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-text/60">
-                Showing {visibleProducts.length} of {catalogCount} products
+                Showing {visibleProducts.length} products after filters
               </p>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  disabled={page === 1}
-                  onClick={() => {
-                    const next = Math.max(1, page - 1);
-                    syncParams({ page: next });
-                  }}
-                >
-                  Prev
-                </Button>
-                <Button
-                  variant="ghost"
-                  disabled={page >= totalPages}
-                  onClick={() => {
-                    const next = Math.min(totalPages, page + 1);
-                    syncParams({ page: next });
-                  }}
-                >
-                  Next
-                </Button>
-              </div>
             </div>
           </>
         ) : null}

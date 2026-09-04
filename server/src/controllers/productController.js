@@ -145,6 +145,7 @@ const calculateRatingFromReviews = async (productId) => {
 const getProducts = asyncHandler(async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 12;
+  const fetchAll = req.query.all === 'true';
   const includeDeleted = req.query.includeDeleted === 'true';
   const filter = await buildProductFilter(req.query, { includeDeleted });
 
@@ -166,12 +167,15 @@ const getProducts = asyncHandler(async (req, res) => {
                   ? buildStableSort({ rating: -1 })
                   : buildStableSort({ createdAt: -1 });
 
-  const products = await Product.find(filter)
+  let productQuery = Product.find(filter)
     .populate('category', 'name slug')
-    .sort(sortBy)
-    .limit(limit)
-    .skip(limit * (page - 1))
-    .lean();
+    .sort(sortBy);
+
+  if (!fetchAll) {
+    productQuery = productQuery.limit(limit).skip(limit * (page - 1));
+  }
+
+  const products = await productQuery.lean();
 
   // Batch fetch review stats to avoid N+1 queries
   const productIds = products.map(p => p._id);
@@ -198,7 +202,12 @@ const getProducts = asyncHandler(async (req, res) => {
   const serializedProducts = await Promise.all(
     products.map(product => serializeProduct(product, reviewStatsMap))
   );
-  res.json({ products: serializedProducts, page, pages: Math.ceil(count / limit), count });
+  res.json({
+    products: serializedProducts,
+    page: fetchAll ? 1 : page,
+    pages: fetchAll ? 1 : Math.ceil(count / limit),
+    count,
+  });
 });
 
 const getProductBySlug = asyncHandler(async (req, res) => {
