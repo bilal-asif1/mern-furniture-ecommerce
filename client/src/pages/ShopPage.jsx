@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { readListingPosition } from '../utils/listingPosition';
-import { productMatchesShopCategory, resolveShopCategoryQuery } from '../utils/shopCategories';
+import { findMatchingCategory, productMatchesShopCategory } from '../utils/shopCategories';
 
 const PLACEHOLDER_IMAGE = '/category-placeholder.svg';
 
@@ -16,13 +16,13 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState('default');
   const [activeFilter, setActiveFilter] = useState('all');
   const [filterOpen, setFilterOpen] = useState(false);
-  const { products, catalogListLoading, catalogError, fetchProducts } = useApp();
+  const { products, categories, catalogListLoading, catalogError, fetchProducts } = useApp();
 
   const filterMenuRef = useRef(null);
   const productSectionRef = useRef(null);
   const restoredPositionKeyRef = useRef('');
   const categorySlug = searchParams.get('category') || '';
-  const resolvedCategory = useMemo(() => resolveShopCategoryQuery(categorySlug), [categorySlug]);
+  const activeCategory = useMemo(() => findMatchingCategory(categories, categorySlug), [categories, categorySlug]);
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useEffect(() => {
@@ -57,13 +57,13 @@ export default function ShopPage() {
   useEffect(() => {
     fetchProducts({
       all: true,
-      ...(resolvedCategory.query ? { category: resolvedCategory.query } : {}),
+      ...(categorySlug ? { category: categorySlug } : {}),
     });
     return undefined;
-  }, [fetchProducts, resolvedCategory.query]);
+  }, [fetchProducts, categorySlug]);
 
   const visibleProducts = useMemo(() => {
-    const categoryFiltered = products.filter((product) => productMatchesShopCategory(product, resolvedCategory.query));
+    const categoryFiltered = products.filter((product) => productMatchesShopCategory(product, categorySlug));
 
     const filtered = categoryFiltered.filter((product) => {
       if (activeFilter === 'featured') return Boolean(product.featured || product.badge === 'Featured');
@@ -84,7 +84,7 @@ export default function ShopPage() {
     }
 
     return sortBy === 'default' ? filtered : sorted;
-  }, [products, activeFilter, resolvedCategory.query, sortBy]);
+  }, [products, activeFilter, categorySlug, sortBy]);
 
   useLayoutEffect(() => {
     if (catalogListLoading || visibleProducts.length === 0) return;
@@ -206,7 +206,7 @@ export default function ShopPage() {
               </div>
 
               <p className="text-sm text-text/60">
-                Showing {visibleProducts.length}{resolvedCategory.label ? ` ${resolvedCategory.label} products` : ' products'}
+                Showing {visibleProducts.length}{activeCategory?.name ? ` ${activeCategory.name} products` : ' products'}
               </p>
             </div>
 

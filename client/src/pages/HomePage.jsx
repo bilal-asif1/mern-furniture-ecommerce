@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -6,7 +6,7 @@ import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { readListingPosition } from '../utils/listingPosition';
-import { productMatchesPremiumCategory, resolvePremiumCategory } from '../utils/shopCategories';
+import { productMatchesShopCategory } from '../utils/shopCategories';
 import heroImageMobile from '../assets/images/shop/shop-hero.jpeg';
 import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 
@@ -40,9 +40,7 @@ export default function HomePage() {
   });
 
   const categorySlug = searchParams.get('category') || '';
-  const activeCategoryQuery = categorySlug;
-  const resolvedCategory = useMemo(() => resolvePremiumCategory(categorySlug), [categorySlug]);
-  const exploreCategoryFilter = resolvedCategory?.slug || 'all';
+  const exploreCategoryFilter = categorySlug || 'all';
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useLayoutEffect(() => {
@@ -459,7 +457,7 @@ export default function HomePage() {
               <h2 className="font-display text-[1.25rem] font-light normal-case leading-normal tracking-[0.05em] text-text sm:text-[1.5rem] lg:text-[1.75rem]">
                 Explore What Everyone&apos;s Loving
               </h2>
-              {activeCategoryQuery ? (
+              {categorySlug ? (
                 <button
                   type="button"
                   onClick={clearCategoryFilter}
@@ -489,7 +487,7 @@ export default function HomePage() {
               }}
             >
               {products
-                .filter((product) => productMatchesPremiumCategory(product, exploreCategoryFilter))
+                .filter((product) => productMatchesShopCategory(product, exploreCategoryFilter))
                 .map((product, index) => (
                   <div
                     key={product.id}
