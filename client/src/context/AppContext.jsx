@@ -67,7 +67,7 @@ function AppBootstrap({ onInitialCatalogReady }) {
       await Promise.allSettled([
         dispatch(fetchCategories()),
         dispatch(fetchBrands()),
-        dispatch(fetchProducts({ limit: 100 })),
+        dispatch(fetchProducts({ all: true })),
       ]);
 
       if (!cancelled) {

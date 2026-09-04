@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { readListingPosition } from '../utils/listingPosition';
+import { productMatchesShopCategory, resolveShopCategoryQuery } from '../utils/shopCategories';
 import heroImageMobile from '../assets/images/shop/shop-hero.jpeg';
 import heroImageDesktop from '../assets/images/shop/deskshop-hero.jpeg';
 
@@ -40,20 +41,20 @@ export default function HomePage() {
 
   const categorySlug = searchParams.get('category') || '';
   const activeCategoryQuery = categorySlug;
-  const exploreCategoryFilter = categorySlug || 'all';
+  const resolvedCategory = useMemo(() => resolveShopCategoryQuery(categorySlug), [categorySlug]);
+  const exploreCategoryFilter = resolvedCategory.query || 'all';
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useEffect(() => {
     if (!categorySlug) return undefined;
 
     fetchProducts({
-      category: categorySlug,
-      limit: 100,
-      page: 1,
+      category: resolvedCategory.query,
+      all: true,
     });
 
     return undefined;
-  }, [categorySlug, fetchProducts]);
+  }, [categorySlug, fetchProducts, resolvedCategory.query]);
 
   useLayoutEffect(() => {
     if (products.length === 0) return;
@@ -499,10 +500,7 @@ export default function HomePage() {
               }}
             >
               {products
-                .filter((product) => {
-                  if (exploreCategoryFilter === 'all') return true;
-                  return product.categorySlug === exploreCategoryFilter || product.category?.slug === exploreCategoryFilter;
-                })
+                .filter((product) => productMatchesShopCategory(product, exploreCategoryFilter))
                 .map((product, index) => (
                   <div
                     key={product.id}

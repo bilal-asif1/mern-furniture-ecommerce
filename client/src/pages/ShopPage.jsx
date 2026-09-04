@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react';
@@ -6,21 +6,23 @@ import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { useApp } from '../context/AppContext';
 import { readListingPosition } from '../utils/listingPosition';
+import { productMatchesShopCategory, resolveShopCategoryQuery } from '../utils/shopCategories';
 
 const PLACEHOLDER_IMAGE = '/category-placeholder.svg';
 
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
-  const [sortBy, setSortBy] = useState('featured');
+  const [sortBy, setSortBy] = useState('default');
   const [activeFilter, setActiveFilter] = useState('all');
   const [filterOpen, setFilterOpen] = useState(false);
-  const { products, catalogListLoading, catalogError, catalogCount, fetchProducts } = useApp();
+  const { products, catalogListLoading, catalogError, fetchProducts } = useApp();
 
   const filterMenuRef = useRef(null);
   const productSectionRef = useRef(null);
   const restoredPositionKeyRef = useRef('');
   const categorySlug = searchParams.get('category') || '';
+  const resolvedCategory = useMemo(() => resolveShopCategoryQuery(categorySlug), [categorySlug]);
   const hasRestoreState = Boolean(location.key && readListingPosition(location.key));
 
   useEffect(() => {
@@ -55,13 +57,15 @@ export default function ShopPage() {
   useEffect(() => {
     fetchProducts({
       all: true,
-      ...(categorySlug ? { category: categorySlug } : {}),
+      ...(resolvedCategory.query ? { category: resolvedCategory.query } : {}),
     });
     return undefined;
-  }, [categorySlug, fetchProducts]);
+  }, [fetchProducts, resolvedCategory.query]);
 
   const visibleProducts = useMemo(() => {
-    const filtered = products.filter((product) => {
+    const categoryFiltered = products.filter((product) => productMatchesShopCategory(product, resolvedCategory.query));
+
+    const filtered = categoryFiltered.filter((product) => {
       if (activeFilter === 'featured') return Boolean(product.featured || product.badge === 'Featured');
       if (activeFilter === 'best-seller') return Boolean(product.bestSeller);
       if (activeFilter === 'new-arrival') return Boolean(product.newArrival);
@@ -79,8 +83,8 @@ export default function ShopPage() {
       sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     }
 
-    return sorted;
-  }, [products, activeFilter, sortBy]);
+    return sortBy === 'default' ? filtered : sorted;
+  }, [products, activeFilter, resolvedCategory.query, sortBy]);
 
   useLayoutEffect(() => {
     if (catalogListLoading || visibleProducts.length === 0) return;
@@ -117,10 +121,6 @@ export default function ShopPage() {
     return () => window.cancelAnimationFrame(raf);
   }, [catalogListLoading, location.key, location.pathname, visibleProducts.length]);
 
-  const clearFilters = useCallback(() => {
-    setSearchParams({}, { replace: true, preventScrollReset: true });
-  }, [setSearchParams]);
-
   const filterOptions = [
     { value: 'all', label: 'All products' },
     { value: 'featured', label: 'Featured' },
@@ -129,6 +129,7 @@ export default function ShopPage() {
   ];
 
   const sortOptions = [
+    { value: 'default', label: 'Default' },
     { value: 'featured', label: 'Featured' },
     { value: 'newest', label: 'Newest' },
     { value: 'best-seller', label: 'Best Sellers' },
@@ -205,7 +206,7 @@ export default function ShopPage() {
               </div>
 
               <p className="text-sm text-text/60">
-                Showing {catalogCount} products
+                Showing {visibleProducts.length}{resolvedCategory.label ? ` ${resolvedCategory.label} products` : ' products'}
               </p>
             </div>
 
