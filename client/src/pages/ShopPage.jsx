@@ -55,12 +55,16 @@ export default function ShopPage() {
   }, [categorySlug, hasRestoreState]);
 
   useEffect(() => {
+    // The catalog is already bootstrapped at app startup. Refetching here on every
+    // mount flips listLoading back on and causes the back-navigation flash.
+    if (products.length > 0) return undefined;
+
     fetchProducts({
       all: true,
       ...(categorySlug ? { category: categorySlug } : {}),
     });
     return undefined;
-  }, [fetchProducts, categorySlug]);
+  }, [fetchProducts, categorySlug, products.length]);
 
   const visibleProducts = useMemo(() => {
     const categoryFiltered = products.filter((product) => productMatchesShopCategory(product, categorySlug));
@@ -243,7 +247,7 @@ export default function ShopPage() {
           ) : null}
         </AnimatePresence>
 
-        {catalogListLoading ? (
+        {catalogListLoading && visibleProducts.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

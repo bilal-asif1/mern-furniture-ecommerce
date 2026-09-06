@@ -52,8 +52,12 @@ export default function ProductDetailsPage() {
   const hasMultipleImages = galleryImages.length > 1;
 
   useEffect(() => {
-    if (slug) fetchProductBySlug(slug);
-  }, [slug, fetchProductBySlug]);
+    if (!slug) return undefined;
+    if (product?.slug === slug) return undefined;
+
+    fetchProductBySlug(slug);
+    return undefined;
+  }, [slug, product?.slug, fetchProductBySlug]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
